@@ -11,13 +11,14 @@ import type { LatLng } from './geo';
  * fait jamais confiance aux prix envoyés par le navigateur.
  */
 
-export type SpotKind = 'restaurant' | 'cafe' | 'cafeteria' | 'bar' | 'foodtruck' | 'vending';
+export type SpotKind = 'restaurant' | 'cafe' | 'cafeteria' | 'bar' | 'foodtruck' | 'grocery' | 'vending';
 export type SpotGlyph =
   | 'utensils'
   | 'coffee'
   | 'sandwich'
   | 'beer'
   | 'truck'
+  | 'basket'
   | 'soda'
   | 'pizza'
   | 'burger'
@@ -60,6 +61,7 @@ export const KIND_LABEL: Record<SpotKind, string> = {
   cafeteria: 'Cafétéria',
   bar: 'Bar',
   foodtruck: 'Food truck',
+  grocery: 'Supermarché',
   vending: 'Distributeurs',
 };
 
@@ -556,6 +558,123 @@ export const SPOTS: Spot[] = [
     ],
   },
   {
+    id: 'holy-cow-epfl',
+    name: 'Holy Cow!',
+    kind: 'restaurant',
+    glyph: 'burger',
+    place: 'Les Arcades · Quartier Nord',
+    area: 'EPFL',
+    lat: 46.52258,
+    lng: 6.56562,
+    tagline: 'Burgers au bœuf suisse, à côté du métro',
+    priceLevel: 2,
+    hours: week.everyday(['11:00', '23:00']),
+    menu: [
+      {
+        title: 'Burgers',
+        items: [
+          item('hc-holycow', 'Holy Cow!', 14.9, { description: 'Bœuf suisse, cheddar, sauce maison', tags: ['hot', 'popular'] }),
+          item('hc-smoky', 'Smoky Big Cheese & Bacon', 16.9, { tags: ['hot'] }),
+          item('hc-bigbeef', 'Big Beef', 18.9, { description: 'Double steak', tags: ['hot'] }),
+          item('hc-buffalo', 'Buffalo Crispy Chicken', 15.9, { tags: ['hot'] }),
+          item('hc-veggie', 'Veggie', 14.4, { description: 'Mayo citron vert-basilic, chutney de pomme épicé', tags: ['hot', 'vege'] }),
+        ],
+      },
+      {
+        title: 'À côté',
+        items: [
+          item('hc-frites', 'Frites', 5.9, { tags: ['hot', 'vegan', 'popular'] }),
+          item('hc-patate', 'Frites de patate douce', 6.9, { tags: ['hot', 'vegan'] }),
+          item('hc-soda', 'Soda 50 cl', 4.5),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'denner-epfl',
+    name: 'Denner EPFL',
+    kind: 'grocery',
+    glyph: 'basket',
+    place: 'Les Arcades · Quartier Nord',
+    area: 'EPFL',
+    lat: 46.52283,
+    lng: 6.56525,
+    tagline: 'Boissons et snacks à petit prix',
+    priceLevel: 1,
+    hours: week.custom([['07:30', '20:00']], [['08:00', '18:00']]),
+    menu: [
+      {
+        title: 'Boissons',
+        items: [
+          item('den-coca', 'Coca-Cola 1.5 L', 1.95, { tags: ['popular'] }),
+          item('den-eau', 'Eau minérale 1.5 L', 0.55),
+          item('den-icetea', 'Ice tea 1.5 L', 1.3),
+          item('den-redbull', 'Red Bull 25 cl', 1.75),
+          item('den-biere', 'Bière 50 cl', 1.4),
+        ],
+      },
+      {
+        title: 'Snacks',
+        items: [
+          item('den-chips', 'Chips nature 175 g', 2.95, { tags: ['vegan'] }),
+          item('den-chocolat', 'Chocolat au lait 100 g', 1.4),
+          item('den-biscuits', 'Biscuits', 1.9),
+          item('den-sandwich', 'Sandwich', 3.6),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'migros-epfl',
+    name: 'Migros EPFL',
+    kind: 'grocery',
+    glyph: 'basket',
+    place: 'Les Arcades · Quartier Nord',
+    area: 'EPFL',
+    lat: 46.52309,
+    lng: 6.56487,
+    tagline: 'Le supermarché du campus',
+    priceLevel: 1,
+    hours: week.custom([['07:30', '20:00']], [['08:00', '18:00']]),
+    menu: [
+      {
+        title: 'Sur le pouce',
+        items: [
+          item('mig-sandwich', 'Sandwich jambon-fromage', 4.2, { tags: ['popular'] }),
+          item('mig-wrap', 'Wrap falafel', 5.5, { tags: ['vegan'] }),
+          item('mig-salade', 'Salade de pâtes', 4.95, { tags: ['vege'] }),
+          item('mig-sushi', 'Sushi box', 8.9),
+        ],
+      },
+      {
+        title: 'Boissons',
+        items: [
+          item('mig-eau', 'Eau minérale 1.5 L', 0.8),
+          item('mig-coca', 'Coca-Cola 50 cl', 1.95),
+          item('mig-latte', 'Café latte (gobelet)', 1.95),
+          item('mig-redbull', 'Red Bull 25 cl', 1.95),
+        ],
+      },
+      {
+        title: 'Fruits & douceurs',
+        items: [
+          item('mig-banane', 'Banane', 0.45, { tags: ['vegan'] }),
+          item('mig-pomme', 'Pomme', 0.7, { tags: ['vegan'] }),
+          item('mig-chocolat', 'Chocolat au lait 100 g', 1.8),
+          item('mig-chips', 'Chips 90 g', 2.6, { tags: ['vegan'] }),
+        ],
+      },
+      {
+        title: 'Dépannage',
+        items: [
+          item('mig-lait', 'Lait entier 1 L', 1.7),
+          item('mig-pain', 'Pain mi-blanc', 2.5),
+          item('mig-pates', 'Pâtes 500 g', 1.3),
+        ],
+      },
+    ],
+  },
+  {
     id: 'geopolis',
     name: 'Cafétéria Géopolis',
     kind: 'cafeteria',
@@ -635,10 +754,11 @@ export const BUILDINGS: Building[] = [
   { id: 'CH', name: 'CH', hint: 'Chimie', lat: 46.5166, lng: 6.565 },
   { id: 'SV', name: 'SV', hint: 'Sciences de la vie', lat: 46.5212, lng: 6.5648 },
   { id: 'RLC', name: 'RLC', hint: 'Rolex Learning Center', lat: 46.51845, lng: 6.5683 },
-  { id: 'STCC', name: 'STCC', hint: 'SwissTech Convention Center', lat: 46.5233, lng: 6.5634 },
+  { id: 'STCC', name: 'STCC', hint: 'SwissTech Convention Center', lat: 46.52346, lng: 6.56401 },
+  { id: 'ARC', name: 'Les Arcades', hint: 'Quartier Nord · logements et commerces', lat: 46.52286, lng: 6.5651 },
   { id: 'PO', name: 'Polydôme', hint: 'Examens & événements', lat: 46.52, lng: 6.568 },
   { id: 'IP', name: 'Innovation Park', hint: 'Start-ups', lat: 46.5165, lng: 6.562 },
-  { id: 'M1', name: 'Métro EPFL', hint: 'Arrêt M1', lat: 46.52225, lng: 6.5664 },
+  { id: 'M1', name: 'Métro EPFL', hint: 'Arrêt M1', lat: 46.52219, lng: 6.56611 },
 ];
 
 export const SPOT_BY_ID = new Map(SPOTS.map((s) => [s.id, s]));

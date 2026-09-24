@@ -186,6 +186,46 @@ export function MapView() {
   const activityBySpot = useMemo(() => new Map((activity ?? []).map((a) => [a.spotId, a])), [activity]);
   const now = new Date();
 
+  /* Libellés qui se chevauchent : on garde les plus utiles, les autres reviennent en zoomant. */
+  const [hiddenLabels, setHiddenLabels] = useState<Set<string>>(() => new Set());
+  useEffect(() => {
+    if (!map) return;
+    const date = new Date();
+    const priority = (s: Spot) => {
+      if (scene.focusSpotIds && !scene.focusSpotIds.includes(s.id)) return -1;
+      if (scene.highlightSpotId === s.id || hoverSpotId === s.id) return 4;
+      if (!openStatus(s.hours, date).open) return 0;
+      return (activityBySpot.get(s.id)?.rushers.length ?? 0) > 0 ? 2 : 1;
+    };
+    const compute = () => {
+      const visible = SPOTS.filter((s) => priority(s) >= 0);
+      const points = new Map(visible.map((s) => [s.id, map.project([s.lng, s.lat])]));
+      const bubbles = visible.map((s) => {
+        const p = points.get(s.id)!;
+        return { id: s.id, x1: p.x - 14, x2: p.x + 14, y1: p.y - 14, y2: p.y + 14 };
+      });
+      const placed: { x1: number; x2: number; y1: number; y2: number }[] = [];
+      const hidden = new Set<string>();
+      const hits = (a: (typeof placed)[number], b: (typeof placed)[number]) => a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1;
+      for (const s of [...visible].sort((a, b) => priority(b) - priority(a))) {
+        const p = points.get(s.id)!;
+        const half = (s.name.length * 6.4 + 8) / 2;
+        const label = { x1: p.x - half, x2: p.x + half, y1: p.y + 15, y2: p.y + 31 };
+        const blocked = placed.some((r) => hits(r, label)) || bubbles.some((b) => b.id !== s.id && hits(b, label));
+        if (blocked && priority(s) < 4) hidden.add(s.id);
+        else placed.push(label);
+      }
+      setHiddenLabels((prev) => (prev.size === hidden.size && [...hidden].every((id) => prev.has(id)) ? prev : hidden));
+    };
+    compute();
+    map.on('moveend', compute);
+    map.on('resize', compute);
+    return () => {
+      map.off('moveend', compute);
+      map.off('resize', compute);
+    };
+  }, [map, scene.focusSpotIds, scene.highlightSpotId, hoverSpotId, activityBySpot]);
+
   return (
     <div className={cx('map', labels > 0 && 'map--labels', labels > 1 && 'map--labels-all', scene.focusSpotIds && 'map--focus')}>
       <div ref={container} className="map__canvas" />
@@ -202,6 +242,7 @@ export function MapView() {
                   selected={selected}
                   dim={dim}
                   closed={!openStatus(spot.hours, now).open}
+                  labelHidden={hiddenLabels.has(spot.id)}
                   rushers={activityBySpot.get(spot.id)?.rushers.length ?? 0}
                   onClick={() => navigate(`/spot/${spot.id}`)}
                 />
@@ -268,6 +309,7 @@ function SpotPin({
   selected,
   dim,
   closed,
+  labelHidden,
   rushers,
   onClick,
 }: {
@@ -275,13 +317,14 @@ function SpotPin({
   selected: boolean;
   dim: boolean;
   closed: boolean;
+  labelHidden: boolean;
   rushers: number;
   onClick: () => void;
 }) {
   const Icon = GLYPHS[spot.glyph];
   return (
     <button
-      className={cx('spot-pin', selected && 'is-selected', dim && 'is-dim', closed && 'is-closed')}
+      className={cx('spot-pin', selected && 'is-selected', dim && 'is-dim', closed && 'is-closed', labelHidden && 'is-label-hidden')}
       onClick={onClick}
       aria-label={spot.name}
     >

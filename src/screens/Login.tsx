@@ -1,16 +1,29 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type PointerEvent, type RefObject } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import { ArrowRight, Bike, Gift, MessageCircle, Wallet } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
 import { keys, useUpdateProfile } from '../lib/queries';
 import { useMapScene } from '../state/scene';
+import { useMedia } from '../lib/useMedia';
 import { Button, Chip, cx } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 import type { Me } from '../../shared/types';
 import { formatCHF } from '../../shared/money';
 
 const DOMAIN = '@epfl.ch';
+
+/**
+ * Sur iOS, un champ focalisé par script n'ouvre pas le clavier, et le
+ * toucher ensuite ne l'ouvre pas non plus. On refocalise donc le champ
+ * pendant le geste de l'utilisateur.
+ */
+const focusOnTap = (ref: RefObject<HTMLInputElement | null>) => (e: PointerEvent) => {
+  const input = ref.current;
+  if (!input || e.pointerType === 'mouse') return;
+  if (document.activeElement === input) input.blur();
+  input.focus();
+};
 
 const toEmail = (raw: string) => {
   const v = raw.trim().toLowerCase();
@@ -24,6 +37,9 @@ export function Login() {
   const [code, setCode] = useState('');
   const [devCode, setDevCode] = useState<string | null>(null);
   const codeInput = useRef<HTMLInputElement>(null);
+  const emailInput = useRef<HTMLInputElement>(null);
+  // Focus automatique seulement avec une souris : sur mobile il bloque le clavier.
+  const finePointer = useMedia('(pointer: fine)');
 
   useMapScene(() => ({ cameraKey: 'login', camera: { kind: 'overview' } }), []);
 
@@ -43,7 +59,7 @@ export function Login() {
   });
 
   useEffect(() => {
-    if (step === 'code') codeInput.current?.focus();
+    if (step === 'code' && finePointer) codeInput.current?.focus();
   }, [step]);
 
   useEffect(() => {
@@ -105,9 +121,11 @@ export function Login() {
             <form onSubmit={submitEmail} className="auth__form">
               <label className="field field--suffix">
                 <span className="field__label">Adresse EPFL</span>
-                <span className="field__control">
+                <span className="field__control" onPointerDown={focusOnTap(emailInput)}>
                   <input
-                    autoFocus
+                    ref={emailInput}
+                    autoFocus={finePointer}
+                    type="text"
                     inputMode="email"
                     autoComplete="username"
                     autoCapitalize="none"
@@ -142,7 +160,7 @@ export function Login() {
               </button>
             </p>
 
-            <label className={cx('otp', verify.isError && 'is-error')} onClick={() => codeInput.current?.focus()}>
+            <label className={cx('otp', verify.isError && 'is-error')} onPointerDown={focusOnTap(codeInput)}>
               <input
                 ref={codeInput}
                 className="otp__input"

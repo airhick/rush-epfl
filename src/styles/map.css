@@ -176,7 +176,8 @@
   opacity: 1;
 }
 
-.map:not(.map--labels-all) .spot-pin.is-closed:not(.is-selected):not(:hover) .spot-pin__label {
+.map:not(.map--labels-all) .spot-pin.is-closed:not(.is-selected):not(:hover) .spot-pin__label,
+.spot-pin.is-label-hidden:not(.is-selected):not(:hover) .spot-pin__label {
   opacity: 0;
 }
 

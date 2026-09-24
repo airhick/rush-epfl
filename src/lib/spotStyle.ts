@@ -8,6 +8,7 @@ import {
   Pizza,
   Salad,
   Sandwich,
+  ShoppingBasket,
   Truck,
   UtensilsCrossed,
   type LucideIcon,
@@ -20,6 +21,7 @@ export const GLYPHS: Record<SpotGlyph, LucideIcon> = {
   sandwich: Sandwich,
   beer: Beer,
   truck: Truck,
+  basket: ShoppingBasket,
   soda: CupSoda,
   pizza: Pizza,
   burger: Hamburger,
@@ -35,6 +37,7 @@ export const KIND_TINT: Record<SpotKind, [string, string]> = {
   cafeteria: ['#32ADE6', '#0A84C9'],
   bar: ['#BF5AF2', '#8E3FD6'],
   foodtruck: ['#FF5E57', '#E5304A'],
+  grocery: ['#34C759', '#1FA44A'],
   vending: ['#6E6CF0', '#4845C7'],
 };
 
