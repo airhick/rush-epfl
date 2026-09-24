@@ -1,0 +1,189 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--label);
+  background: var(--bg-grouped);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv11', 'ss01', 'ss03';
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+input,
+textarea {
+  border: 0;
+  outline: none;
+  background: none;
+  min-width: 0;
+}
+
+::placeholder {
+  color: var(--label-3);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--blue) 55%, transparent);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* ── Typographie ─────────────────────────────────────────────────────── */
+
+.large-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.12;
+  font-weight: 750;
+  letter-spacing: -0.028em;
+}
+
+.title1 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  line-height: 1.15;
+  font-weight: 720;
+  letter-spacing: -0.025em;
+}
+
+.muted {
+  color: var(--label-2);
+}
+
+.faint {
+  color: var(--label-3);
+}
+
+.small {
+  font-size: 13px;
+}
+
+.text-green {
+  color: var(--green-text);
+}
+
+.text-red {
+  color: var(--red);
+}
+
+.link {
+  color: var(--blue);
+  font-weight: 560;
+  font-size: 14px;
+}
+
+.link:disabled {
+  opacity: 0.4;
+}
+
+.footnote {
+  padding: 8px 20px 28px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--label-3);
+}
+
+.pad-x {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.stack {
+  display: grid;
+  gap: 10px;
+}
+
+.center-pad {
+  display: grid;
+  place-items: center;
+  padding: 48px 0;
+  color: var(--label-2);
+}
+
+.splash {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+}
+
+/* Barres de défilement discrètes sur ordinateur. */
+@media (hover: hover) {
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--fill-2);
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,158 @@
+import { DatabaseSync } from 'node:sqlite';
+import { mkdirSync } from 'node:fs';
+import { dirname } from 'node:path';
+import { env } from './env';
+
+const SCHEMA = /* sql */ `
+  PRAGMA journal_mode = WAL;
+  PRAGMA foreign_keys = ON;
+
+  CREATE TABLE IF NOT EXISTS users (
+    id          TEXT PRIMARY KEY,
+    email       TEXT NOT NULL UNIQUE,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT NOT NULL,
+    section     TEXT,
+    hue         INTEGER NOT NULL,
+    onboarded   INTEGER NOT NULL DEFAULT 0,
+    is_bot      INTEGER NOT NULL DEFAULT 0,
+    created_at  TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS login_codes (
+    email         TEXT PRIMARY KEY,
+    code_hash     TEXT NOT NULL,
+    expires_at    INTEGER NOT NULL,
+    attempts      INTEGER NOT NULL DEFAULT 0,
+    last_sent_at  INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS sessions (
+    token_hash  TEXT PRIMARY KEY,
+    user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at  INTEGER NOT NULL,
+    expires_at  INTEGER NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS orders (
+    id                   TEXT PRIMARY KEY,
+    requester_id         TEXT NOT NULL REFERENCES users(id),
+    courier_id           TEXT REFERENCES users(id),
+    spot_id              TEXT NOT NULL,
+    items_json           TEXT NOT NULL,
+    items_cents          INTEGER NOT NULL,
+    margin_cents         INTEGER NOT NULL,
+    tip_cents            INTEGER NOT NULL,
+    suggested_tip_cents  INTEGER NOT NULL,
+    hold_cents           INTEGER NOT NULL,
+    actual_items_cents   INTEGER,
+    dropoff_lat          REAL NOT NULL,
+    dropoff_lng          REAL NOT NULL,
+    dropoff_label        TEXT NOT NULL,
+    dropoff_note         TEXT NOT NULL DEFAULT '',
+    status               TEXT NOT NULL,
+    courier_lat          REAL,
+    courier_lng          REAL,
+    courier_loc_at       TEXT,
+    created_at           TEXT NOT NULL,
+    accepted_at          TEXT,
+    picked_up_at         TEXT,
+    delivered_at         TEXT,
+    completed_at         TEXT,
+    cancelled_at         TEXT,
+    cancel_reason        TEXT,
+    -- Note attribuée par le demandeur au rusher, et inversement.
+    rating_for_courier   INTEGER,
+    rating_for_requester INTEGER
+  );
+  CREATE INDEX IF NOT EXISTS orders_status    ON orders(status);
+  CREATE INDEX IF NOT EXISTS orders_requester ON orders(requester_id);
+  CREATE INDEX IF NOT EXISTS orders_courier   ON orders(courier_id);
+
+  -- Registre append-only : le solde est toujours la somme des écritures.
+  CREATE TABLE IF NOT EXISTS transactions (
+    id            TEXT PRIMARY KEY,
+    user_id       TEXT NOT NULL REFERENCES users(id),
+    kind          TEXT NOT NULL,
+    amount_cents  INTEGER NOT NULL,
+    label         TEXT NOT NULL,
+    order_id      TEXT,
+    created_at    TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS tx_user ON transactions(user_id, created_at);
+
+  CREATE TABLE IF NOT EXISTS messages (
+    id          TEXT PRIMARY KEY,
+    order_id    TEXT NOT NULL REFERENCES orders(id),
+    sender_id   TEXT,
+    body        TEXT NOT NULL,
+    kind        TEXT NOT NULL,
+    created_at  TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS messages_order ON messages(order_id, created_at);
+
+  CREATE TABLE IF NOT EXISTS reads (
+    order_id      TEXT NOT NULL,
+    user_id       TEXT NOT NULL,
+    last_read_at  TEXT NOT NULL,
+    PRIMARY KEY (order_id, user_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS presence (
+    user_id     TEXT PRIMARY KEY REFERENCES users(id),
+    available   INTEGER NOT NULL,
+    spot_id     TEXT,
+    dest_lat    REAL,
+    dest_lng    REAL,
+    dest_label  TEXT,
+    updated_at  TEXT NOT NULL
+  );
+`;
+
+function open(path: string): DatabaseSync {
+  if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true });
+  const db = new DatabaseSync(path);
+  db.exec(SCHEMA);
+  return db;
+}
+
+export const db = open(env.dbPath);
+
+type Param = string | number | null;
+
+export function one<T>(sql: string, ...params: Param[]): T | undefined {
+  return db.prepare(sql).get(...params) as T | undefined;
+}
+
+export function all<T>(sql: string, ...params: Param[]): T[] {
+  return db.prepare(sql).all(...params) as T[];
+}
+
+export function run(sql: string, ...params: Param[]) {
+  return db.prepare(sql).run(...params);
+}
+
+let depth = 0;
+
+/**
+ * Exécute `fn` dans une transaction. DatabaseSync est synchrone : aucune
+ * autre requête ne peut s'intercaler, ce qui rend les opérations sur le
+ * solde atomiques. Les appels imbriqués réutilisent la transaction courante.
+ */
+export function transaction<T>(fn: () => T): T {
+  if (depth > 0) return fn();
+  depth++;
+  db.exec('BEGIN IMMEDIATE');
+  try {
+    const result = fn();
+    db.exec('COMMIT');
+    return result;
+  } catch (err) {
+    db.exec('ROLLBACK');
+    throw err;
+  } finally {
+    depth--;
+  }
+}
+
+export const nowIso = () => new Date().toISOString();

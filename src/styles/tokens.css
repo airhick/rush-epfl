@@ -1,0 +1,126 @@
+/*
+ * Design tokens — calqués sur les couleurs système d'iOS.
+ * Le thème suit le système, sauf si l'utilisateur force clair/sombre.
+ */
+
+:root {
+  color-scheme: light;
+
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', 'Inter', system-ui, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter Variable', 'Inter', system-ui, sans-serif;
+  --font-rounded: ui-rounded, 'SF Pro Rounded', var(--font-display);
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', Menlo, monospace;
+
+  /* Surfaces */
+  --bg: #ffffff;
+  --bg-grouped: #f2f2f7;
+  --bg-elevated: #ffffff;
+  --bg-secondary: #f2f2f7;
+  --bg-tertiary: #e9e9ee;
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-strong: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --bar: rgba(251, 251, 250, 0.97);
+  --scrim: rgba(0, 0, 0, 0.28);
+
+  /* Texte */
+  --label: #000000;
+  --label-2: rgba(60, 60, 67, 0.62);
+  --label-3: rgba(60, 60, 67, 0.36);
+  --label-4: rgba(60, 60, 67, 0.18);
+  --label-inverse: #ffffff;
+
+  /* Remplissages */
+  --fill: rgba(120, 120, 128, 0.12);
+  --fill-2: rgba(120, 120, 128, 0.16);
+  --fill-3: rgba(120, 120, 128, 0.2);
+  --separator: rgba(60, 60, 67, 0.13);
+  --separator-strong: rgba(60, 60, 67, 0.24);
+
+  /* Couleurs système */
+  --ink: #000000;
+  --ink-contrast: #ffffff;
+  --blue: #007aff;
+  --green: #34c759;
+  --green-text: #1a8f3c;
+  --green-soft: rgba(52, 199, 89, 0.14);
+  --orange: #ff9500;
+  --orange-soft: rgba(255, 149, 0, 0.14);
+  --red: #ff3b30;
+  --red-soft: rgba(255, 59, 48, 0.1);
+  --yellow: #ffcc00;
+  --indigo: #5856d6;
+  --bubble-mine: #007aff;
+  --bubble-theirs: #e9e9eb;
+
+  /* Élévation */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.16), 0 3px 10px rgba(0, 0, 0, 0.06);
+  --shadow-pin: 0 2px 6px rgba(0, 0, 0, 0.22), 0 0 0 0.5px rgba(0, 0, 0, 0.08);
+
+  /* Formes */
+  --r-xs: 8px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+
+  /* Mouvement */
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --panel-w: 420px;
+  --tabbar-h: 58px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --bg-grouped: #000000;
+  --bg-elevated: #1c1c1e;
+  --bg-secondary: #1c1c1e;
+  --bg-tertiary: #2c2c2e;
+  --glass: rgba(28, 28, 30, 0.74);
+  --glass-strong: rgba(28, 28, 30, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --bar: rgba(24, 24, 26, 0.97);
+  --scrim: rgba(0, 0, 0, 0.5);
+
+  --label: #ffffff;
+  --label-2: rgba(235, 235, 245, 0.62);
+  --label-3: rgba(235, 235, 245, 0.34);
+  --label-4: rgba(235, 235, 245, 0.18);
+  --label-inverse: #000000;
+
+  --fill: rgba(120, 120, 128, 0.24);
+  --fill-2: rgba(120, 120, 128, 0.32);
+  --fill-3: rgba(120, 120, 128, 0.36);
+  --separator: rgba(84, 84, 88, 0.45);
+  --separator-strong: rgba(84, 84, 88, 0.7);
+
+  --ink: #ffffff;
+  --ink-contrast: #000000;
+  --blue: #0a84ff;
+  --green: #30d158;
+  --green-text: #30d158;
+  --green-soft: rgba(48, 209, 88, 0.16);
+  --orange: #ff9f0a;
+  --orange-soft: rgba(255, 159, 10, 0.16);
+  --red: #ff453a;
+  --red-soft: rgba(255, 69, 58, 0.16);
+  --yellow: #ffd60a;
+  --indigo: #5e5ce6;
+  --bubble-mine: #0a84ff;
+  --bubble-theirs: #26252a;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 50px rgba(0, 0, 0, 0.6), 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+  --shadow-pin: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
