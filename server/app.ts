@@ -8,8 +8,10 @@ import * as orders from './services/orders';
 import * as messages from './services/messages';
 import * as ledger from './services/ledger';
 import * as presence from './services/presence';
+import * as places from './services/places';
 import { getUser, publicUser, toMe, updateProfile } from './services/users';
 import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
+import { SPOT_BY_ID } from '../shared/catalog';
 import type { Conversation } from '../shared/types';
 
 const latLng = { lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) };
@@ -114,6 +116,21 @@ export function createApp() {
   api.get('/activity', (c) => c.json(presence.activity()));
   api.get('/presence', (c) => c.json(presence.getPresence(me(c).id)));
   api.put('/presence', async (c) => c.json(presence.setPresence(me(c).id, await body(c, schemas.presence))));
+
+  /* ── Photos et avis Google Maps (API Places, attributions incluses) ── */
+
+  const spotParam = (c: Context<AppEnv>) => {
+    const spot = SPOT_BY_ID.get(c.req.param('id') ?? '');
+    if (!spot) throw new HttpError(404, 'Spot inconnu.');
+    return spot;
+  };
+
+  api.get('/spots/:id/google', async (c) => c.json(await places.googlePlace(spotParam(c))));
+
+  api.get('/spots/:id/google/photo', async (c) => {
+    const url = await places.googlePhotoUrl(spotParam(c), c.req.query('name') ?? '', Number(c.req.query('w')));
+    return c.redirect(url, 302);
+  });
 
   /* ── Commandes ────────────────────────────────────────────────────── */
 

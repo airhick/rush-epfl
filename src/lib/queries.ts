@@ -2,6 +2,7 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import { api, ApiError } from './api';
 import type {
   Conversation,
+  GooglePlaceResult,
   Me,
   Message,
   Order,
@@ -45,6 +46,16 @@ export const useMe = () =>
       }
     },
     staleTime: 60_000,
+  });
+
+/** Photos et avis Google Maps d'un spot : chargés à l'ouverture de la fiche, gardés pour la session. */
+export const useGooglePlace = (spotId: string | undefined) =>
+  useQuery({
+    queryKey: ['google', spotId ?? ''] as const,
+    queryFn: () => api<GooglePlaceResult>(`/spots/${spotId}/google`),
+    enabled: Boolean(spotId),
+    staleTime: Infinity,
+    retry: false,
   });
 
 export const useActivity = () => useQuery({ queryKey: keys.activity, queryFn: () => api<SpotActivity[]>('/activity') });

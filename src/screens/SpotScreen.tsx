@@ -7,7 +7,8 @@ import { formatDistance, walkingDistance, walkingMinutes } from '../../shared/ge
 import { openStatus } from '../../shared/hours';
 import { suggestTip } from '../../shared/pricing';
 import { formatCHF } from '../../shared/money';
-import { useActivity } from '../lib/queries';
+import { useActivity, useGooglePlace } from '../lib/queries';
+import { GoogleGallery, GoogleReviews } from '../features/GoogleMedia';
 import { joinNames, plural } from '../lib/format';
 import { useCart, useCartSummary } from '../state/cart';
 import { useDropoff, useGeo } from '../state/location';
@@ -37,6 +38,8 @@ export function SpotScreen() {
   const cart = useCart();
   const summary = useCartSummary();
   const { data: activity } = useActivity();
+  const { data: googleData } = useGooglePlace(spot?.id);
+  const google = googleData?.available ? googleData : null;
   const [conflict, setConflict] = useState<MenuItem | null>(null);
   const [section, setSection] = useState(0);
   const scroller = useRef<HTMLDivElement>(null);
@@ -103,9 +106,21 @@ export function SpotScreen() {
       navTitle={spot.name}
       scrollRef={scroller}
       hero={
-        <div className="spot-hero">
-          <SpotCover spot={spot} height={168} />
-        </div>
+        google ? (
+          <GoogleGallery
+            spotId={spot.id}
+            place={google}
+            fallback={
+              <div className="spot-hero">
+                <SpotCover spot={spot} height={168} />
+              </div>
+            }
+          />
+        ) : (
+          <div className="spot-hero">
+            <SpotCover spot={spot} height={168} />
+          </div>
+        )
       }
       footer={
         <AnimatePresence>
@@ -127,13 +142,24 @@ export function SpotScreen() {
         <p className="spot-head__meta">
           {KIND_LABEL[spot.kind]} · {spot.place} · {['Petit budget', 'Budget moyen', 'Plus cher'][spot.priceLevel - 1]}
         </p>
-        {spot.rating && (
-          <a className="ext-rating" href={spot.rating.url} target="_blank" rel="noreferrer">
+        {google?.rating != null ? (
+          <a className="ext-rating" href={google.mapsUrl ?? undefined} target="_blank" rel="noreferrer">
             <Star size={13} fill="currentColor" strokeWidth={0} />
-            {spot.rating.value.toFixed(1).replace('.', ',')}
-            <span>sur {spot.rating.source}</span>
+            {google.rating.toFixed(1).replace('.', ',')}
+            <span>
+              sur Google Maps ({google.ratingCount})
+            </span>
             <ArrowUpRight size={13} />
           </a>
+        ) : (
+          spot.rating && (
+            <a className="ext-rating" href={spot.rating.url} target="_blank" rel="noreferrer">
+              <Star size={13} fill="currentColor" strokeWidth={0} />
+              {spot.rating.value.toFixed(1).replace('.', ',')}
+              <span>sur {spot.rating.source}</span>
+              <ArrowUpRight size={13} />
+            </a>
+          )
         )}
       </div>
 
@@ -236,10 +262,18 @@ export function SpotScreen() {
           })}
         </section>
       ))}
+      {google && <GoogleReviews place={google} />}
+
       <section className="ext-sources">
         <h2>Sources externes</h2>
         {spot.priceNote && <p className="ext-sources__note">{spot.priceNote}</p>}
         <div className="ext-sources__links">
+          {google?.mapsUrl && (
+            <a href={google.mapsUrl} target="_blank" rel="noreferrer">
+              Google Maps
+              <ArrowUpRight size={14} />
+            </a>
+          )}
           {spot.rating && (
             <a href={spot.rating.url} target="_blank" rel="noreferrer">
               Photos et avis sur {spot.rating.source}
@@ -254,7 +288,8 @@ export function SpotScreen() {
           ))}
         </div>
         <p className="ext-sources__disclaimer">
-          Produits, prix, horaires et notes proviennent de sources externes{spot.checkedAt && `, relevés en ${monthLabel(spot.checkedAt)}`}. Ils
+          Produits, prix, horaires, photos et avis proviennent de sources externes{spot.checkedAt && `, relevés en ${monthLabel(spot.checkedAt)}`}
+          {google && ' ; photos et avis Google Maps crédités à leurs auteurs'}. Ils
           servent seulement à donner une idée aux acheteurs et aux rushers de ce qu’est l’article et de sa réception. Les prix précédés de ≈ sont
           estimés ; ton rusher saisit le montant exact du ticket et tu ne paies que ce qui a été dépensé. Rush n’est affilié à aucun de ces services.
         </p>

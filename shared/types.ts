@@ -103,6 +103,38 @@ export interface Presence {
   destination: (LatLng & { label: string }) | null;
 }
 
+/** Photos et avis Google Maps d'un spot (API Google Places, attributions incluses). */
+export interface GooglePlace {
+  available: true;
+  rating: number | null;
+  ratingCount: number;
+  mapsUrl: string | null;
+  photos: GooglePhoto[];
+  reviews: GoogleReview[];
+}
+
+export interface GoogleAttribution {
+  name: string;
+  url: string | null;
+}
+
+export interface GooglePhoto {
+  /** Nom de ressource Google, à repasser tel quel au proxy photo du serveur. */
+  name: string;
+  width: number;
+  height: number;
+  attributions: GoogleAttribution[];
+}
+
+export interface GoogleReview {
+  author: GoogleAttribution & { photoUrl: string | null };
+  rating: number;
+  text: string;
+  when: string;
+}
+
+export type GooglePlaceResult = GooglePlace | { available: false; reason: 'not-configured' | 'not-found' | 'error' };
+
 /** Rushers disponibles, agrégés par spot pour la carte et les fiches. */
 export interface SpotActivity {
   spotId: string;

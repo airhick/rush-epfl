@@ -9,6 +9,7 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | | |
 |---|---|
 | **Carte intégrée** | Tous les spots de graille de l'EPFL et autour (UNIL), avec les rushers présents en direct, les trajets et la position du livreur. Style vectoriel maison inspiré d'Apple Plans, bâtiments en 3D, clair/sombre. |
+| **Fiches spots** | Menus et prix relevés sur des sources externes (citées et liées), horaires, note ; photos et avis Google Maps crédités à leurs auteurs si une clé Google est configurée. |
 | **Commander** | Menus par spot, panier, point de livraison par GPS, bâtiment ou épingle déplaçable sur la carte, note visible uniquement par le rusher. |
 | **Livrer** | Tu indiques où tu es et où tu vas : les demandes sont triées selon le **détour** qu'elles t'imposent (« Sur ton chemin », « +320 m de détour »). |
 | **Solde Rush** | Porte-monnaie local : **CHF 1.00 offert** à chaque nouveau compte, puis le solde se gagne en livrant. Montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
@@ -69,7 +70,7 @@ shared/          Code partagé client/serveur
   hours.ts         Horaires d'ouverture (fuseau Europe/Zurich)
   types.ts         Contrat de l'API et des évènements temps réel
 server/          Hono + SQLite (node:sqlite) + WebSocket (ws)
-  services/        auth, orders, ledger, messages, presence, users
+  services/        auth, orders, ledger, messages, presence, users, places (Google)
   demo/bots.ts     Rushers simulés (mode démo uniquement)
 src/             React 19 + Vite
   map/             MapLibre GL, style maison, marqueurs React
@@ -108,14 +109,26 @@ docker run -p 8787:8787 -v rush-data:/app/data -e SMTP_URL=… rush-epfl
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
+| `GOOGLE_MAPS_API_KEY` | Clé Google Maps Platform (Places API New) pour les photos et avis des spots | désactivé |
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
+
+### Photos et avis Google Maps
+
+Avec `GOOGLE_MAPS_API_KEY`, chaque fiche spot affiche les photos et les avis Google Maps du lieu, via l'[API Places (New)](https://developers.google.com/maps/documentation/places/web-service/op-overview) officielle, sous licence et avec les attributions exigées : auteur de chaque photo et de chaque avis (lien vers son profil), mention Google Maps, lien vers la fiche complète.
+
+1. Dans [Google Cloud Console](https://console.cloud.google.com/), créer un projet, lier un compte de facturation et activer **Places API (New)**.
+2. Créer une clé API, la **restreindre** à Places API (New) et, idéalement, fixer un quota journalier (par ex. 500 requêtes/jour) pour ne jamais dépasser la tranche gratuite mensuelle.
+3. La renseigner dans Render → *Environment* → `GOOGLE_MAPS_API_KEY` (ou dans l'environnement local).
+
+Côté serveur (`server/services/places.ts`) : le lieu Google est retrouvé par recherche textuelle près des coordonnées du spot (rejeté s'il est à plus de 350 m), puis ses détails sont demandés à Google à l'ouverture de la fiche (requêtes simultanées regroupées, résultat gardé par le navigateur le temps de la session). Conformément aux conditions de Google, seul l'identifiant du lieu est mis en cache côté serveur ; photos et avis ne sont ni copiés ni stockés, la clé ne quitte jamais le serveur et les photos passent par une redirection vers l'URL fournie par Google. Chaque ouverture de fiche et chaque photo affichée compte comme un appel facturable au-delà de la tranche gratuite : d'où l'intérêt du quota. Sans clé (ou si le lieu est introuvable), la fiche garde sa couverture et ses liens vers les sources.
 
 ## À savoir avant un vrai lancement
 
 - **SMTP obligatoire en production** : sans `SMTP_URL`, les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
 - **Catalogue** (`shared/catalog.ts`) : liste des points de restauration relevée en septembre 2026 sur les pages officielles de l'EPFL et des enseignes. Chaque spot indique ses sources (affichées et liées dans l'app), si ses horaires sont officiels, et marque d'un ≈ les prix estimés faute de source publique. Les positions sur la carte restent approximatives.
+- **Photos et avis** : ils viennent uniquement de Google Maps (API officielle, crédités). Rien n'est recopié depuis Uber Eats, Tripadvisor ou d'autres sites, dont les contenus appartiennent à leurs auteurs ; l'app renvoie vers eux par lien.
 - **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.
 - **Authentification** : le code par e-mail limite l'accès aux adresses `@epfl.ch` ; une intégration au SSO EPFL (Microsoft Entra ID) serait l'étape suivante.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

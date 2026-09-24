@@ -10,6 +10,8 @@ export const env = {
   welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
   /** Sans SMTP, le code de connexion est affiché dans la console du serveur. */
   smtpUrl: process.env.SMTP_URL ?? null,
+  /** Clé Google Maps Platform (Places API New) : photos et avis Google des spots. */
+  googleMapsKey: process.env.GOOGLE_MAPS_API_KEY ?? null,
   mailFrom: process.env.MAIL_FROM ?? 'Rush <no-reply@rush.epfl.ch>',
   /** Domaines autorisés à se connecter. */
   allowedDomains: (process.env.RUSH_ALLOWED_DOMAINS ?? 'epfl.ch')
