@@ -19,13 +19,14 @@ const SCHEMA = /* sql */ `
     created_at  TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS login_codes (
-    email         TEXT PRIMARY KEY,
-    code_hash     TEXT NOT NULL,
-    expires_at    INTEGER NOT NULL,
-    attempts      INTEGER NOT NULL DEFAULT 0,
-    last_sent_at  INTEGER NOT NULL
+  -- Mots de passe à part : jamais lus avec un SELECT * sur users.
+  CREATE TABLE IF NOT EXISTS credentials (
+    user_id        TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    password_hash  TEXT NOT NULL,
+    updated_at     INTEGER NOT NULL
   );
+  -- Ancienne connexion par code e-mail.
+  DROP TABLE IF EXISTS login_codes;
 
   CREATE TABLE IF NOT EXISTS sessions (
     token_hash  TEXT PRIMARY KEY,

@@ -18,7 +18,7 @@ const latLng = { lat: z.number().min(-90).max(90), lng: z.number().min(-180).max
 
 const schemas = {
   email: z.object({ email: z.string().max(120) }),
-  verify: z.object({ email: z.string().max(120), code: z.string().regex(/^\s*\d{6}\s*$/, 'Le code fait 6 chiffres.') }),
+  credentials: z.object({ email: z.string().max(120), password: z.string().min(1, 'Entre ton mot de passe.').max(200) }),
   profile: z.object({
     firstName: z.string().trim().min(1).max(40),
     lastName: z.string().trim().max(60),
@@ -64,15 +64,7 @@ export function createApp() {
 
   /* ── Authentification ─────────────────────────────────────────────── */
 
-  api.post('/auth/request', async (c) => {
-    const { email } = await body(c, schemas.email);
-    const result = await auth.requestCode(email);
-    return c.json({ ok: true, ...result });
-  });
-
-  api.post('/auth/verify', async (c) => {
-    const { email, code } = await body(c, schemas.verify);
-    const { user, token } = auth.verifyCode(email, code);
+  const signIn = (c: Context, { user, token }: auth.SignedIn) => {
     setCookie(c, auth.SESSION_COOKIE, token, {
       httpOnly: true,
       sameSite: 'Lax',
@@ -80,7 +72,23 @@ export function createApp() {
       path: '/',
       maxAge: auth.SESSION_TTL_MS / 1000,
     });
-    return c.json(toMe(user));
+    return toMe(user);
+  };
+
+  /* L'écran de connexion demande d'abord si l'adresse a un compte. */
+  api.post('/auth/check', async (c) => {
+    const { email } = await body(c, schemas.email);
+    return c.json(auth.accountExists(email));
+  });
+
+  api.post('/auth/login', async (c) => {
+    const { email, password } = await body(c, schemas.credentials);
+    return c.json(signIn(c, await auth.login(email, password)));
+  });
+
+  api.post('/auth/register', async (c) => {
+    const { email, password } = await body(c, schemas.credentials);
+    return c.json(signIn(c, await auth.register(email, password)), 201);
   });
 
   api.post('/auth/logout', (c) => {

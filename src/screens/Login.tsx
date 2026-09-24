@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState, type FormEvent, type PointerEvent, type RefObject } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, Bike, Gift, MessageCircle, Wallet } from 'lucide-react';
+import { ArrowRight, Bike, Eye, EyeOff, Gift, MessageCircle, Wallet } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
 import { keys, useUpdateProfile } from '../lib/queries';
 import { useMapScene } from '../state/scene';
 import { useMedia } from '../lib/useMedia';
-import { Button, Chip, cx } from '../ui/primitives';
+import { Button, Chip } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 import type { Me } from '../../shared/types';
 import { formatCHF } from '../../shared/money';
 
 const DOMAIN = '@epfl.ch';
+/** Même règle que le serveur (server/services/auth.ts). */
+const PASSWORD_MIN = 8;
 
 /**
  * Sur iOS, un champ focalisé par script n'ouvre pas le clavier, et le
@@ -32,47 +34,49 @@ const toEmail = (raw: string) => {
 
 export function Login() {
   const qc = useQueryClient();
-  const [step, setStep] = useState<'email' | 'code'>('email');
+  const [step, setStep] = useState<'email' | 'password'>('email');
   const [local, setLocal] = useState('');
-  const [code, setCode] = useState('');
-  const [devCode, setDevCode] = useState<string | null>(null);
-  const codeInput = useRef<HTMLInputElement>(null);
+  const [exists, setExists] = useState(false);
+  const [password, setPassword] = useState('');
+  const [reveal, setReveal] = useState(false);
   const emailInput = useRef<HTMLInputElement>(null);
+  const passwordInput = useRef<HTMLInputElement>(null);
   // Focus automatique seulement avec une souris : sur mobile il bloque le clavier.
   const finePointer = useMedia('(pointer: fine)');
+  const email = toEmail(local);
 
   useMapScene(() => ({ cameraKey: 'login', camera: { kind: 'overview' } }), []);
 
-  const request = useMutation({
-    mutationFn: () => api<{ devCode?: string }>('/auth/request', { body: { email: toEmail(local) } }),
+  const check = useMutation({
+    mutationFn: () => api<{ exists: boolean }>('/auth/check', { body: { email } }),
     onSuccess: (res) => {
-      setDevCode(res.devCode ?? null);
-      setStep('code');
-      setCode('');
+      setExists(res.exists);
+      setPassword('');
+      setStep('password');
     },
   });
 
-  const verify = useMutation({
-    mutationFn: (c: string) => api<Me>('/auth/verify', { body: { email: toEmail(local), code: c } }),
+  const signIn = useMutation({
+    mutationFn: () => api<Me>(exists ? '/auth/login' : '/auth/register', { body: { email, password } }),
     onSuccess: (me) => qc.setQueryData(keys.me, me),
-    onError: () => setCode(''),
   });
 
   useEffect(() => {
-    if (step === 'code' && finePointer) codeInput.current?.focus();
+    if (step === 'password' && finePointer) passwordInput.current?.focus();
   }, [step]);
-
-  useEffect(() => {
-    if (code.length === 6 && !verify.isPending) verify.mutate(code);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code]);
 
   const submitEmail = (e: FormEvent) => {
     e.preventDefault();
-    if (local.trim()) request.mutate();
+    if (local.trim()) check.mutate();
   };
 
-  const error = (step === 'email' ? request.error : verify.error) as ApiError | null;
+  const tooShort = !exists && password.length < PASSWORD_MIN;
+  const submitPassword = (e: FormEvent) => {
+    e.preventDefault();
+    if (password && !tooShort) signIn.mutate();
+  };
+
+  const error = (step === 'email' ? check.error : signIn.error) as ApiError | null;
 
   return (
     <div className="auth">
@@ -138,61 +142,63 @@ export function Login() {
                 </span>
               </label>
               {error && <p className="form-error">{error.message}</p>}
-              <Button block loading={request.isPending} disabled={!local.trim()} icon={<ArrowRight size={18} />}>
-                Recevoir un code
+              <Button block loading={check.isPending} disabled={!local.trim()} icon={<ArrowRight size={18} />}>
+                Continuer
               </Button>
               <p className="auth__fine">Rush est réservé aux étudiant·e·s et au personnel de l’EPFL.</p>
             </form>
           </motion.div>
         ) : (
           <motion.div
-            key="code"
+            key="password"
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
             transition={{ duration: 0.22 }}
           >
-            <h1 className="auth__title">Vérifie ta boîte mail</h1>
+            <h1 className="auth__title">{exists ? 'Content de te revoir' : 'Crée ton mot de passe'}</h1>
             <p className="auth__lead">
-              Code envoyé à <strong>{toEmail(local)}</strong>.{' '}
+              {exists ? 'Connexion avec' : 'Nouveau compte pour'} <strong>{email}</strong>.{' '}
               <button className="link" onClick={() => setStep('email')}>
                 Modifier
               </button>
             </p>
 
-            <label className={cx('otp', verify.isError && 'is-error')} onPointerDown={focusOnTap(codeInput)}>
-              <input
-                ref={codeInput}
-                className="otp__input"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                maxLength={6}
-                value={code}
-                aria-label="Code à 6 chiffres"
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              />
-              {Array.from({ length: 6 }, (_, i) => (
-                <span key={i} className={cx('otp__cell', i === code.length && 'is-caret', code[i] && 'is-filled')}>
-                  {code[i] ?? ''}
+            <form onSubmit={submitPassword} className="auth__form">
+              {/* Pour que le gestionnaire de mots de passe associe le mot de passe à l'adresse. */}
+              <input type="email" autoComplete="username" value={email} readOnly hidden />
+              <label className="field">
+                <span className="field__label">Mot de passe</span>
+                <span className="field__control" onPointerDown={focusOnTap(passwordInput)}>
+                  <input
+                    ref={passwordInput}
+                    type={reveal ? 'text' : 'password'}
+                    autoComplete={exists ? 'current-password' : 'new-password'}
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="field__reveal"
+                    onClick={() => setReveal(!reveal)}
+                    aria-label={reveal ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                  >
+                    {reveal ? <EyeOff size={19} /> : <Eye size={19} />}
+                  </button>
                 </span>
-              ))}
-            </label>
-
-            {error && <p className="form-error">{error.message}</p>}
-            {verify.isPending && <p className="auth__lead">Vérification…</p>}
-
-            {devCode && (
-              <button className="dev-code" onClick={() => setCode(devCode)}>
-                <span>Mode développement</span>
-                <strong>{devCode}</strong>
-                <span className="dev-code__hint">Toucher pour remplir</span>
-              </button>
-            )}
-
-            <p className="auth__hint">Rien reçu après une minute ? Regarde dans le courrier indésirable.</p>
-            <button className="link auth__resend" disabled={request.isPending} onClick={() => request.mutate()}>
-              Renvoyer un code
-            </button>
+              </label>
+              {!exists && (
+                <p className="auth__hint">
+                  {PASSWORD_MIN} caractères minimum. Garde-le bien : il n’y a pas encore de réinitialisation.
+                </p>
+              )}
+              {error && <p className="form-error">{error.message}</p>}
+              <Button block loading={signIn.isPending} disabled={!password || tooShort} icon={<ArrowRight size={18} />}>
+                {exists ? 'Se connecter' : 'Créer mon compte'}
+              </Button>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>

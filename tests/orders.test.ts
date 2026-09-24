@@ -5,7 +5,7 @@ import { createUser, balanceOf, heldOf } from '../server/services/users';
 import { record, wallet } from '../server/services/ledger';
 import * as orders from '../server/services/orders';
 import { listMessages } from '../server/services/messages';
-import { normalizeEmail, requestCode, verifyCode } from '../server/services/auth';
+import { accountExists, login, normalizeEmail, register } from '../server/services/auth';
 import { env } from '../server/env';
 
 // Holy Cow! ouvre tous les jours de 11h à 23h : on fixe l'heure à midi pour ne pas dépendre de l'horloge.
@@ -26,7 +26,7 @@ const code = (fn: () => unknown) => {
 };
 
 beforeEach(() => {
-  db.exec('DELETE FROM messages; DELETE FROM transactions; DELETE FROM orders; DELETE FROM presence; DELETE FROM sessions; DELETE FROM login_codes; DELETE FROM users;');
+  db.exec('DELETE FROM messages; DELETE FROM transactions; DELETE FROM orders; DELETE FROM presence; DELETE FROM sessions; DELETE FROM credentials; DELETE FROM users;');
 });
 
 describe('cycle de vie d’une commande', () => {
@@ -127,33 +127,66 @@ describe('cycle de vie d’une commande', () => {
 });
 
 describe('authentification', () => {
+  it('crée le compte avec un mot de passe, puis s’y connecte', async () => {
+    expect(accountExists('new.person@epfl.ch').exists).toBe(false);
+    const { user: created } = await register('New.Person@epfl.ch', 'croissant-42');
+    expect(accountExists('new.person@epfl.ch')).toEqual({ email: 'new.person@epfl.ch', exists: true });
+
+    const { user: again, token } = await login('new.person@epfl.ch', 'croissant-42');
+    expect(again.id).toBe(created.id);
+    expect(token).toMatch(/^[\w-]{40,}$/);
+
+    // Le mot de passe n'est jamais stocké en clair.
+    const row = db.prepare('SELECT password_hash FROM credentials WHERE user_id = ?').get(created.id) as { password_hash: string };
+    expect(row.password_hash).toMatch(/^scrypt\$/);
+    expect(row.password_hash).not.toContain('croissant');
+  });
+
+  it('refuse un mauvais mot de passe, un doublon et un mot de passe trop court', async () => {
+    await register('ada.lovelace@epfl.ch', 'machine-analytique');
+    await expect(login('ada.lovelace@epfl.ch', 'mauvais')).rejects.toMatchObject({ status: 422 });
+    await expect(login('inconnu@epfl.ch', 'peu-importe')).rejects.toMatchObject({ status: 422 });
+    await expect(register('ada.lovelace@epfl.ch', 'autre-mot-de-passe')).rejects.toMatchObject({ status: 409 });
+    await expect(register('court@epfl.ch', '1234567')).rejects.toMatchObject({ status: 422 });
+    expect(accountExists('court@epfl.ch').exists).toBe(false);
+  });
+
+  it('bloque l’adresse après trop d’essais ratés', async () => {
+    await register('grace.hopper@epfl.ch', 'cobol-forever');
+    for (let i = 0; i < 8; i++) await expect(login('grace.hopper@epfl.ch', `essai-${i}`)).rejects.toMatchObject({ status: 422 });
+    await expect(login('grace.hopper@epfl.ch', 'cobol-forever')).rejects.toMatchObject({ status: 429 });
+  });
+
   it('offre le crédit de bienvenue une seule fois, à la création du compte', async () => {
-    const login = async () => {
-      const { devCode } = await requestCode('new.person@epfl.ch');
-      db.exec("UPDATE login_codes SET last_sent_at = 0");
-      return verifyCode('new.person@epfl.ch', devCode!).user;
-    };
-    const first = await login();
+    const { user: first } = await register('bonus.once@epfl.ch', 'un-seul-bonus');
     expect(env.welcomeBonusCents).toBe(100);
     expect(balanceOf(first.id)).toBe(100);
     expect(wallet(first.id).transactions.map((t) => t.kind)).toEqual(['bonus']);
 
-    const again = await login();
-    expect(again.id).toBe(first.id);
+    await login('bonus.once@epfl.ch', 'un-seul-bonus');
     expect(balanceOf(first.id)).toBe(100);
   });
 
-  it('ne permet plus de créditer son solde depuis l’API', async () => {
-    const { createApp } = await import('../server/app');
-    const { devCode } = await requestCode('someone.else@epfl.ch');
-    const { user: u, token } = verifyCode('someone.else@epfl.ch', devCode!);
-    const res = await createApp().request('/api/wallet/topup', {
-      method: 'POST',
-      headers: { cookie: `rush_session=${token}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ amountCents: 5000, method: 'twint' }),
-    });
-    expect(res.status).toBe(404);
-    expect(balanceOf(u.id)).toBe(env.welcomeBonusCents);
+  it('passe par l’API : vérifie l’adresse, crée le compte et pose le cookie', async () => {
+    const app = (await import('../server/app')).createApp();
+    const post = (path: string, body: object, cookie = '') =>
+      app.request(`/api${path}`, { method: 'POST', headers: { 'content-type': 'application/json', cookie }, body: JSON.stringify(body) });
+
+    expect(await (await post('/auth/check', { email: 'api.user@epfl.ch' })).json()).toEqual({ email: 'api.user@epfl.ch', exists: false });
+    expect((await post('/auth/check', { email: 'api.user@gmail.com' })).status).toBe(422);
+
+    const res = await post('/auth/register', { email: 'api.user@epfl.ch', password: 'rush-rush-rush' });
+    expect(res.status).toBe(201);
+    const me = (await res.json()) as { email: string; balanceCents: number; passwordHash?: string };
+    expect(me.email).toBe('api.user@epfl.ch');
+    expect(me).not.toHaveProperty('passwordHash');
+    const cookie = res.headers.get('set-cookie')!.split(';')[0];
+    expect(cookie).toMatch(/^rush_session=/);
+
+    // Plus de recharge : le solde ne se crédite pas depuis l'API.
+    const topup = await post('/wallet/topup', { amountCents: 5000, method: 'twint' }, cookie);
+    expect(topup.status).toBe(404);
+    expect(me.balanceCents).toBe(env.welcomeBonusCents);
   });
 
   it('n’accepte que les adresses EPFL', () => {

@@ -16,7 +16,7 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
-| **Accès EPFL uniquement** | Connexion par code à 6 chiffres envoyé sur l'adresse `@epfl.ch`. |
+| **Accès EPFL** | Compte créé avec une adresse `@epfl.ch` et un mot de passe, sans e-mail à attendre. |
 
 ## Démarrer
 
@@ -27,7 +27,7 @@ npm install
 npm run dev
 ```
 
-Ouvre <http://localhost:5173> et connecte-toi avec n'importe quelle adresse `@epfl.ch`. Sans envoi d'e-mail configuré, le code s'affiche dans la console du serveur **et** dans l'app (bouton « Mode développement »).
+Ouvre <http://localhost:5173> et crée un compte avec n'importe quelle adresse `@epfl.ch` et un mot de passe (8 caractères minimum).
 
 `npm run dev` active le **mode démo** (`RUSH_DEMO=1`) : huit rushers simulés publient des demandes, acceptent les tiennes, se déplacent sur la carte et te répondent dans le chat. Idéal pour tester seul. Pour tester à deux humains, ouvre une seconde fenêtre de navigation privée avec une autre adresse.
 
@@ -93,7 +93,7 @@ Ou avec Docker (c'est ce qu'utilise Render) :
 
 ```bash
 docker build -t rush-epfl .
-docker run -p 8787:8787 -v rush-data:/app/data -e MAIL_SCRIPT_URL=… rush-epfl
+docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 ```
 
 ### Render (offre gratuite)
@@ -104,9 +104,6 @@ docker run -p 8787:8787 -v rush-data:/app/data -e MAIL_SCRIPT_URL=… rush-epfl
 |---|---|---|
 | `PORT` | Port HTTP | `8787` |
 | `RUSH_DB` | Fichier SQLite | `data/rush.db` |
-| `MAIL_SCRIPT_URL` | URL du script Gmail qui envoie les codes (prioritaire) | console |
-| `SMTP_URL` | Envoi des codes en SMTP (`smtps://user:pass@host`), hors Render gratuit | console |
-| `MAIL_FROM` | Expéditeur des e-mails envoyés en SMTP | `Rush <no-reply@rush.epfl.ch>` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
@@ -114,17 +111,6 @@ docker run -p 8787:8787 -v rush-data:/app/data -e MAIL_SCRIPT_URL=… rush-epfl
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
-
-### Envoi des codes de connexion
-
-L'offre gratuite de Render **bloque les ports SMTP** (25, 465, 587) depuis septembre 2025 : un `SMTP_URL` n'y part jamais. Les codes partent donc d'un compte Gmail grâce à un petit script Google Apps Script ([`scripts/gmail-mailer.gs`](scripts/gmail-mailer.gs)) appelé en HTTPS : gratuit, sans clé d'API ni service tiers.
-
-1. Sur [script.google.com](https://script.google.com), connecté au compte Gmail qui enverra les codes (un compte dédié, par ex. « rush.epfl », évite d'exposer une adresse perso) : *Nouveau projet*, coller le contenu de `scripts/gmail-mailer.gs`.
-2. *Déployer* → *Nouveau déploiement* → type *Application Web*, *Exécuter en tant que : Moi*, *Qui a accès : Tout le monde* → *Déployer*.
-3. Autoriser l'accès : Google prévient que l'application n'est pas validée (c'est ton propre script) → *Paramètres avancés* → *Accéder au projet*.
-4. Copier l'URL de l'application Web (`https://script.google.com/macros/s/…/exec`) dans Render → *Environment* → `MAIL_SCRIPT_URL`.
-
-Le script n'envoie qu'un code à 6 chiffres à une adresse `@epfl.ch`, avec son propre modèle : même si son URL fuitait, il ne peut pas servir à autre chose. Limite de Gmail : **100 destinataires par jour** (largement assez, une session dure 30 jours). Si l'envoi échoue (quota atteint…), l'app affiche « L'e-mail n'a pas pu partir » et la raison est dans les logs. Si `RUSH_ALLOWED_DOMAINS` change, adapter `ALLOWED_DOMAIN` dans le script.
 
 ### Photos et avis Google Maps
 
@@ -138,9 +124,8 @@ Côté serveur (`server/services/places.ts`) : le lieu Google est retrouvé par 
 
 ## À savoir avant un vrai lancement
 
-- **Envoi d'e-mails obligatoire en production** : sans `MAIL_SCRIPT_URL` (ou `SMTP_URL` hors Render gratuit), les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
 - **Catalogue** (`shared/catalog.ts`) : liste des points de restauration relevée en septembre 2026 sur les pages officielles de l'EPFL et des enseignes. Chaque spot indique ses sources (affichées et liées dans l'app), si ses horaires sont officiels, et marque d'un ≈ les prix estimés faute de source publique. Les positions sur la carte restent approximatives.
 - **Photos et avis** : ils viennent uniquement de Google Maps (API officielle, crédités). Rien n'est recopié depuis Uber Eats, Tripadvisor ou d'autres sites, dont les contenus appartiennent à leurs auteurs ; l'app renvoie vers eux par lien.
 - **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.
-- **Authentification** : le code par e-mail limite l'accès aux adresses `@epfl.ch` ; une intégration au SSO EPFL (Microsoft Entra ID) serait l'étape suivante.
+- **Authentification** : adresse `@epfl.ch` + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours). Aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** : quelqu'un pourrait s'inscrire avec une adresse EPFL qui n'est pas la sienne, et il n'y a pas de réinitialisation du mot de passe. Pour vérifier l'appartenance à l'EPFL, l'étape suivante est le SSO EPFL (Microsoft Entra ID, qui a remplacé Tequila), à demander au service informatique de l'EPFL. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

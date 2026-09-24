@@ -2,7 +2,6 @@ import { existsSync, readFileSync } from 'node:fs';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { env } from './env';
-import { mailer } from './mail';
 import { createApp } from './app';
 import { handleClientEvents, sendTo, upgrade } from './realtime';
 import { SESSION_COOKIE, purgeExpired, userFromToken } from './services/auth';
@@ -32,10 +31,6 @@ handleClientEvents((userId, event) => {
     }
   }
 });
-
-if (env.production && !mailer) {
-  console.warn('\n  ⚠︎  Ni MAIL_SCRIPT_URL ni SMTP_URL : les codes de connexion ne partent que dans ces logs.\n');
-}
 
 const server = serve({ fetch: app.fetch, port: env.port }, (info) => {
   console.log(`\n  Rush API · http://localhost:${info.port}${env.demo ? '  (mode démo : rushers simulés actifs)' : ''}\n`);
