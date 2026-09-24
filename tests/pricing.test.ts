@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { computeHold, maxActualItems, settle, suggestTip } from '../shared/pricing';
 import { SPOT_BY_ID, BUILDINGS } from '../shared/catalog';
 
-const spot = SPOT_BY_ID.get('parmentier')!;
+const spot = SPOT_BY_ID.get('foodlab')!;
 const near = { lat: spot.lat + 0.0005, lng: spot.lng };
 const far = BUILDINGS.find((b) => b.id === 'STCC')!;
 // Jeudi 24 septembre 2026, 10:00 à Zurich : hors heure de pointe.

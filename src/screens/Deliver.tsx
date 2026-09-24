@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import { Bike, Building2, ChevronRight, Flag, MapPin, Navigation, Sparkles } from 'lucide-react';
-import { BUILDINGS, SPOTS, SPOT_BY_ID } from '../../shared/catalog';
+import { BUILDINGS, SPOTS, SPOT_BY_ID, spotOf } from '../../shared/catalog';
 import { detourMeters, formatDistance, walkingDistance, type LatLng } from '../../shared/geo';
 import { openStatus } from '../../shared/hours';
 import { formatCHF } from '../../shared/money';
@@ -42,7 +42,7 @@ export function Deliver() {
   const ranked = useMemo<Ranked[]>(() => {
     return (open ?? [])
       .map((order) => {
-        const spot = SPOT_BY_ID.get(order.spotId)!;
+        const spot = spotOf(order.spotId);
         const detour = detourMeters({ from, spot, dropoff: order.dropoff, destination: p.destination });
         // Un pourboire au-dessus du suggéré fait remonter la demande (+0.50 ≈ 100 m de détour en moins).
         const bonus = ((order.tipCents - order.suggestedTipCents) / 50) * 100;
@@ -59,17 +59,17 @@ export function Deliver() {
 
   useMapScene(() => {
     const routes: RouteLine[] = ranked.map(({ order }) => {
-      const spot = SPOT_BY_ID.get(order.spotId)!;
+      const spot = spotOf(order.spotId);
       return { id: order.id, points: arc(spot, order.dropoff), style: order.id === selected ? 'active' : 'ghost' };
     });
     const sel = ranked.find((r) => r.order.id === selected);
-    const selSpot = sel ? SPOT_BY_ID.get(sel.order.spotId)! : null;
+    const selSpot = sel ? spotOf(sel.order.spotId) : null;
     return {
       cameraKey: sel ? `deliver-${sel.order.id}` : `deliver-${p.spotId ?? 'me'}-${ranked.length > 0}`,
       camera: sel
         ? { kind: 'fit', points: [selSpot!, sel.order.dropoff, ...(p.destination ? [p.destination] : [])], maxZoom: 17.2 }
         : ranked.length
-          ? { kind: 'fit', points: [from, ...ranked.slice(0, 6).flatMap((r) => [SPOT_BY_ID.get(r.order.spotId)!, r.order.dropoff])] }
+          ? { kind: 'fit', points: [from, ...ranked.slice(0, 6).flatMap((r) => [spotOf(r.order.spotId), r.order.dropoff])] }
           : { kind: 'overview' },
       focusSpotIds: [...new Set(ranked.map((r) => r.order.spotId).concat(p.spotId ? [p.spotId] : []))],
       highlightSpotId: selSpot?.id ?? p.spotId,
@@ -258,7 +258,7 @@ function RequestCard({
   onAccept: () => void;
   accepting: boolean;
 }) {
-  const spot = SPOT_BY_ID.get(order.spotId)!;
+  const spot = spotOf(order.spotId);
   const count = order.items.reduce((n, i) => n + i.qty, 0);
   const onTheWay = hasDestination && detour < ON_THE_WAY_M;
   const generous = order.tipCents > order.suggestedTipCents;

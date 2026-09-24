@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import { Check, MessageCircle, Navigation, Receipt, Store } from 'lucide-react';
-import { SPOT_BY_ID } from '../../shared/catalog';
+import { spotOf } from '../../shared/catalog';
 import { walkingDistance, walkingMinutes, formatDistance, type LatLng } from '../../shared/geo';
 import { maxActualItems, settle } from '../../shared/pricing';
 import { formatCHF } from '../../shared/money';
@@ -43,7 +43,7 @@ export function OrderScreen() {
 
 function OrderView({ order }: { order: Order }) {
   const navigate = useNavigate();
-  const spot = SPOT_BY_ID.get(order.spotId)!;
+  const spot = spotOf(order.spotId);
   const action = useOrderAction(order.id);
   const accept = useAccept();
   const [pickupOpen, setPickupOpen] = useState(false);

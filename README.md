@@ -115,7 +115,7 @@ Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé
 ## À savoir avant un vrai lancement
 
 - **SMTP obligatoire en production** : sans `SMTP_URL`, les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
-- **Coordonnées des spots** : placées à la main et approximatives. Elles sont toutes dans `shared/catalog.ts`, à vérifier sur le terrain (les prix aussi sont indicatifs).
+- **Catalogue** (`shared/catalog.ts`) : liste des points de restauration relevée en septembre 2026 sur les pages officielles de l'EPFL et des enseignes. Chaque spot indique ses sources (affichées et liées dans l'app), si ses horaires sont officiels, et marque d'un ≈ les prix estimés faute de source publique. Les positions sur la carte restent approximatives.
 - **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.
 - **Authentification** : le code par e-mail limite l'accès aux adresses `@epfl.ch` ; une intégration au SSO EPFL (Microsoft Entra ID) serait l'étape suivante.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

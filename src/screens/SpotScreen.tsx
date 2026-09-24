@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { Clock, Flame, Footprints, Leaf, Plus, ShoppingBag, Sprout } from 'lucide-react';
+import { ArrowUpRight, Clock, Flame, Footprints, Leaf, Plus, ShoppingBag, Sprout, Star } from 'lucide-react';
 import { KIND_LABEL, SPOT_BY_ID, type ItemTag, type MenuItem } from '../../shared/catalog';
 import { formatDistance, walkingDistance, walkingMinutes } from '../../shared/geo';
 import { openStatus } from '../../shared/hours';
@@ -15,6 +15,11 @@ import { useMapScene } from '../state/scene';
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
 import { AvatarStack, Button, cx, Empty, SpotCover, Stepper } from '../ui/primitives';
+
+const monthLabel = (ym: string) => {
+  const [y, m] = ym.split('-').map(Number);
+  return new Intl.DateTimeFormat('fr-CH', { month: 'long', year: 'numeric' }).format(new Date(y, m - 1, 1));
+};
 
 const TAG: Record<ItemTag, { icon: typeof Leaf; label: string } | null> = {
   vege: { icon: Leaf, label: 'Végé' },
@@ -122,6 +127,14 @@ export function SpotScreen() {
         <p className="spot-head__meta">
           {KIND_LABEL[spot.kind]} · {spot.place} · {['Petit budget', 'Budget moyen', 'Plus cher'][spot.priceLevel - 1]}
         </p>
+        {spot.rating && (
+          <a className="ext-rating" href={spot.rating.url} target="_blank" rel="noreferrer">
+            <Star size={13} fill="currentColor" strokeWidth={0} />
+            {spot.rating.value.toFixed(1).replace('.', ',')}
+            <span>sur {spot.rating.source}</span>
+            <ArrowUpRight size={13} />
+          </a>
+        )}
       </div>
 
       <div className="info-strip">
@@ -133,7 +146,10 @@ export function SpotScreen() {
         <div className="info-strip__cell">
           <Clock size={17} />
           <strong className={cx(status.open ? 'text-green' : 'text-red')}>{status.open ? 'Ouvert' : 'Fermé'}</strong>
-          <span>{status.label.split('· ')[1] ?? status.label}</span>
+          <span>
+            {status.label.split('· ')[1] ?? status.label}
+            {!spot.hoursVerified && <em className="info-strip__hint">horaires indicatifs</em>}
+          </span>
         </div>
         <div className="info-strip__cell">
           <span className="info-strip__tip">{formatCHF(tip.suggestedCents, { bare: true })}</span>
@@ -191,7 +207,10 @@ export function SpotScreen() {
                   </span>
                   {item.description && <span className="menu-item__desc">{item.description}</span>}
                   <span className="menu-item__meta">
-                    <span className="menu-item__price">{formatCHF(item.priceCents)}</span>
+                    <span className="menu-item__price" title={item.est ? 'Prix estimé, à confirmer sur place' : undefined}>
+                      {item.est && '≈ '}
+                      {formatCHF(item.priceCents)}
+                    </span>
                     {item.tags?.map((t) => {
                       const tag = TAG[t];
                       if (!tag) return null;
@@ -217,7 +236,29 @@ export function SpotScreen() {
           })}
         </section>
       ))}
-      <p className="footnote">Prix indicatifs. Ton rusher saisit le montant exact du ticket : tu ne paies que ce qui a été dépensé.</p>
+      <section className="ext-sources">
+        <h2>Sources externes</h2>
+        {spot.priceNote && <p className="ext-sources__note">{spot.priceNote}</p>}
+        <div className="ext-sources__links">
+          {spot.rating && (
+            <a href={spot.rating.url} target="_blank" rel="noreferrer">
+              Photos et avis sur {spot.rating.source}
+              <ArrowUpRight size={14} />
+            </a>
+          )}
+          {spot.sources.map((s) => (
+            <a key={s.url} href={s.url} target="_blank" rel="noreferrer">
+              {s.label}
+              <ArrowUpRight size={14} />
+            </a>
+          ))}
+        </div>
+        <p className="ext-sources__disclaimer">
+          Produits, prix, horaires et notes proviennent de sources externes{spot.checkedAt && `, relevés en ${monthLabel(spot.checkedAt)}`}. Ils
+          servent seulement à donner une idée aux acheteurs et aux rushers de ce qu’est l’article et de sa réception. Les prix précédés de ≈ sont
+          estimés ; ton rusher saisit le montant exact du ticket et tu ne paies que ce qui a été dépensé. Rush n’est affilié à aucun de ces services.
+        </p>
+      </section>
 
       <Sheet open={conflict !== null} onClose={() => setConflict(null)} title="Nouvelle demande ?">
         <p className="sheet-text">

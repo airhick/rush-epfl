@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { MessageCircle } from 'lucide-react';
-import { SPOT_BY_ID } from '../../shared/catalog';
+import { spotOf } from '../../shared/catalog';
 import { useConversations } from '../lib/queries';
 import { shortDate } from '../lib/format';
 import { useMapScene } from '../state/scene';
@@ -34,7 +34,7 @@ export function Messages() {
       <div className="inbox">
         {data?.map(({ order, other, lastMessage, unread }) => {
           if (!other) return null;
-          const spot = SPOT_BY_ID.get(order.spotId)!;
+          const spot = spotOf(order.spotId);
           const isTyping = (typing[order.id] ?? 0) > Date.now();
           const preview = isTyping
             ? 'écrit…'

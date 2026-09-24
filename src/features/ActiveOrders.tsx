@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 import { ChevronRight } from 'lucide-react';
-import { SPOT_BY_ID } from '../../shared/catalog';
+import { spotOf } from '../../shared/catalog';
 import { ACTIVE_STATUSES, type Order } from '../../shared/types';
 import { useMyOrders } from '../lib/queries';
 import { SpotBadge } from '../ui/primitives';
@@ -16,7 +16,7 @@ export function ActiveOrders({ role }: { role?: Order['myRole'] }) {
   return (
     <div className="active-orders">
       {active.map((o) => {
-        const spot = SPOT_BY_ID.get(o.spotId)!;
+        const spot = spotOf(o.spotId);
         const line = statusLine(o);
         return (
           <button key={o.id} className="active-order" onClick={() => navigate(`/orders/${o.id}`)}>

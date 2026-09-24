@@ -196,7 +196,10 @@ export function Explore() {
           </div>
         )}
       </section>
-      <p className="footnote">Pourboire indicatif pour un article livré à {dropoff.label}. Prix indicatifs, le montant réel du ticket fait foi.</p>
+      <p className="footnote">
+        Pourboire indicatif pour un article livré à {dropoff.label}. Prix, horaires et notes proviennent de sources externes (EPFL, enseignes,
+        Tripadvisor), à titre indicatif ; le montant réel du ticket fait foi.
+      </p>
     </Screen>
   );
 }

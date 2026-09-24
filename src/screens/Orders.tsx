@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Box } from 'lucide-react';
-import { SPOT_BY_ID } from '../../shared/catalog';
+import { spotOf } from '../../shared/catalog';
 import { formatCHF } from '../../shared/money';
 import { ACTIVE_STATUSES, type Order } from '../../shared/types';
 import { useMyOrders } from '../lib/queries';
@@ -86,7 +86,7 @@ export function Orders() {
 }
 
 function OrderRow({ order, onClick }: { order: Order; onClick: () => void }) {
-  const spot = SPOT_BY_ID.get(order.spotId)!;
+  const spot = spotOf(order.spotId);
   const line = statusLine(order);
   const active = ACTIVE_STATUSES.includes(order.status);
   const amount =

@@ -17,7 +17,7 @@ import { addMessage } from '../services/messages';
 import * as orders from '../services/orders';
 import { setPresence } from '../services/presence';
 import { balanceOf, bots, createUser, getUser, invalidatePublicUser, type UserRow } from '../services/users';
-import { BUILDINGS, SPOTS, SPOT_BY_ID } from '../../shared/catalog';
+import { BUILDINGS, SPOTS, SPOT_BY_ID, spotOf } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { haversine, lerp, type LatLng } from '../../shared/geo';
 import { computeHold, suggestTip } from '../../shared/pricing';
@@ -214,7 +214,7 @@ function botDeliversForHuman(orderId: string, people: UserRow[]) {
     if (!bot) return;
     orders.accept(orderId, bot.id);
 
-    const spot = SPOT_BY_ID.get(row.spot_id)!;
+    const spot = spotOf(row.spot_id);
     const presence = one<{ spot_id: string | null }>('SELECT spot_id FROM presence WHERE user_id = ?', bot.id);
     const alreadyThere = presence?.spot_id === spot.id;
     setPresence(bot.id, { available: false, spotId: spot.id, destination: null });

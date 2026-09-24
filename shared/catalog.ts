@@ -34,6 +34,8 @@ export interface MenuItem {
   description?: string;
   priceCents: number;
   tags?: ItemTag[];
+  /** Aucun prix public trouvé : estimation à confirmer sur place. */
+  est?: boolean;
 }
 
 export interface MenuSection {
@@ -48,11 +50,30 @@ export interface Spot extends LatLng {
   glyph: SpotGlyph;
   /** Bâtiment ou repère, tel qu'on le dit sur le campus. */
   place: string;
-  area: 'EPFL' | 'UNIL';
+  area: 'EPFL';
   tagline: string;
   priceLevel: 1 | 2 | 3;
   hours: WeekHours;
+  /** Horaires relevés sur une source officielle, ou horaires typiques. */
+  hoursVerified: boolean;
+  priceNote?: string;
+  /** D'où viennent les informations affichées (crédité dans l'app). */
+  sources: SourceRef[];
+  /** Note publique d'un service tiers, affichée avec sa source. */
+  rating?: ExternalRating;
+  checkedAt: string;
   menu: MenuSection[];
+}
+
+export interface SourceRef {
+  label: string;
+  url: string;
+}
+
+export interface ExternalRating {
+  value: number;
+  source: string;
+  url: string;
 }
 
 export const KIND_LABEL: Record<SpotKind, string> = {
@@ -65,8 +86,6 @@ export const KIND_LABEL: Record<SpotKind, string> = {
   vending: 'Distributeurs',
 };
 
-const LUNCH = week.weekdays(['11:15', '14:00']);
-
 const item = (id: string, name: string, price: number, extra: Partial<MenuItem> = {}): MenuItem => ({
   id,
   name,
@@ -74,161 +93,48 @@ const item = (id: string, name: string, price: number, extra: Partial<MenuItem> 
   ...extra,
 });
 
+/* ── Sources publiques utilisées pour le catalogue (relevé de septembre 2026) ── */
+
+const EPFL_MENU = { label: 'EPFL · Offre du jour', url: 'https://www.epfl.ch/campus/restaurants-shops-hotels/fr/offre-du-jour-de-tous-les-points-de-restauration/' };
+const EPFL_HOURS = { label: 'EPFL · Horaires', url: 'https://www.epfl.ch/campus/restaurants-shops-hotels/fr/restauration/horaires-points-de-restauration' };
+const EPFL_SELF = (slug: string) => ({ label: 'EPFL · Fiche du restaurant', url: `https://www.epfl.ch/campus/restaurants-shops-hotels/${slug}` });
+const CHECKED = '2026-09';
+
+/** Prix estimé : pas de source publique, à confirmer sur place. */
+const est = { est: true } as const;
+
 export const SPOTS: Spot[] = [
+  /* ── Cœur du campus ─────────────────────────────────────────────────── */
   {
-    id: 'esplanade',
-    name: "L'Esplanade",
+    id: 'foodlab',
+    name: 'FoodLab',
     kind: 'restaurant',
     glyph: 'utensils',
-    place: 'CO · Esplanade',
+    place: 'CM · 2e étage',
     area: 'EPFL',
-    lat: 46.52045,
-    lng: 6.567,
-    tagline: 'Assiettes du jour, grande terrasse',
+    lat: 46.5192,
+    lng: 6.5665,
+    tagline: 'Trois comptoirs : Alpine, Native (végé) et Ginko',
     priceLevel: 1,
-    hours: LUNCH,
+    hours: week.weekdays(['11:15', '14:00']),
+    hoursVerified: false,
+    priceNote: 'Menus au prix étudiant publié par l’EPFL ; le personnel paie plus.',
+    sources: [EPFL_SELF('self-service-2/foodlab-alpine/'), EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
       {
-        title: 'Menus du jour',
-        items: [
-          item('esp-viande', 'Assiette du jour', 9.5, { description: 'Viande, garniture et légumes du marché', tags: ['hot', 'popular'] }),
-          item('esp-vege', 'Assiette végétarienne', 8.5, { description: 'Plat du jour sans viande', tags: ['hot', 'vege'] }),
-          item('esp-pates', 'Pâtes du jour', 7.9, { description: 'Sauce maison, parmesan', tags: ['hot', 'vege'] }),
-        ],
+        title: 'Alpine',
+        items: [item('fl-alpine', 'Menu Alpine (prix étudiant)', 8.6, { description: 'Plat du jour, voir l’offre du jour EPFL', tags: ['hot', 'popular'] })],
       },
       {
-        title: 'À côté',
-        items: [
-          item('esp-salade', 'Salade composée', 8.9, { tags: ['vege'] }),
-          item('esp-soupe', 'Soupe du jour', 3.5, { tags: ['hot', 'vegan'] }),
-          item('esp-dessert', 'Dessert du jour', 3.2),
-          item('esp-eau', 'Eau minérale 50 cl', 2.0),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'parmentier',
-    name: 'Le Parmentier',
-    kind: 'restaurant',
-    glyph: 'burger',
-    place: 'ME · Terrasse sud',
-    area: 'EPFL',
-    lat: 46.51835,
-    lng: 6.5636,
-    tagline: 'Grill, burgers et frites maison',
-    priceLevel: 2,
-    hours: LUNCH,
-    menu: [
-      {
-        title: 'Grill',
-        items: [
-          item('par-burger', 'Burger maison', 12.5, { description: 'Bœuf suisse, cheddar, oignons confits', tags: ['hot', 'popular'] }),
-          item('par-veggie', 'Burger végé', 11.5, { description: 'Galette pois chiches & patate douce', tags: ['hot', 'vege'] }),
-          item('par-poulet', 'Poulet rôti & frites', 11.9, { tags: ['hot'] }),
-          item('par-wrap', 'Wrap falafel', 9.5, { tags: ['vegan'] }),
-        ],
+        title: 'Native · végétarien',
+        items: [item('fl-native', 'Menu Native (prix étudiant)', 8.1, { tags: ['hot', 'vege'], ...est })],
       },
       {
-        title: 'Accompagnements',
+        title: 'Ginko · sushis et asiatique',
         items: [
-          item('par-frites', 'Frites', 4.5, { tags: ['hot', 'vegan', 'popular'] }),
-          item('par-salade', 'Petite salade verte', 3.9, { tags: ['vegan'] }),
-          item('par-coca', 'Coca-Cola 33 cl', 2.5),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'corbusier',
-    name: 'Le Corbusier',
-    kind: 'restaurant',
-    glyph: 'salad',
-    place: 'SG · Rez',
-    area: 'EPFL',
-    lat: 46.5195,
-    lng: 6.5643,
-    tagline: 'Cuisine du monde et bowls',
-    priceLevel: 2,
-    hours: week.weekdays(['11:30', '13:45']),
-    menu: [
-      {
-        title: 'Bowls',
-        items: [
-          item('cor-poke', 'Poke bowl saumon', 12.9, { description: 'Riz vinaigré, avocat, edamame', tags: ['popular'] }),
-          item('cor-tofu', 'Bowl tofu teriyaki', 11.5, { tags: ['vegan'] }),
-        ],
-      },
-      {
-        title: 'Au wok',
-        items: [
-          item('cor-curry', 'Curry vert thaï', 11.5, { description: 'Poulet, lait de coco, riz jasmin', tags: ['hot'] }),
-          item('cor-riz', 'Riz cantonais', 9.8, { tags: ['hot'] }),
-          item('cor-nems', 'Nems (4 pièces)', 5.5, { tags: ['hot'] }),
-          item('cor-the', 'Thé glacé maison', 3.0),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'vinci',
-    name: 'Le Vinci',
-    kind: 'restaurant',
-    glyph: 'pizza',
-    place: 'CE · Centre Est',
-    area: 'EPFL',
-    lat: 46.5196,
-    lng: 6.5692,
-    tagline: 'Pizzas au feu de bois',
-    priceLevel: 2,
-    hours: week.weekdays(['11:30', '14:00'], ['17:30', '20:00']),
-    menu: [
-      {
-        title: 'Pizzas',
-        items: [
-          item('vin-margherita', 'Margherita', 12.0, { description: 'Tomate, mozzarella fior di latte, basilic', tags: ['vege', 'popular'] }),
-          item('vin-prosciutto', 'Prosciutto e funghi', 14.5),
-          item('vin-4f', 'Quattro formaggi', 15.0, { tags: ['vege'] }),
-          item('vin-diavola', 'Diavola', 14.5, { description: 'Salami piquant, olives' }),
-          item('vin-calzone', 'Calzone', 15.5),
-        ],
-      },
-      {
-        title: 'Et aussi',
-        items: [
-          item('vin-roquette', 'Salade roquette & parmesan', 7.5, { tags: ['vege'] }),
-          item('vin-tiramisu', 'Tiramisù', 5.5),
-          item('vin-sanpe', 'San Pellegrino 50 cl', 2.8),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'vallotton',
-    name: 'La Table de Vallotton',
-    kind: 'restaurant',
-    glyph: 'utensils',
-    place: 'BC · Rez',
-    area: 'EPFL',
-    lat: 46.51865,
-    lng: 6.56195,
-    tagline: 'Menus du jour et salad bar',
-    priceLevel: 1,
-    hours: week.weekdays(['11:30', '13:45']),
-    menu: [
-      {
-        title: 'Menus',
-        items: [
-          item('val-menu', 'Menu du jour', 9.9, { tags: ['hot', 'popular'] }),
-          item('val-vege', 'Menu végétarien', 8.9, { tags: ['hot', 'vege'] }),
-          item('val-soupe', 'Soupe & pain', 3.8, { tags: ['hot', 'vegan'] }),
-        ],
-      },
-      {
-        title: 'Salad bar',
-        items: [
-          item('val-salad-s', 'Boîte salade — petite', 6.5, { tags: ['vege'] }),
-          item('val-salad-l', 'Boîte salade — grande', 9.5, { tags: ['vege'] }),
+          item('fl-ginko-wok', 'Plat wok du jour', 12.5, { tags: ['hot'], ...est }),
+          item('fl-ginko-sushi', 'Box sushis', 12.9, est),
         ],
       },
     ],
@@ -242,32 +148,54 @@ export const SPOTS: Spot[] = [
     area: 'EPFL',
     lat: 46.51775,
     lng: 6.5648,
-    tagline: 'Viennoiseries, sandwichs, café',
+    tagline: 'Menus du midi, viennoiseries, café',
     priceLevel: 1,
-    hours: week.weekdays(['07:30', '16:00']),
+    hours: week.weekdays(['07:00', '17:00']),
+    hoursVerified: true,
+    priceNote: 'Menus au prix étudiant publié par l’EPFL (service de midi 11h30–14h).',
+    sources: [EPFL_SELF('cafeteria-2/arcadie'), EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
       {
-        title: 'Boulangerie',
+        title: 'Menus de midi',
         items: [
-          item('arc-croissant', 'Croissant au beurre', 1.6, { tags: ['popular'] }),
-          item('arc-pac', 'Pain au chocolat', 1.8),
-          item('arc-tresse', 'Tresse au beurre', 2.4),
+          item('arc-menu1', 'Menu 1 (prix étudiant)', 8.1, { tags: ['hot', 'popular'] }),
+          item('arc-menu2', 'Menu 2 (prix étudiant)', 8.5, { tags: ['hot'] }),
         ],
       },
       {
-        title: 'Sandwichs',
+        title: 'Cafétéria',
         items: [
-          item('arc-jambon', 'Jambon-beurre', 5.9),
-          item('arc-mozza', 'Mozzarella, tomate, pesto', 6.5, { tags: ['vege'] }),
-          item('arc-poulet', 'Poulet curry', 6.9),
+          item('arc-croissant', 'Croissant au beurre', 1.6, est),
+          item('arc-sandwich', 'Sandwich', 6.2, est),
+          item('arc-cafe', 'Café', 2.2, { tags: ['hot'], ...est }),
         ],
       },
+    ],
+  },
+  {
+    id: 'giacometti',
+    name: 'Le Giacometti',
+    kind: 'cafeteria',
+    glyph: 'sandwich',
+    place: 'SG',
+    area: 'EPFL',
+    lat: 46.5193,
+    lng: 6.5638,
+    tagline: 'Sandwichs, salades et café',
+    priceLevel: 1,
+    hours: week.weekdays(['08:00', '17:00']),
+    hoursVerified: true,
+    sources: [EPFL_SELF('?p=133'), EPFL_HOURS],
+    checkedAt: CHECKED,
+    menu: [
       {
-        title: 'Boissons',
+        title: 'À emporter',
         items: [
-          item('arc-cafe', 'Café', 2.2, { tags: ['hot'] }),
-          item('arc-cappu', 'Cappuccino', 3.0, { tags: ['hot'] }),
-          item('arc-jus', "Jus d'orange pressé", 3.5),
+          item('gia-sandwich', 'Sandwich du jour', 6.5, { tags: ['popular'], ...est }),
+          item('gia-salade', 'Salade bowl', 9.5, { tags: ['vege'], ...est }),
+          item('gia-cafe', 'Café', 2.2, { tags: ['hot'], ...est }),
+          item('gia-cookie', 'Cookie', 2.5, est),
         ],
       },
     ],
@@ -277,28 +205,131 @@ export const SPOTS: Spot[] = [
     name: "L'Ornithorynque",
     kind: 'cafeteria',
     glyph: 'sandwich',
-    place: 'CE · 1er étage',
+    place: 'CE',
     area: 'EPFL',
     lat: 46.51925,
     lng: 6.5682,
-    tagline: 'Paninis, quiches et smoothies',
+    tagline: 'Self-service et cafétéria',
     priceLevel: 1,
     hours: week.weekdays(['07:30', '17:00']),
+    hoursVerified: false,
+    sources: [EPFL_SELF('self-service-2/ornithorynque/'), EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
       {
-        title: 'Salé',
-        items: [
-          item('orn-panini', 'Panini tomate-mozza', 7.5, { tags: ['hot', 'vege', 'popular'] }),
-          item('orn-panini-j', 'Panini jambon-fromage', 7.5, { tags: ['hot'] }),
-          item('orn-quiche', 'Quiche lorraine', 6.9, { tags: ['hot'] }),
-        ],
+        title: 'Midi',
+        items: [item('orn-menu', 'Menu du jour (prix étudiant)', 8.1, { tags: ['hot', 'popular'], ...est })],
       },
       {
-        title: 'Sucré & boissons',
+        title: 'Cafétéria',
         items: [
-          item('orn-muffin', 'Muffin myrtilles', 3.2),
-          item('orn-smoothie', 'Smoothie fruits rouges', 5.5, { tags: ['vegan'] }),
-          item('orn-latte', 'Latte', 3.6, { tags: ['hot'] }),
+          item('orn-panini', 'Panini', 7.5, { tags: ['hot'], ...est }),
+          item('orn-muffin', 'Muffin', 3.2, est),
+          item('orn-cafe', 'Café', 2.2, { tags: ['hot'], ...est }),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'piano',
+    name: 'Piano',
+    kind: 'restaurant',
+    glyph: 'pizza',
+    place: 'Ex-Corbusier',
+    area: 'EPFL',
+    lat: 46.5195,
+    lng: 6.5643,
+    tagline: 'Carte 100 % italienne signée par un chef italien',
+    priceLevel: 1,
+    hours: week.weekdays(['11:30', '14:00']),
+    hoursVerified: false,
+    sources: [EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
+    menu: [
+      {
+        title: 'Cucina',
+        items: [
+          item('pia-pasta', 'Pâtes du jour', 9.5, { tags: ['hot', 'popular'], ...est }),
+          item('pia-pizza', 'Pizza', 11.0, { tags: ['hot'], ...est }),
+          item('pia-tiramisu', 'Tiramisù', 4.5, est),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'hopper',
+    name: 'Hopper',
+    kind: 'restaurant',
+    glyph: 'burger',
+    place: 'BC · ex-Cafétéria BC',
+    area: 'EPFL',
+    lat: 46.5185,
+    lng: 6.5613,
+    tagline: 'Diner : on commande, on personnalise et on paie en ligne',
+    priceLevel: 2,
+    hours: week.weekdays(['11:00', '14:30']),
+    hoursVerified: false,
+    sources: [EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
+    menu: [
+      {
+        title: 'Diner',
+        items: [
+          item('hop-burger', 'Burger', 13.5, { tags: ['hot', 'popular'], ...est }),
+          item('hop-bowl', 'Bowl', 12.5, est),
+          item('hop-frites', 'Frites', 4.5, { tags: ['hot', 'vegan'], ...est }),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'niki',
+    name: 'Niki',
+    kind: 'cafe',
+    glyph: 'croissant',
+    place: 'ELA · ex-cafétéria ELA',
+    area: 'EPFL',
+    lat: 46.5176,
+    lng: 6.562,
+    tagline: 'Salon de thé : crêpes, gaufres, thés en vrac',
+    priceLevel: 1,
+    hours: week.weekdays(['08:00', '16:00']),
+    hoursVerified: false,
+    sources: [EPFL_SELF('cafeteria-2/cafeteria-niki'), EPFL_HOURS],
+    checkedAt: CHECKED,
+    menu: [
+      {
+        title: 'Salon de thé',
+        items: [
+          item('nik-crepe', 'Crêpe sucrée', 5.0, { tags: ['hot', 'popular'], ...est }),
+          item('nik-gaufre', 'Gaufre', 4.5, { tags: ['hot'], ...est }),
+          item('nik-the', 'Thé en vrac', 3.0, { tags: ['hot', 'vegan'], ...est }),
+        ],
+      },
+    ],
+  },
+  {
+    id: 'zaha',
+    name: 'Zaha',
+    kind: 'cafeteria',
+    glyph: 'coffee',
+    place: 'INM · ex-cafétéria INM',
+    area: 'EPFL',
+    lat: 46.5183,
+    lng: 6.56315,
+    tagline: 'Cafétéria, fermée le vendredi',
+    priceLevel: 1,
+    hours: [[], [['08:30', '15:00']], [['08:30', '15:00']], [['08:30', '15:00']], [['08:30', '15:00']], [], []],
+    hoursVerified: true,
+    sources: [EPFL_SELF('cafeteria-2/zaha'), EPFL_HOURS],
+    checkedAt: CHECKED,
+    menu: [
+      {
+        title: 'Cafétéria',
+        items: [
+          item('zah-cafe', 'Café', 2.2, { tags: ['hot', 'popular'], ...est }),
+          item('zah-sandwich', 'Sandwich', 6.2, est),
+          item('zah-viennoiserie', 'Viennoiserie', 1.8, est),
         ],
       },
     ],
@@ -312,149 +343,52 @@ export const SPOTS: Spot[] = [
     area: 'EPFL',
     lat: 46.52075,
     lng: 6.56585,
-    tagline: 'Le bar des étudiant·e·s, ouvert tard',
+    tagline: 'Le bar des étudiant·e·s',
     priceLevel: 1,
     hours: week.custom([['08:00', '24:00']], [['17:00', '24:00']]),
+    hoursVerified: false,
+    sources: [EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
       {
         title: 'À boire',
         items: [
-          item('sat-cafe', 'Café', 1.5, { tags: ['hot', 'popular'] }),
-          item('sat-pression', 'Bière pression 25 cl', 3.5),
-          item('sat-pinte', 'Bière pression 50 cl', 6.0, { tags: ['popular'] }),
-          item('sat-mate', 'Club-Mate', 4.0),
+          item('sat-cafe', 'Café', 1.5, { tags: ['hot', 'popular'], ...est }),
+          item('sat-pression', 'Bière pression 25 cl', 3.5, est),
+          item('sat-pinte', 'Bière pression 50 cl', 6.0, est),
         ],
       },
       {
         title: 'À grignoter',
         items: [
-          item('sat-hotdog', 'Hot-dog', 4.5, { tags: ['hot'] }),
-          item('sat-croque', 'Croque-monsieur', 5.0, { tags: ['hot'] }),
-          item('sat-chips', 'Chips', 2.0, { tags: ['vegan'] }),
+          item('sat-hotdog', 'Hot-dog', 4.5, { tags: ['hot'], ...est }),
+          item('sat-chips', 'Chips', 2.0, { tags: ['vegan'], ...est }),
         ],
       },
     ],
   },
   {
-    id: 'giacometti',
-    name: 'Le Giacometti',
-    kind: 'cafeteria',
-    glyph: 'sandwich',
-    place: 'SG · 1er étage',
-    area: 'EPFL',
-    lat: 46.5193,
-    lng: 6.5638,
-    tagline: 'Focaccias et bowls à emporter',
-    priceLevel: 1,
-    hours: week.weekdays(['07:30', '15:30']),
-    menu: [
-      {
-        title: 'À emporter',
-        items: [
-          item('gia-focaccia', 'Focaccia jambon cru', 7.2, { tags: ['popular'] }),
-          item('gia-bowl', 'Bowl quinoa & feta', 9.5, { tags: ['vege'] }),
-          item('gia-wrap', 'Wrap poulet caesar', 8.4),
-        ],
-      },
-      {
-        title: 'Boissons & douceurs',
-        items: [
-          item('gia-espresso', 'Espresso', 2.0, { tags: ['hot'] }),
-          item('gia-chai', 'Chai latte', 4.2, { tags: ['hot'] }),
-          item('gia-cookie', 'Cookie chocolat', 2.5),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'bc-cafe',
-    name: 'Café BC',
-    kind: 'cafe',
-    glyph: 'coffee',
-    place: 'BC · Hall',
-    area: 'EPFL',
-    lat: 46.5185,
-    lng: 6.5613,
-    tagline: 'Espresso de spécialité',
-    priceLevel: 1,
-    hours: week.weekdays(['07:30', '17:00']),
-    menu: [
-      {
-        title: 'Café',
-        items: [
-          item('bc-espresso', 'Espresso', 2.0, { tags: ['hot'] }),
-          item('bc-cappu', 'Cappuccino', 3.2, { tags: ['hot', 'popular'] }),
-          item('bc-flat', 'Flat white', 4.0, { tags: ['hot'] }),
-          item('bc-cold', 'Cold brew', 4.5),
-        ],
-      },
-      {
-        title: 'À côté',
-        items: [
-          item('bc-croissant', 'Croissant', 1.6),
-          item('bc-banana', 'Banana bread', 3.5, { tags: ['vege'] }),
-          item('bc-bagel', 'Bagel saumon', 7.9),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'niagara',
-    name: 'Niagara',
-    kind: 'cafe',
-    glyph: 'icecream',
-    place: 'PH · Rez',
-    area: 'EPFL',
-    lat: 46.51725,
-    lng: 6.566,
-    tagline: 'Glaces artisanales et gaufres',
-    priceLevel: 1,
-    hours: week.weekdays(['08:00', '17:00']),
-    menu: [
-      {
-        title: 'Glaces',
-        items: [
-          item('nia-1', 'Glace 1 boule', 3.5, { tags: ['popular'] }),
-          item('nia-2', 'Glace 2 boules', 6.0),
-          item('nia-frappe', 'Frappé vanille', 5.5),
-        ],
-      },
-      {
-        title: 'Chaud',
-        items: [
-          item('nia-gaufre', 'Gaufre sucre glace', 4.5, { tags: ['hot'] }),
-          item('nia-choco', 'Chocolat chaud', 3.5, { tags: ['hot'] }),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'rlc',
-    name: 'Café du Learning Center',
+    id: 'klee',
+    name: 'Le Klee',
     kind: 'cafe',
     glyph: 'coffee',
     place: 'Rolex Learning Center',
     area: 'EPFL',
     lat: 46.51845,
     lng: 6.5683,
-    tagline: 'Ouvert le soir et le week-end',
+    tagline: 'La cafétéria du Rolex Learning Center',
     priceLevel: 1,
-    hours: week.custom([['07:30', '21:00']], [['10:00', '18:00']], [['10:00', '18:00']]),
+    hours: week.weekdays(['08:00', '18:00']),
+    hoursVerified: false,
+    sources: [EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
-      {
-        title: 'Boissons',
-        items: [
-          item('rlc-cafe', 'Café', 2.2, { tags: ['hot'] }),
-          item('rlc-matcha', 'Matcha latte', 5.0, { tags: ['hot', 'popular'] }),
-          item('rlc-the', 'Thé', 2.5, { tags: ['hot'] }),
-        ],
-      },
       {
         title: 'Pour réviser',
         items: [
-          item('rlc-sandwich', 'Sandwich du jour', 6.5),
-          item('rlc-salade', 'Salade à emporter', 8.5, { tags: ['vege'] }),
-          item('rlc-brownie', 'Brownie', 3.2),
+          item('kle-cafe', 'Café', 2.2, { tags: ['hot', 'popular'], ...est }),
+          item('kle-sandwich', 'Sandwich', 6.5, est),
+          item('kle-brownie', 'Brownie', 3.2, est),
         ],
       },
     ],
@@ -464,129 +398,124 @@ export const SPOTS: Spot[] = [
     name: 'Food trucks Cosandey',
     kind: 'foodtruck',
     glyph: 'truck',
-    place: 'Place Cosandey',
+    place: 'Place Cosandey · face à l’Agora',
     area: 'EPFL',
     lat: 46.5196,
     lng: 6.5676,
-    tagline: 'Trois trucks, cuisines qui tournent',
+    tagline: 'Six trucks depuis juin 2025',
     priceLevel: 2,
-    hours: week.weekdays(['11:00', '14:00']),
+    hours: week.weekdays(['11:30', '14:00']),
+    hoursVerified: true,
+    sources: [{ label: 'EPFL · Food trucks', url: 'https://www.epfl.ch/campus/restaurants-shops-hotels/food-truck/' }],
+    checkedAt: CHECKED,
     menu: [
-      {
-        title: 'Truck mexicain',
-        items: [
-          item('ft-tacos', 'Tacos al pastor (3)', 12.0, { tags: ['hot', 'popular'] }),
-          item('ft-burrito', 'Burrito haricots noirs', 13.0, { tags: ['hot', 'vegan'] }),
-        ],
-      },
-      {
-        title: 'Truck libanais',
-        items: [
-          item('ft-falafel', 'Pita falafel', 10.0, { tags: ['vegan'] }),
-          item('ft-shawarma', 'Shawarma poulet', 11.5, { tags: ['hot'] }),
-        ],
-      },
-      {
-        title: 'Truck asiatique',
-        items: [
-          item('ft-bao', 'Bao porc effiloché (2)', 9.0, { tags: ['hot'] }),
-          item('ft-limonade', 'Limonade gingembre', 4.0),
-        ],
-      },
+      { title: 'NAS Burger', items: [item('ft-nas-burger', 'Burger', 14.0, { tags: ['hot', 'popular'], ...est })] },
+      { title: 'NAS Sandwich', items: [item('ft-nas-sandwich', 'Sandwich', 9.0, est)] },
+      { title: 'Li Beirut', items: [item('ft-beirut', 'Pita falafel', 11.0, { tags: ['vegan'], ...est })] },
+      { title: 'Manira Wokshop', items: [item('ft-wok', 'Wok', 14.0, { tags: ['hot'], ...est })] },
+      { title: 'Cut Pizza', items: [item('ft-pizza', 'Part de pizza', 6.0, { tags: ['hot'], ...est })] },
+      { title: 'Regal Tandoori', items: [item('ft-tandoori', 'Curry & riz', 14.0, { tags: ['hot'], ...est })] },
     ],
   },
   {
-    id: 'native',
-    name: 'Le Native',
-    kind: 'restaurant',
-    glyph: 'burger',
+    id: 'puur',
+    name: 'Puur',
+    kind: 'cafeteria',
+    glyph: 'salad',
     place: 'Innovation Park',
     area: 'EPFL',
-    lat: 46.5164,
-    lng: 6.5622,
-    tagline: 'Burgers et bowls, produits locaux',
-    priceLevel: 3,
-    hours: week.weekdays(['11:30', '14:00']),
-    menu: [
-      {
-        title: 'Plats',
-        items: [
-          item('nat-burger', 'Burger Native', 16.5, { tags: ['hot', 'popular'] }),
-          item('nat-poke', 'Poke bowl thon', 17.0),
-          item('nat-veggie', 'Bowl veggie de saison', 15.0, { tags: ['vegan'] }),
-        ],
-      },
-      {
-        title: 'Côtés',
-        items: [
-          item('nat-frites', 'Frites de patate douce', 6.0, { tags: ['hot', 'vegan'] }),
-          item('nat-kombucha', 'Kombucha', 5.0),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'vending-inf',
-    name: 'Distributeurs INF',
-    kind: 'vending',
-    glyph: 'soda',
-    place: 'INF · Rez',
-    area: 'EPFL',
-    lat: 46.51895,
-    lng: 6.563,
-    tagline: 'Snacks et boissons, 24h/24',
+    lat: 46.5165,
+    lng: 6.562,
+    tagline: 'Le self-service au centre de l’Innovation Park',
     priceLevel: 1,
-    hours: week.everyday(['00:00', '24:00']),
+    hours: week.weekdays(['11:30', '14:00']),
+    hoursVerified: false,
+    sources: [EPFL_SELF('self-service-2/puur/'), EPFL_MENU, EPFL_HOURS],
+    checkedAt: CHECKED,
     menu: [
       {
-        title: 'Boissons',
+        title: 'Midi',
         items: [
-          item('ven-redbull', 'Red Bull 25 cl', 3.0, { tags: ['popular'] }),
-          item('ven-coca', 'Coca-Cola 50 cl', 2.5),
-          item('ven-eau', 'Eau 50 cl', 1.8),
-          item('ven-cafe', 'Café machine', 1.2, { tags: ['hot'] }),
-        ],
-      },
-      {
-        title: 'Snacks',
-        items: [
-          item('ven-snickers', 'Snickers', 1.8),
-          item('ven-chips', 'Chips paprika', 2.2, { tags: ['vegan'] }),
-          item('ven-sandwich', 'Sandwich emballé', 5.0),
+          item('puu-menu', 'Menu du jour (prix étudiant)', 8.1, { tags: ['hot', 'popular'], ...est }),
+          item('puu-salade', 'Salade', 9.0, { tags: ['vege'], ...est }),
         ],
       },
     ],
   },
+
+  /* ── Quartier Nord · Les Arcades (route Louis-Favre) ────────────────── */
   {
     id: 'holy-cow-epfl',
     name: 'Holy Cow!',
     kind: 'restaurant',
     glyph: 'burger',
-    place: 'Les Arcades · Quartier Nord',
+    place: 'Les Arcades · Louis-Favre 8d',
     area: 'EPFL',
     lat: 46.52258,
     lng: 6.56562,
     tagline: 'Burgers au bœuf suisse, à côté du métro',
     priceLevel: 2,
     hours: week.everyday(['11:00', '23:00']),
+    hoursVerified: true,
+    priceNote: 'Menus (burger, frites, boisson) entre CHF 20 et 22 selon Holy Cow! ; prix à l’unité estimés.',
+    sources: [{ label: 'holycow.ch', url: 'https://holycow.ch/en/restaurantsen/holy-cow-lausanne-epfl/' }],
+    rating: {
+      value: 3.1,
+      source: 'Tripadvisor',
+      url: 'https://www.tripadvisor.com/Restaurant_Review-g2216629-d10326724-Reviews-Holy_Cow_Gourmet_Burger_Co_LAUSANNE_EPFL-Ecublens_Canton_of_Vaud.html',
+    },
+    checkedAt: CHECKED,
     menu: [
       {
         title: 'Burgers',
         items: [
-          item('hc-holycow', 'Holy Cow!', 14.9, { description: 'Bœuf suisse, cheddar, sauce maison', tags: ['hot', 'popular'] }),
-          item('hc-smoky', 'Smoky Big Cheese & Bacon', 16.9, { tags: ['hot'] }),
-          item('hc-bigbeef', 'Big Beef', 18.9, { description: 'Double steak', tags: ['hot'] }),
-          item('hc-buffalo', 'Buffalo Crispy Chicken', 15.9, { tags: ['hot'] }),
-          item('hc-veggie', 'Veggie', 14.4, { description: 'Mayo citron vert-basilic, chutney de pomme épicé', tags: ['hot', 'vege'] }),
+          item('hc-holycow', 'Holy Cow!', 14.9, { description: 'Bœuf suisse, ketchup, oignons caramélisés', tags: ['hot', 'popular'], ...est }),
+          item('hc-cheese', 'Cheddar', 15.9, { description: 'Bœuf suisse, cheddar', tags: ['hot'], ...est }),
+          item('hc-chicken', 'Poulet', 15.4, { description: 'Poulet suisse, mayo citron vert-basilic', tags: ['hot'], ...est }),
+          item('hc-veggie', 'Veggie', 14.4, { tags: ['hot', 'vege'], ...est }),
         ],
       },
       {
         title: 'À côté',
         items: [
-          item('hc-frites', 'Frites', 5.9, { tags: ['hot', 'vegan', 'popular'] }),
-          item('hc-patate', 'Frites de patate douce', 6.9, { tags: ['hot', 'vegan'] }),
-          item('hc-soda', 'Soda 50 cl', 4.5),
+          item('hc-frites', 'Frites', 5.9, { tags: ['hot', 'vegan', 'popular'], ...est }),
+          item('hc-soda', 'Soda', 4.5, est),
         ],
+      },
+    ],
+  },
+  {
+    id: 'gina',
+    name: 'Gina Ristorante',
+    kind: 'restaurant',
+    glyph: 'pizza',
+    place: 'Les Arcades · Louis-Favre 8c',
+    area: 'EPFL',
+    lat: 46.5227,
+    lng: 6.56545,
+    tagline: 'Pâtes fraîches et pizzas, plat du jour à midi',
+    priceLevel: 3,
+    hours: week.weekdays(['11:45', '14:00'], ['18:45', '21:30']),
+    hoursVerified: true,
+    priceNote: 'Plat et pizza du jour à CHF 19.50 à midi ; plats à la carte entre CHF 30 et 45.',
+    sources: [{ label: 'gina-ristorante.ch', url: 'https://www.gina-ristorante.ch/' }],
+    rating: {
+      value: 4.0,
+      source: 'Tripadvisor',
+      url: 'https://www.tripadvisor.com/Restaurant_Review-g2216629-d5453722-Reviews-Gina_Ristorante-Ecublens_Canton_of_Vaud.html',
+    },
+    checkedAt: CHECKED,
+    menu: [
+      {
+        title: 'Midi (du lundi au vendredi)',
+        items: [
+          item('gin-plat', 'Plat du jour', 19.5, { tags: ['hot', 'popular'] }),
+          item('gin-pizza-jour', 'Pizza du jour', 19.5, { tags: ['hot'] }),
+        ],
+      },
+      {
+        title: 'À la carte',
+        items: [item('gin-pates', 'Pâtes fraîches', 30.0, { tags: ['hot'], ...est })],
       },
     ],
   },
@@ -595,31 +524,32 @@ export const SPOTS: Spot[] = [
     name: 'Denner EPFL',
     kind: 'grocery',
     glyph: 'basket',
-    place: 'Les Arcades · Quartier Nord',
+    place: 'Les Arcades · Louis-Favre 8b',
     area: 'EPFL',
     lat: 46.52283,
     lng: 6.56525,
     tagline: 'Boissons et snacks à petit prix',
     priceLevel: 1,
     hours: week.custom([['07:30', '20:00']], [['08:00', '18:00']]),
+    hoursVerified: true,
+    sources: [{ label: 'Denner · EPFL Les Arcades', url: 'https://www.denner.ch/fr/succursales/1024-ecublens-vd-epfl-les-arcades~s1145391' }],
+    checkedAt: CHECKED,
     menu: [
       {
         title: 'Boissons',
         items: [
-          item('den-coca', 'Coca-Cola 1.5 L', 1.95, { tags: ['popular'] }),
-          item('den-eau', 'Eau minérale 1.5 L', 0.55),
-          item('den-icetea', 'Ice tea 1.5 L', 1.3),
-          item('den-redbull', 'Red Bull 25 cl', 1.75),
-          item('den-biere', 'Bière 50 cl', 1.4),
+          item('den-coca', 'Coca-Cola 1.5 L', 1.95, { tags: ['popular'], ...est }),
+          item('den-eau', 'Eau minérale 1.5 L', 0.55, est),
+          item('den-icetea', 'Ice tea 1.5 L', 1.3, est),
+          item('den-redbull', 'Red Bull 25 cl', 1.75, est),
         ],
       },
       {
         title: 'Snacks',
         items: [
-          item('den-chips', 'Chips nature 175 g', 2.95, { tags: ['vegan'] }),
-          item('den-chocolat', 'Chocolat au lait 100 g', 1.4),
-          item('den-biscuits', 'Biscuits', 1.9),
-          item('den-sandwich', 'Sandwich', 3.6),
+          item('den-chips', 'Chips 175 g', 2.95, { tags: ['vegan'], ...est }),
+          item('den-chocolat', 'Chocolat au lait 100 g', 1.4, est),
+          item('den-sandwich', 'Sandwich', 3.6, est),
         ],
       },
     ],
@@ -629,101 +559,39 @@ export const SPOTS: Spot[] = [
     name: 'Migros EPFL',
     kind: 'grocery',
     glyph: 'basket',
-    place: 'Les Arcades · Quartier Nord',
+    place: 'Les Arcades · Louis-Favre 8a',
     area: 'EPFL',
     lat: 46.52309,
     lng: 6.56487,
     tagline: 'Le supermarché du campus',
     priceLevel: 1,
     hours: week.custom([['07:30', '20:00']], [['08:00', '18:00']]),
+    hoursVerified: true,
+    sources: [{ label: 'Migros · Ecublens EPFL', url: 'https://filialen.migros.ch/fr/supermarche-migros-ecublens-epfl/' }],
+    checkedAt: CHECKED,
     menu: [
       {
         title: 'Sur le pouce',
         items: [
-          item('mig-sandwich', 'Sandwich jambon-fromage', 4.2, { tags: ['popular'] }),
-          item('mig-wrap', 'Wrap falafel', 5.5, { tags: ['vegan'] }),
-          item('mig-salade', 'Salade de pâtes', 4.95, { tags: ['vege'] }),
-          item('mig-sushi', 'Sushi box', 8.9),
+          item('mig-sandwich', 'Sandwich', 4.2, { tags: ['popular'], ...est }),
+          item('mig-salade', 'Salade de pâtes', 4.95, { tags: ['vege'], ...est }),
+          item('mig-sushi', 'Sushi box', 8.9, est),
         ],
       },
       {
         title: 'Boissons',
         items: [
-          item('mig-eau', 'Eau minérale 1.5 L', 0.8),
-          item('mig-coca', 'Coca-Cola 50 cl', 1.95),
-          item('mig-latte', 'Café latte (gobelet)', 1.95),
-          item('mig-redbull', 'Red Bull 25 cl', 1.95),
+          item('mig-eau', 'Eau minérale 1.5 L', 0.8, est),
+          item('mig-coca', 'Coca-Cola 50 cl', 1.95, est),
+          item('mig-latte', 'Café latte (gobelet)', 1.95, est),
         ],
       },
       {
         title: 'Fruits & douceurs',
         items: [
-          item('mig-banane', 'Banane', 0.45, { tags: ['vegan'] }),
-          item('mig-pomme', 'Pomme', 0.7, { tags: ['vegan'] }),
-          item('mig-chocolat', 'Chocolat au lait 100 g', 1.8),
-          item('mig-chips', 'Chips 90 g', 2.6, { tags: ['vegan'] }),
-        ],
-      },
-      {
-        title: 'Dépannage',
-        items: [
-          item('mig-lait', 'Lait entier 1 L', 1.7),
-          item('mig-pain', 'Pain mi-blanc', 2.5),
-          item('mig-pates', 'Pâtes 500 g', 1.3),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'geopolis',
-    name: 'Cafétéria Géopolis',
-    kind: 'cafeteria',
-    glyph: 'sandwich',
-    place: 'UNIL · Géopolis',
-    area: 'UNIL',
-    lat: 46.5206,
-    lng: 6.5731,
-    tagline: 'Juste de l’autre côté de la Sorge',
-    priceLevel: 1,
-    hours: week.weekdays(['07:30', '16:30']),
-    menu: [
-      {
-        title: 'Midi',
-        items: [
-          item('geo-plat', 'Plat du jour', 8.9, { tags: ['hot', 'popular'] }),
-          item('geo-sandwich', 'Sandwich baguette', 5.8),
-          item('geo-salade', 'Salade de pâtes', 6.5, { tags: ['vege'] }),
-        ],
-      },
-      {
-        title: 'Boissons',
-        items: [
-          item('geo-cafe', 'Café', 2.0, { tags: ['hot'] }),
-          item('geo-ice', 'Ice tea', 2.8),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'unitheque',
-    name: 'Cafétéria Unithèque',
-    kind: 'cafeteria',
-    glyph: 'coffee',
-    place: 'UNIL · Unithèque',
-    area: 'UNIL',
-    lat: 46.5225,
-    lng: 6.5805,
-    tagline: 'La pause des révisions à la BCU',
-    priceLevel: 1,
-    hours: week.custom([['08:00', '19:00']], [['10:00', '17:00']]),
-    menu: [
-      {
-        title: 'Café & snacks',
-        items: [
-          item('uni-cafe', 'Café', 2.0, { tags: ['hot', 'popular'] }),
-          item('uni-croissant', 'Croissant', 1.5),
-          item('uni-wrap', 'Wrap houmous', 6.9, { tags: ['vegan'] }),
-          item('uni-muffin', 'Muffin chocolat', 3.0),
+          item('mig-banane', 'Banane', 0.45, { tags: ['vegan'], ...est }),
+          item('mig-pomme', 'Pomme', 0.7, { tags: ['vegan'], ...est }),
+          item('mig-chocolat', 'Chocolat au lait 100 g', 1.8, est),
         ],
       },
     ],
@@ -762,6 +630,29 @@ export const BUILDINGS: Building[] = [
 ];
 
 export const SPOT_BY_ID = new Map(SPOTS.map((s) => [s.id, s]));
+
+/** Spot d'une commande, même s'il a depuis été retiré du catalogue. */
+export function spotOf(id: string): Spot {
+  return (
+    SPOT_BY_ID.get(id) ?? {
+      id,
+      name: 'Spot retiré',
+      kind: 'restaurant',
+      glyph: 'utensils',
+      place: 'Plus au catalogue',
+      area: 'EPFL',
+      lat: 46.5195,
+      lng: 6.5662,
+      tagline: '',
+      priceLevel: 1,
+      hours: week.everyday(),
+      hoursVerified: false,
+      sources: [],
+      checkedAt: '',
+      menu: [],
+    }
+  );
+}
 
 export function findItem(spot: Spot, itemId: string): MenuItem | undefined {
   for (const section of spot.menu) {
