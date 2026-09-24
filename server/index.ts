@@ -34,10 +34,7 @@ handleClientEvents((userId, event) => {
 });
 
 if (env.production && !mailer) {
-  console.warn('\n  ⚠︎  Ni BREVO_API_KEY ni SMTP_URL : les codes de connexion ne partent que dans ces logs.\n');
-}
-if (mailer === 'brevo' && !env.mailFromSet) {
-  console.warn('\n  ⚠︎  MAIL_FROM non défini : Brevo refusera l’envoi, il faut une adresse d’expéditeur validée.\n');
+  console.warn('\n  ⚠︎  Ni MAIL_SCRIPT_URL ni SMTP_URL : les codes de connexion ne partent que dans ces logs.\n');
 }
 
 const server = serve({ fetch: app.fetch, port: env.port }, (info) => {

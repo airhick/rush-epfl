@@ -93,7 +93,7 @@ Ou avec Docker (c'est ce qu'utilise Render) :
 
 ```bash
 docker build -t rush-epfl .
-docker run -p 8787:8787 -v rush-data:/app/data -e BREVO_API_KEY=… -e MAIL_FROM='Rush <toi@gmail.com>' rush-epfl
+docker run -p 8787:8787 -v rush-data:/app/data -e MAIL_SCRIPT_URL=… rush-epfl
 ```
 
 ### Render (offre gratuite)
@@ -104,9 +104,9 @@ docker run -p 8787:8787 -v rush-data:/app/data -e BREVO_API_KEY=… -e MAIL_FROM
 |---|---|---|
 | `PORT` | Port HTTP | `8787` |
 | `RUSH_DB` | Fichier SQLite | `data/rush.db` |
-| `BREVO_API_KEY` | Envoi des codes par l'API HTTP de Brevo (prioritaire) | console |
+| `MAIL_SCRIPT_URL` | URL du script Gmail qui envoie les codes (prioritaire) | console |
 | `SMTP_URL` | Envoi des codes en SMTP (`smtps://user:pass@host`), hors Render gratuit | console |
-| `MAIL_FROM` | Expéditeur des e-mails (avec Brevo : adresse validée dans Brevo) | `Rush <no-reply@rush.epfl.ch>` |
+| `MAIL_FROM` | Expéditeur des e-mails envoyés en SMTP | `Rush <no-reply@rush.epfl.ch>` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
@@ -117,14 +117,14 @@ Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé
 
 ### Envoi des codes de connexion
 
-L'offre gratuite de Render **bloque les ports SMTP** (25, 465, 587) depuis septembre 2025 : un `SMTP_URL` Gmail n'y part jamais. L'app envoie donc les codes par l'API HTTP de [Brevo](https://www.brevo.com) (port 443, offre gratuite de 300 e-mails/jour, aucun nom de domaine requis) :
+L'offre gratuite de Render **bloque les ports SMTP** (25, 465, 587) depuis septembre 2025 : un `SMTP_URL` n'y part jamais. Les codes partent donc d'un compte Gmail grâce à un petit script Google Apps Script ([`scripts/gmail-mailer.gs`](scripts/gmail-mailer.gs)) appelé en HTTPS : gratuit, sans clé d'API ni service tiers.
 
-1. Créer un compte Brevo gratuit (le premier envoi peut attendre une validation du compte par Brevo).
-2. *Senders, domains & dedicated IPs* → *Senders* → ajouter l'adresse d'expéditeur (par ex. une adresse Gmail) et la valider avec le code reçu.
-3. *SMTP & API* → *API keys* → générer une clé.
-4. Sur Render → *Environment* : `BREVO_API_KEY` = la clé, `MAIL_FROM` = `Rush <adresse-validée>`.
+1. Sur [script.google.com](https://script.google.com), connecté au compte Gmail qui enverra les codes (un compte dédié, par ex. « rush.epfl », évite d'exposer une adresse perso) : *Nouveau projet*, coller le contenu de `scripts/gmail-mailer.gs`.
+2. *Déployer* → *Nouveau déploiement* → type *Application Web*, *Exécuter en tant que : Moi*, *Qui a accès : Tout le monde* → *Déployer*.
+3. Autoriser l'accès : Google prévient que l'application n'est pas validée (c'est ton propre script) → *Paramètres avancés* → *Accéder au projet*.
+4. Copier l'URL de l'application Web (`https://script.google.com/macros/s/…/exec`) dans Render → *Environment* → `MAIL_SCRIPT_URL`.
 
-Si l'envoi échoue, l'app affiche « L'e-mail n'a pas pu partir » et le détail de l'erreur Brevo est dans les logs. Les e-mails venant d'une adresse Gmail peuvent arriver dans le courrier indésirable EPFL ; authentifier un nom de domaine dans Brevo (SPF/DKIM) règle ça.
+Le script n'envoie qu'un code à 6 chiffres à une adresse `@epfl.ch`, avec son propre modèle : même si son URL fuitait, il ne peut pas servir à autre chose. Limite de Gmail : **100 destinataires par jour** (largement assez, une session dure 30 jours). Si l'envoi échoue (quota atteint…), l'app affiche « L'e-mail n'a pas pu partir » et la raison est dans les logs. Si `RUSH_ALLOWED_DOMAINS` change, adapter `ALLOWED_DOMAIN` dans le script.
 
 ### Photos et avis Google Maps
 
@@ -138,7 +138,7 @@ Côté serveur (`server/services/places.ts`) : le lieu Google est retrouvé par 
 
 ## À savoir avant un vrai lancement
 
-- **Envoi d'e-mails obligatoire en production** : sans `BREVO_API_KEY` (ou `SMTP_URL` hors Render gratuit), les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
+- **Envoi d'e-mails obligatoire en production** : sans `MAIL_SCRIPT_URL` (ou `SMTP_URL` hors Render gratuit), les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
 - **Catalogue** (`shared/catalog.ts`) : liste des points de restauration relevée en septembre 2026 sur les pages officielles de l'EPFL et des enseignes. Chaque spot indique ses sources (affichées et liées dans l'app), si ses horaires sont officiels, et marque d'un ≈ les prix estimés faute de source publique. Les positions sur la carte restent approximatives.
 - **Photos et avis** : ils viennent uniquement de Google Maps (API officielle, crédités). Rien n'est recopié depuis Uber Eats, Tripadvisor ou d'autres sites, dont les contenus appartiennent à leurs auteurs ; l'app renvoie vers eux par lien.
 - **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.

@@ -2,59 +2,59 @@ import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 import type * as MailModule from '../server/mail';
 import type * as AuthModule from '../server/services/auth';
 
+const SCRIPT_URL = 'https://script.google.com/macros/s/test/exec';
+
 let mail: typeof MailModule;
 let auth: typeof AuthModule;
 
 beforeAll(async () => {
-  process.env.BREVO_API_KEY = 'brevo-test';
-  process.env.MAIL_FROM = 'Rush <rush.epfl@gmail.com>';
+  process.env.MAIL_SCRIPT_URL = SCRIPT_URL;
   mail = await import('../server/mail');
   auth = await import('../server/services/auth');
 });
 
 afterEach(() => vi.unstubAllGlobals());
 
-function mockBrevo(status = 201) {
+function mockScript(reply: object, status = 200) {
   const calls: { url: string; init: RequestInit }[] = [];
   vi.stubGlobal(
     'fetch',
     vi.fn(async (url: string, init: RequestInit) => {
       calls.push({ url, init });
-      return new Response(JSON.stringify(status < 300 ? { messageId: 'm1' } : { message: 'sender not valid' }), { status });
+      return new Response(JSON.stringify(reply), { status });
     }),
   );
   return calls;
 }
 
-describe('envoi des codes par e-mail', () => {
-  it('lit les adresses « Nom <e-mail> »', () => {
-    expect(mail.parseAddress('Rush <rush@exemple.ch>')).toEqual({ name: 'Rush', email: 'rush@exemple.ch' });
-    expect(mail.parseAddress('"Rush EPFL" <rush@exemple.ch>')).toEqual({ name: 'Rush EPFL', email: 'rush@exemple.ch' });
-    expect(mail.parseAddress(' rush@exemple.ch ')).toEqual({ email: 'rush@exemple.ch' });
-  });
-
-  it('passe par l’API HTTP de Brevo quand la clé est définie', async () => {
-    const calls = mockBrevo();
-    expect(mail.mailer).toBe('brevo');
+describe('envoi des codes par le script Gmail', () => {
+  it('envoie seulement l’adresse et le code au script', async () => {
+    const calls = mockScript({ ok: true, remaining: 99 });
+    expect(mail.mailer).toBe('gmail-script');
     expect(await mail.sendLoginCode('ada.lovelace@epfl.ch', '123456')).toBe(true);
 
     expect(calls).toHaveLength(1);
-    expect(calls[0].url).toBe('https://api.brevo.com/v3/smtp/email');
-    expect((calls[0].init.headers as Record<string, string>)['api-key']).toBe('brevo-test');
-    const payload = JSON.parse(String(calls[0].init.body));
-    expect(payload.sender).toEqual({ name: 'Rush', email: 'rush.epfl@gmail.com' });
-    expect(payload.to).toEqual([{ email: 'ada.lovelace@epfl.ch' }]);
-    expect(payload.subject).toContain('123456');
-    expect(payload.htmlContent).toContain('123456');
+    expect(calls[0].url).toBe(SCRIPT_URL);
+    expect(calls[0].init.method).toBe('POST');
+    expect(JSON.parse(String(calls[0].init.body))).toEqual({ to: 'ada.lovelace@epfl.ch', code: '123456' });
+  });
+
+  it('traite un refus du script comme un échec', async () => {
+    mockScript({ ok: false, error: 'Service invoked too many times for one day: email.' });
+    await expect(mail.sendLoginCode('ada.lovelace@epfl.ch', '123456')).rejects.toThrow(/too many times/);
+
+    // Page d'erreur HTML de Google plutôt que du JSON.
+    vi.stubGlobal('fetch', vi.fn(async () => new Response('<html>Erreur</html>', { status: 200 })));
+    await expect(mail.sendLoginCode('ada.lovelace@epfl.ch', '123456')).rejects.toThrow(/réponse inattendue/);
   });
 
   it('signale un envoi raté sans bloquer une nouvelle demande', async () => {
-    mockBrevo(400);
+    mockScript({ ok: false, error: 'quota' });
     vi.spyOn(console, 'error').mockImplementation(() => {});
     await expect(auth.requestCode('grace.hopper@epfl.ch')).rejects.toMatchObject({ status: 502 });
 
     // Le code n'est jamais parti : pas de délai d'attente avant de réessayer.
-    mockBrevo();
+    mockScript({ ok: true });
     await expect(auth.requestCode('grace.hopper@epfl.ch')).resolves.toEqual({});
   });
 });

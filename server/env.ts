@@ -8,15 +8,14 @@ export const env = {
   demo: process.env.RUSH_DEMO === '1',
   /** Crédit offert à chaque nouveau compte, en centimes (CHF 1.00 par défaut). */
   welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
-  /** Envoi des codes par l'API HTTP de Brevo (à privilégier : Render gratuit bloque le SMTP). */
-  brevoApiKey: process.env.BREVO_API_KEY ?? null,
-  /** Sans Brevo ni SMTP, le code de connexion est affiché dans la console du serveur. */
+  /** URL du script Gmail qui envoie les codes (scripts/gmail-mailer.gs) ; Render gratuit bloque le SMTP. */
+  mailScriptUrl: process.env.MAIL_SCRIPT_URL ?? null,
+  /** Sans script ni SMTP, le code de connexion est affiché dans la console du serveur. */
   smtpUrl: process.env.SMTP_URL ?? null,
   /** Clé Google Maps Platform (Places API New) : photos et avis Google des spots. */
   googleMapsKey: process.env.GOOGLE_MAPS_API_KEY ?? null,
-  /** Expéditeur ; avec Brevo, une adresse validée dans le compte Brevo. */
+  /** Expéditeur des e-mails envoyés en SMTP (le script Gmail envoie depuis son compte). */
   mailFrom: process.env.MAIL_FROM ?? 'Rush <no-reply@rush.epfl.ch>',
-  mailFromSet: Boolean(process.env.MAIL_FROM),
   /** Domaines autorisés à se connecter. */
   allowedDomains: (process.env.RUSH_ALLOWED_DOMAINS ?? 'epfl.ch')
     .split(',')

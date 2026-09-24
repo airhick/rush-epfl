@@ -7,31 +7,21 @@ interface Mail {
   html: string;
 }
 
-/** « Rush <rush@exemple.ch> » → { name: 'Rush', email: 'rush@exemple.ch' } */
-export function parseAddress(raw: string): { name?: string; email: string } {
-  const match = /^\s*"?([^"<]*?)"?\s*<([^>]+)>\s*$/.exec(raw);
-  if (!match) return { email: raw.trim() };
-  return match[1] ? { name: match[1], email: match[2].trim() } : { email: match[2].trim() };
-}
-
 /**
- * API HTTP de Brevo : elle passe par le port 443, alors que les offres
- * gratuites de Render bloquent les ports SMTP (25, 465, 587).
+ * Script Google Apps Script déployé sur un compte Gmail (scripts/gmail-mailer.gs) :
+ * gratuit, sans clé d'API, et en HTTPS, alors que les offres gratuites de
+ * Render bloquent les ports SMTP (25, 465, 587). Le script a son propre modèle
+ * d'e-mail et n'accepte qu'un code à 6 chiffres pour une adresse EPFL.
  */
-async function viaBrevo(mail: Mail) {
-  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+async function viaGmailScript(to: string, code: string) {
+  const res = await fetch(env.mailScriptUrl!, {
     method: 'POST',
-    headers: { 'api-key': env.brevoApiKey!, 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({
-      sender: parseAddress(env.mailFrom),
-      to: [{ email: mail.to }],
-      subject: mail.subject,
-      textContent: mail.text,
-      htmlContent: mail.html,
-    }),
-    signal: AbortSignal.timeout(10_000),
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ to, code }),
+    signal: AbortSignal.timeout(15_000),
   });
-  if (!res.ok) throw new Error(`Brevo ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
+  if (!res.ok || !data?.ok) throw new Error(`Script Gmail ${res.status}: ${data?.error ?? 'réponse inattendue'}`);
 }
 
 let transport: { sendMail(opts: object): Promise<unknown> } | null = null;
@@ -44,8 +34,8 @@ async function viaSmtp(mail: Mail) {
   await transport.sendMail({ from: env.mailFrom, ...mail });
 }
 
-/** Moyen d'envoi retenu : l'API Brevo en priorité, sinon SMTP, sinon rien (console). */
-export const mailer = env.brevoApiKey ? 'brevo' : env.smtpUrl ? 'smtp' : null;
+/** Moyen d'envoi retenu : le script Gmail en priorité, sinon SMTP, sinon rien (console). */
+export const mailer = env.mailScriptUrl ? 'gmail-script' : env.smtpUrl ? 'smtp' : null;
 
 /**
  * Envoie le code par e-mail. Renvoie false si aucun envoi n'est configuré
@@ -56,7 +46,11 @@ export async function sendLoginCode(email: string, code: string): Promise<boolea
     console.log(`\n  ✉︎  Code de connexion pour ${email} : ${code}\n`);
     return false;
   }
-  const mail: Mail = {
+  if (mailer === 'gmail-script') {
+    await viaGmailScript(email, code);
+    return true;
+  }
+  await viaSmtp({
     to: email,
     subject: `${code} — ton code Rush`,
     text: `Ton code de connexion Rush est ${code}.\n\nIl expire dans 10 minutes. Si tu n'as rien demandé, ignore cet e-mail.`,
@@ -66,7 +60,6 @@ export async function sendLoginCode(email: string, code: string): Promise<boolea
       <div style="font-size:36px;font-weight:700;letter-spacing:0.18em">${code}</div>
       <p style="color:#8e8e93;font-size:13px;line-height:1.5;margin-top:24px">Il expire dans 10 minutes. Si tu n'as rien demandé, ignore cet e-mail.</p>
     </div>`,
-  };
-  await (mailer === 'brevo' ? viaBrevo(mail) : viaSmtp(mail));
+  });
   return true;
 }

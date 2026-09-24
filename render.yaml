@@ -10,12 +10,10 @@ services:
       - key: NODE_ENV
         value: production
       # Obligatoire pour que les codes de connexion partent par e-mail.
-      # L'offre gratuite de Render bloque les ports SMTP : on passe par
-      # l'API HTTP de Brevo (gratuit, 300 e-mails/jour). MAIL_FROM doit
-      # être l'expéditeur validé dans Brevo, ex. « Rush <toi@gmail.com> ».
-      - key: BREVO_API_KEY
-        sync: false
-      - key: MAIL_FROM
+      # L'offre gratuite de Render bloque les ports SMTP : les codes partent
+      # d'un compte Gmail via le script scripts/gmail-mailer.gs (gratuit,
+      # sans clé d'API) ; ici, l'URL de son déploiement « Application Web ».
+      - key: MAIL_SCRIPT_URL
         sync: false
       - key: RUSH_WELCOME_BONUS_CENTS
         value: "100"
