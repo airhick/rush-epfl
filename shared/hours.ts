@@ -71,6 +71,16 @@ function fmt(hhmm: string): string {
 
 /** Raccourcis pour déclarer des horaires lisibles dans le catalogue. */
 export const week = {
+  /** Du lundi au dimanche, dans l'ordre de la semaine. */
+  days: (
+    mon: TimeRange[],
+    tue: TimeRange[],
+    wed: TimeRange[],
+    thu: TimeRange[],
+    fri: TimeRange[],
+    sat: TimeRange[] = [],
+    sun: TimeRange[] = [],
+  ): WeekHours => [sun, mon, tue, wed, thu, fri, sat],
   weekdays: (...ranges: TimeRange[]): WeekHours => [[], ranges, ranges, ranges, ranges, ranges, []],
   everyday: (...ranges: TimeRange[]): WeekHours => Array.from({ length: 7 }, () => ranges),
   custom: (weekdays: TimeRange[], saturday: TimeRange[] = [], sunday: TimeRange[] = []): WeekHours => [

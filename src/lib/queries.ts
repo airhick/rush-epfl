@@ -2,12 +2,13 @@ import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/re
 import { api, ApiError } from './api';
 import type {
   Conversation,
-  GooglePlaceResult,
   Me,
   Message,
   Order,
+  PlaceMedia,
   Presence,
   SpotActivity,
+  SpotMenu,
   Wallet,
 } from '../../shared/types';
 import type { CreateOrderInput } from './types';
@@ -48,14 +49,22 @@ export const useMe = () =>
     staleTime: 60_000,
   });
 
-/** Photos et avis Google Maps d'un spot : chargés à l'ouverture de la fiche, gardés pour la session. */
-export const useGooglePlace = (spotId: string | undefined) =>
+/** Menu du jour d'un spot : offre EPFL lue en direct par le serveur, puis carte fixe. */
+export const useSpotMenu = (spotId: string | undefined) =>
   useQuery({
-    queryKey: ['google', spotId ?? ''] as const,
-    queryFn: () => api<GooglePlaceResult>(`/spots/${spotId}/google`),
+    queryKey: ['menu', spotId ?? ''] as const,
+    queryFn: () => api<SpotMenu>(`/spots/${spotId}/menu`),
+    enabled: Boolean(spotId),
+    staleTime: 5 * 60_000,
+  });
+
+/** Photos et avis Google Maps d'un spot (relevé crédité, sans clé d'API). */
+export const usePlaceMedia = (spotId: string | undefined) =>
+  useQuery({
+    queryKey: ['media', spotId ?? ''] as const,
+    queryFn: () => api<PlaceMedia | null>(`/spots/${spotId}/media`),
     enabled: Boolean(spotId),
     staleTime: Infinity,
-    retry: false,
   });
 
 export const useActivity = () => useQuery({ queryKey: keys.activity, queryFn: () => api<SpotActivity[]>('/activity') });

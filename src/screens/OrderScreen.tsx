@@ -189,9 +189,12 @@ function OrderView({ order }: { order: Order }) {
       <Group header={plural(order.items.reduce((n, i) => n + i.qty, 0), 'article', 'articles')}>
         {order.items.map((i) => (
           <div key={i.id} className="item-line">
-            <span className="item-line__qty">{i.qty}×</span>
-            <span className="item-line__name">{i.name}</span>
-            <span className="item-line__price">{formatCHF(i.priceCents * i.qty)}</span>
+            <span className="item-line__qty">{i.custom ? '·' : `${i.qty}×`}</span>
+            <span className="item-line__name">{i.custom ? `Demande libre : ${i.name}` : i.name}</span>
+            <span className="item-line__price">
+              {i.custom && 'max. '}
+              {formatCHF(i.priceCents * i.qty)}
+            </span>
           </div>
         ))}
       </Group>
@@ -369,7 +372,7 @@ function Actions({
 function PickupSheet({ open, onClose, order }: { open: boolean; onClose: () => void; order: Order }) {
   const pickup = usePickup(order.id);
   const max = maxActualItems(order);
-  const [value, setValue] = useState((order.itemsCents / 100).toFixed(2));
+  const [value, setValue] = useState('');
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const cents = Math.round(Number(value.replace(',', '.')) * 100);
   const valid = Number.isFinite(cents) && cents > 0 && cents <= max;
@@ -397,20 +400,19 @@ function PickupSheet({ open, onClose, order }: { open: boolean; onClose: () => v
           value={value}
           style={{ width: `${Math.max(2, value.length) * 0.62 + 0.2}em` }}
           onChange={(e) => setValue(e.target.value.replace(/[^\d.,]/g, ''))}
+          placeholder="0.00"
           aria-label="Montant payé"
         />
       </div>
       <p className={cx('pickup-hint', !valid && 'is-error')}>
-        Estimation {formatCHF(order.itemsCents)} · maximum {formatCHF(max)}
+        Prix publiés {formatCHF(order.itemsCents)} (tarif le plus élevé) · maximum {formatCHF(max)}
       </p>
 
       <Group header="À récupérer">
         {order.items.map((i) => (
           <button key={i.id} className={cx('check-line', checked[i.id] && 'is-checked')} onClick={() => setChecked({ ...checked, [i.id]: !checked[i.id] })}>
             <span className="check-line__box">{checked[i.id] && <Check size={14} strokeWidth={3} />}</span>
-            <span>
-              {i.qty}× {i.name}
-            </span>
+            <span>{i.custom ? `Demande libre : ${i.name} (budget max. ${formatCHF(i.priceCents)})` : `${i.qty}× ${i.name}`}</span>
           </button>
         ))}
       </Group>

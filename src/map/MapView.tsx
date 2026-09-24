@@ -16,7 +16,7 @@ import { useLayout } from '../state/ui';
 import { useActivity } from '../lib/queries';
 import { useResolvedTheme } from '../lib/theme';
 import { useIsDesktop } from '../lib/useMedia';
-import { GLYPHS, tintGradient } from '../lib/spotStyle';
+import { GLYPHS } from '../lib/spotStyle';
 import { Avatar, cx } from '../ui/primitives';
 
 const CUSTOM_STYLE = import.meta.env.VITE_MAP_STYLE as string | undefined;
@@ -328,7 +328,7 @@ function SpotPin({
       onClick={onClick}
       aria-label={spot.name}
     >
-      <span className="spot-pin__bubble" style={{ background: closed ? undefined : tintGradient(spot.kind) }}>
+      <span className="spot-pin__bubble">
         <Icon strokeWidth={2} />
       </span>
       {rushers > 0 && !closed && <span className="spot-pin__live">{rushers}</span>}

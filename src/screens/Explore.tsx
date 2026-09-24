@@ -13,7 +13,7 @@ import { useDropoff, useGeo } from '../state/location';
 import { DropoffButton } from '../features/DropoffPicker';
 import { ActiveOrders } from '../features/ActiveOrders';
 import { Screen } from '../ui/Screen';
-import { AvatarStack, Chip, cx, Empty, SpotBadge, SpotCover } from '../ui/primitives';
+import { AvatarStack, Chip, cx, Empty, SpotCover, SpotThumb } from '../ui/primitives';
 import type { PublicUser } from '../../shared/types';
 
 type Filter = 'all' | SpotKind | 'open-late';
@@ -165,7 +165,7 @@ export function Explore() {
                   onMouseEnter={() => hover(spot.id)}
                   onMouseLeave={() => hover(null)}
                 >
-                  <SpotBadge spot={spot} size={56} radius={14} />
+                  <SpotThumb spot={spot} size={60} />
                   <span className="spot-row__text">
                     <span className="spot-row__name">{spot.name}</span>
                     <span className="spot-row__meta">
@@ -197,8 +197,8 @@ export function Explore() {
         )}
       </section>
       <p className="footnote">
-        Pourboire indicatif pour un article livré à {dropoff.label}. Prix, horaires et notes proviennent de sources externes (EPFL, enseignes,
-        Tripadvisor), à titre indicatif ; le montant réel du ticket fait foi.
+        Pourboire suggéré pour un article livré à {dropoff.label}. Menus et prix du jour publiés par l’EPFL, horaires officiels, photos et
+        avis Google Maps crédités à leurs auteurs. Le ticket de caisse fait toujours foi.
       </p>
     </Screen>
   );

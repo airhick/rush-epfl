@@ -1,4 +1,5 @@
 import type { LatLng } from './geo';
+import type { MenuSection } from './catalog';
 
 export type OrderStatus = 'open' | 'accepted' | 'picked_up' | 'delivered' | 'completed' | 'cancelled';
 export type Role = 'requester' | 'courier';
@@ -29,6 +30,8 @@ export interface OrderItem {
   name: string;
   qty: number;
   priceCents: number;
+  /** Demande libre : `priceCents` est le budget plafond fixé par le demandeur. */
+  custom?: boolean;
 }
 
 export interface Dropoff extends LatLng {
@@ -103,37 +106,41 @@ export interface Presence {
   destination: (LatLng & { label: string }) | null;
 }
 
-/** Photos et avis Google Maps d'un spot (API Google Places, attributions incluses). */
-export interface GooglePlace {
-  available: true;
+export type DailyStatus = 'ok' | 'empty' | 'unavailable';
+
+/** Menu d'un spot : offre du jour EPFL (lue en direct) puis carte fixe officielle. */
+export interface SpotMenu {
+  sections: MenuSection[];
+  daily: { date: string; status: DailyStatus; sourceUrl: string; fetchedAt: string | null } | null;
+}
+
+/** Photos et avis Google Maps d'un spot, relevés une fois et crédités à leurs auteurs. */
+export interface PlaceMedia {
+  name: string;
+  mapsUrl: string;
   rating: number | null;
   ratingCount: number;
-  mapsUrl: string | null;
-  photos: GooglePhoto[];
-  reviews: GoogleReview[];
+  fetchedAt: string;
+  photos: PlacePhoto[];
+  reviews: PlaceReview[];
 }
 
-export interface GoogleAttribution {
-  name: string;
-  url: string | null;
+export interface PlacePhoto {
+  url: string;
+  author: string;
+  authorUrl: string | null;
 }
 
-export interface GooglePhoto {
-  /** Nom de ressource Google, à repasser tel quel au proxy photo du serveur. */
-  name: string;
-  width: number;
-  height: number;
-  attributions: GoogleAttribution[];
-}
-
-export interface GoogleReview {
-  author: GoogleAttribution & { photoUrl: string | null };
+export interface PlaceReview {
+  author: string;
+  authorUrl: string | null;
   rating: number;
   text: string;
-  when: string;
+  /** Langue d'origine quand le texte affiché est la traduction de Google. */
+  translatedFrom?: string;
+  date: string;
+  url: string | null;
 }
-
-export type GooglePlaceResult = GooglePlace | { available: false; reason: 'not-configured' | 'not-found' | 'error' };
 
 /** Rushers disponibles, agrégés par spot pour la carte et les fiches. */
 export interface SpotActivity {

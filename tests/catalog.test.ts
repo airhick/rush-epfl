@@ -13,7 +13,7 @@ describe('catalogue', () => {
     for (const s of SPOTS) {
       expect(s.sources.length, s.id).toBeGreaterThan(0);
       for (const src of s.sources) expect(src.url, s.id).toMatch(/^https:\/\//);
-      if (s.rating) expect(s.rating.url, s.id).toMatch(/^https:\/\//);
+      if (s.cover) expect(s.cover.url, s.id).toMatch(/^https:\/\//);
     }
   });
 
@@ -21,12 +21,17 @@ describe('catalogue', () => {
     for (const p of [...SPOTS, ...BUILDINGS]) expect(haversine(p, EPFL_CENTER), p.id).toBeLessThan(800);
   });
 
-  it('a des menus non vides et des prix positifs', () => {
+  it('n’a que des prix exacts sur ses cartes fixes', () => {
     for (const s of SPOTS) {
-      const items = s.menu.flatMap((m) => m.items);
-      expect(items.length, s.id).toBeGreaterThan(0);
-      for (const i of items) expect(i.priceCents, i.id).toBeGreaterThan(0);
+      for (const i of s.menu.flatMap((m) => m.items)) {
+        expect(i.priceCents, i.id).toBeGreaterThan(0);
+        expect(i.priceCents % 5, i.id).toBe(0);
+      }
     }
+  });
+
+  it('a des horaires pour chaque spot', () => {
+    for (const s of SPOTS) expect(s.hours.flat().length, s.id).toBeGreaterThan(0);
   });
 
   it('résiste aux commandes d’un spot retiré', () => {

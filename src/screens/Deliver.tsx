@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { Bike, Building2, ChevronRight, Flag, MapPin, Navigation, Sparkles } from 'lucide-react';
+import { Bike, Building2, ChevronRight, Flag, MapPin, Navigation, Wallet } from 'lucide-react';
 import { BUILDINGS, SPOTS, SPOT_BY_ID, spotOf } from '../../shared/catalog';
 import { detourMeters, formatDistance, walkingDistance, type LatLng } from '../../shared/geo';
 import { openStatus } from '../../shared/hours';
@@ -131,7 +131,7 @@ export function Deliver() {
 
       {wallet && wallet.earnedThisMonthCents > 0 && (
         <p className="earned-line">
-          <Sparkles size={14} /> {formatCHF(wallet.earnedThisMonthCents)} reçus ce mois-ci grâce à tes livraisons
+          <Wallet size={14} /> {formatCHF(wallet.earnedThisMonthCents)} reçus ce mois-ci grâce à tes livraisons
         </p>
       )}
 
@@ -272,7 +272,7 @@ function RequestCard({
             {spot.name} <span className="request__arrow">→</span> {order.dropoff.label}
           </span>
           <span className="request__meta">
-            {plural(count, 'article', 'articles')} · ~{formatCHF(order.itemsCents)} à avancer
+            {plural(count, 'article', 'articles')} · jusqu’à {formatCHF(order.itemsCents)} à avancer
           </span>
           <span className="request__chips">
             {onTheWay ? (
@@ -305,10 +305,11 @@ function RequestCard({
             <ul className="request__items">
               {order.items.map((i) => (
                 <li key={i.id}>
+                  <span>{i.custom ? `Demande libre : ${i.name}` : `${i.qty}× ${i.name}`}</span>
                   <span>
-                    {i.qty}× {i.name}
+                    {i.custom && 'max. '}
+                    {formatCHF(i.priceCents * i.qty)}
                   </span>
-                  <span>{formatCHF(i.priceCents * i.qty)}</span>
                 </li>
               ))}
             </ul>

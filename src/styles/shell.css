@@ -16,13 +16,11 @@
   width: var(--panel-w);
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
-  background: var(--glass);
-  backdrop-filter: blur(30px) saturate(190%);
-  -webkit-backdrop-filter: blur(30px) saturate(190%);
-  box-shadow:
-    var(--shadow-3),
-    inset 0 0 0 0.5px var(--glass-border);
+  border-radius: 30px;
+  background: var(--lg-sheen), var(--lg-tint-strong);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--shadow-3), var(--lg-rim);
   overflow: hidden;
 }
 
@@ -50,13 +48,13 @@
   bottom: 0;
   display: flex;
   flex-direction: column;
-  border-radius: 14px 14px 0 0;
-  background: var(--glass-strong);
-  backdrop-filter: blur(30px) saturate(190%);
-  -webkit-backdrop-filter: blur(30px) saturate(190%);
+  border-radius: 28px 28px 0 0;
+  background: var(--lg-sheen), var(--lg-tint-strong);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
   box-shadow:
     0 -8px 30px rgba(0, 0, 0, 0.12),
-    inset 0 0.5px 0 var(--glass-border);
+    var(--lg-rim);
 }
 
 .sheet__grabber {
@@ -112,9 +110,9 @@
 }
 
 .screen.is-scrolled .nav {
-  background: var(--bar);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: var(--lg-sheen), var(--lg-tint-bar);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
   box-shadow: 0 0.5px 0 var(--separator);
 }
 
@@ -243,9 +241,9 @@
   display: grid;
   gap: 6px;
   padding: 12px 16px 14px;
-  background: var(--bar);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: var(--lg-sheen), var(--lg-tint-bar);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
   box-shadow: 0 -0.5px 0 var(--separator);
 }
 
@@ -259,10 +257,14 @@
   flex: none;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  height: calc(var(--tabbar-h) + var(--safe-bottom));
-  padding-bottom: var(--safe-bottom);
-  background: var(--glass-strong);
-  box-shadow: 0 -0.5px 0 var(--separator);
+  height: var(--tabbar-h);
+  margin: 4px 12px calc(10px + var(--safe-bottom));
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--lg-sheen), var(--lg-tint);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-rim);
 }
 
 .tabbar__item {
@@ -270,17 +272,23 @@
   justify-items: center;
   align-content: center;
   gap: 3px;
-  color: var(--label-3);
+  border-radius: 999px;
+  color: var(--label-2);
   text-decoration: none;
-  transition: color 0.2s;
+  transition:
+    color 0.2s,
+    background-color 0.25s;
 }
 
 .tabbar__item:hover {
   color: var(--label-2);
 }
 
+/* Onglet actif : une lentille de verre sous l'icône, comme sur iOS. */
 .tabbar__item.is-active {
   color: var(--label);
+  background: var(--lg-sheen), var(--fill);
+  box-shadow: var(--lg-rim);
 }
 
 .tabbar__item.is-active svg {
@@ -331,10 +339,10 @@
   height: 40px;
   padding: 0 14px 0 10px;
   border-radius: 999px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: var(--shadow-2);
+  background: var(--lg-sheen), var(--lg-tint);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-rim);
 }
 
 .chrome--account {
@@ -354,10 +362,10 @@
   height: 40px;
   padding: 0 15px 0 13px;
   border-radius: 999px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: var(--shadow-2);
+  background: var(--lg-sheen), var(--lg-tint);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-rim);
   font-weight: 650;
   font-variant-numeric: tabular-nums;
   transition: transform 0.15s;
@@ -372,8 +380,10 @@
   display: grid;
   padding: 2px;
   border-radius: 50%;
-  background: var(--glass-strong);
-  box-shadow: var(--shadow-2);
+  background: var(--lg-sheen), var(--lg-tint);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-rim);
   transition: transform 0.15s;
 }
 
@@ -382,12 +392,12 @@
   right: 16px;
   flex-direction: column;
   gap: 0;
-  width: 44px;
-  border-radius: 12px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: var(--shadow-2);
+  width: 46px;
+  border-radius: 23px;
+  background: var(--lg-sheen), var(--lg-tint);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--lg-shadow), var(--lg-rim);
   overflow: hidden;
 }
 
@@ -449,11 +459,11 @@
   gap: 12px;
   width: 100%;
   padding: 12px 16px 12px 12px;
-  border-radius: 22px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: var(--shadow-3);
+  border-radius: 26px;
+  background: var(--lg-sheen), var(--lg-tint-strong);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--shadow-3), var(--lg-rim);
   text-align: left;
 }
 
@@ -463,8 +473,10 @@
   place-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 10px;
-  background: var(--fill);
+  border-radius: 50%;
+  background: var(--icon-bg);
+  color: var(--icon-fg);
+  box-shadow: inset 0 0 0 0.5px var(--icon-ring);
 }
 
 .toast__text {

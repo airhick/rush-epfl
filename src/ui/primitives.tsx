@@ -1,9 +1,9 @@
-import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
+import { forwardRef, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { motion } from 'motion/react';
 import { Minus, Plus, Star } from 'lucide-react';
 import type { PublicUser } from '../../shared/types';
 import type { Spot } from '../../shared/catalog';
-import { GLYPHS, tintGradient } from '../lib/spotStyle';
+import { GLYPHS, photoUrl } from '../lib/spotStyle';
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 export { cx };
@@ -138,30 +138,56 @@ export function StarsInput({ value, onChange, size = 34 }: { value: number; onCh
 
 /* ── Spots ───────────────────────────────────────────────────────────── */
 
-export function SpotBadge({ spot, size = 44, radius }: { spot: Spot; size?: number; radius?: number }) {
+export function SpotBadge({ spot, size = 44 }: { spot: Spot; size?: number; radius?: number }) {
   const Icon = GLYPHS[spot.glyph];
   return (
-    <span
-      className="spot-badge"
-      style={{ width: size, height: size, borderRadius: radius ?? size * 0.28, background: tintGradient(spot.kind) }}
-      aria-hidden
-    >
+    <span className="spot-badge" style={{ width: size, height: size }} aria-hidden>
       <Icon size={size * 0.5} strokeWidth={1.9} />
     </span>
   );
 }
 
-/** Couverture générée : dégradé de la famille, pictogramme et motif discret. */
-export function SpotCover({ spot, height = 132, className }: { spot: Spot; height?: number; className?: string }) {
-  const Icon = GLYPHS[spot.glyph];
+/** Vignette de liste : la photo du spot, sinon son pictogramme blanc sur fond noir. */
+export function SpotThumb({ spot, size = 60 }: { spot: Spot; size?: number }) {
+  const [failed, setFailed] = useState(false);
+  if (!spot.cover || failed) return <SpotBadge spot={spot} size={size} />;
   return (
-    <div className={cx('spot-cover', className)} style={{ height, background: tintGradient(spot.kind, 135) }} aria-hidden>
-      <div className="spot-cover__pattern">
-        {Array.from({ length: 14 }, (_, i) => (
-          <Icon key={i} strokeWidth={1.4} />
-        ))}
-      </div>
-      <Icon className="spot-cover__glyph" strokeWidth={1.6} />
+    <img
+      className="spot-thumb"
+      src={photoUrl(spot.cover.url, size * 3, size * 3)}
+      alt=""
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      style={{ width: size, height: size }}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
+/** Couverture : la photo du spot (créditée), sinon son pictogramme blanc sur fond noir. */
+export function SpotCover({ spot, height = 132, className, width = 640 }: { spot: Spot; height?: number; className?: string; width?: number }) {
+  const Icon = GLYPHS[spot.glyph];
+  const [failed, setFailed] = useState(false);
+  const cover = spot.cover && !failed ? spot.cover : null;
+  return (
+    <div className={cx('spot-cover', className)} style={{ height }}>
+      {cover ? (
+        <>
+          <img
+            src={photoUrl(cover.url, width)}
+            alt=""
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            onError={() => setFailed(true)}
+          />
+          <span className="spot-cover__credit">
+            © {cover.credit}
+            {cover.source === 'google' && ' · Google Maps'}
+          </span>
+        </>
+      ) : (
+        <Icon className="spot-cover__glyph" strokeWidth={1.6} aria-hidden />
+      )}
     </div>
   );
 }
@@ -304,9 +330,10 @@ export function Row({
   );
 }
 
-export function IconTile({ color, children, size = 30 }: { color: string; children: ReactNode; size?: number }) {
+/** Pictogramme blanc sur fond noir, sans cadre carré. */
+export function IconTile({ children, size = 30 }: { color?: string; children: ReactNode; size?: number }) {
   return (
-    <span className="icon-tile" style={{ background: color, width: size, height: size }}>
+    <span className="icon-tile" style={{ width: size, height: size }}>
       {children}
     </span>
   );

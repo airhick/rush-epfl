@@ -6,7 +6,7 @@ import { bus } from './bus';
 import { debit, record } from './ledger';
 import { systemMessage } from './messages';
 import { getUser, invalidatePublicUser, publicUser } from './users';
-import { SPOT_BY_ID, findItem } from '../../shared/catalog';
+import { CUSTOM_ITEM_ID, SPOT_BY_ID, findItem, isOrderable, type MenuSection } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { computeHold, maxActualItems, settle, suggestTip, TIP_MAX_CENTS, TIP_MIN_CENTS } from '../../shared/pricing';
 import { formatCHF } from '../../shared/money';
@@ -153,23 +153,34 @@ function expectStatus(row: OrderRow, ...allowed: OrderStatus[]) {
 export interface CreateOrderInput {
   spotId: string;
   items: { itemId: string; qty: number }[];
+  /** Demande libre : texte et budget plafond (bornés par la validation de l'API). */
+  custom?: { text: string; budgetCents: number } | null;
   dropoff: Dropoff;
   tipCents: number;
 }
 
-export function createOrder(requesterId: string, input: CreateOrderInput, now = new Date()): Order {
+/**
+ * `menu` est le menu du jour résolu côté serveur (offre EPFL + carte fixe) :
+ * les prix ne viennent jamais du navigateur.
+ */
+export function createOrder(requesterId: string, input: CreateOrderInput, now = new Date(), menu?: MenuSection[]): Order {
   const spot = SPOT_BY_ID.get(input.spotId);
   if (!spot) throw new HttpError(404, 'Spot inconnu.');
   if (!openStatus(spot.hours, now).open) throw new HttpError(422, `${spot.name} est fermé pour le moment.`);
+  const sections = menu ?? spot.menu;
 
   const merged = new Map<string, number>();
   for (const { itemId, qty } of input.items) merged.set(itemId, (merged.get(itemId) ?? 0) + qty);
 
   const items: OrderItem[] = [];
   for (const [itemId, qty] of merged) {
-    const item = findItem(spot, itemId);
-    if (!item) throw new HttpError(422, 'Un article n’existe plus dans ce menu.');
+    const item = findItem(sections, itemId);
+    if (!item) throw new HttpError(422, 'Un plat n’est plus au menu du jour. Retire-le de ta demande.');
+    if (!isOrderable(item)) throw new HttpError(422, `${item.name} n’a pas de prix fixe : passe par une demande libre.`);
     items.push({ id: item.id, name: item.name, qty, priceCents: item.priceCents });
+  }
+  if (input.custom) {
+    items.push({ id: CUSTOM_ITEM_ID, name: input.custom.text.trim(), qty: 1, priceCents: input.custom.budgetCents, custom: true });
   }
   const itemCount = items.reduce((n, i) => n + i.qty, 0);
   if (itemCount === 0) throw new HttpError(422, 'Ton panier est vide.');

@@ -58,7 +58,7 @@
   height: 30px;
   border-radius: 50%;
   color: #fff;
-  background: #8e8e93;
+  background: #000;
   box-shadow:
     0 0 0 2px #fff,
     var(--shadow-pin);
@@ -107,7 +107,7 @@
 }
 
 .spot-pin.is-closed .spot-pin__bubble {
-  background: #aeaeb2;
+  background: #8e8e93;
 }
 
 :root[data-theme='dark'] .spot-pin.is-closed .spot-pin__bubble {

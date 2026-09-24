@@ -24,6 +24,29 @@
   --bar: rgba(251, 251, 250, 0.97);
   --scrim: rgba(0, 0, 0, 0.28);
 
+  /* Liquid Glass : teinte légère, flou saturé, arête lumineuse et reflet. */
+  --lg-tint: rgba(255, 255, 255, 0.48);
+  --lg-tint-strong: rgba(255, 255, 255, 0.7);
+  /* Barres posées sur du contenu qui défile : plus couvrantes pour rester lisibles. */
+  --lg-tint-bar: rgba(250, 250, 252, 0.95);
+  --lg-blur: blur(24px) saturate(210%) brightness(1.04);
+  --lg-rim:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.95), inset 0 -1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.55), inset 0 0 18px rgba(255, 255, 255, 0.18);
+  --lg-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 38%,
+    rgba(255, 255, 255, 0) 62%,
+    rgba(255, 255, 255, 0.16) 100%
+  );
+  --lg-shadow: 0 12px 34px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+
+  /* Icônes : pictogramme blanc sur fond noir, sans cadre. */
+  --icon-bg: #000000;
+  --icon-fg: #ffffff;
+  --icon-ring: transparent;
+
   /* Texte */
   --label: #000000;
   --label-2: rgba(60, 60, 67, 0.62);
@@ -91,6 +114,26 @@
   --glass-border: rgba(255, 255, 255, 0.08);
   --bar: rgba(24, 24, 26, 0.97);
   --scrim: rgba(0, 0, 0, 0.5);
+
+  --lg-tint: rgba(36, 36, 40, 0.42);
+  --lg-tint-strong: rgba(30, 30, 34, 0.66);
+  --lg-tint-bar: rgba(24, 24, 27, 0.95);
+  --lg-blur: blur(24px) saturate(190%) brightness(0.96);
+  --lg-rim:
+    inset 0 1px 0.5px rgba(255, 255, 255, 0.26), inset 0 -1px 1px rgba(255, 255, 255, 0.06),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.14), inset 0 0 18px rgba(255, 255, 255, 0.04);
+  --lg-sheen: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.03) 38%,
+    rgba(255, 255, 255, 0) 62%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  --lg-shadow: 0 12px 34px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.3);
+
+  --icon-bg: #000000;
+  --icon-fg: #ffffff;
+  --icon-ring: rgba(255, 255, 255, 0.22);
 
   --label: #ffffff;
   --label-2: rgba(235, 235, 245, 0.62);

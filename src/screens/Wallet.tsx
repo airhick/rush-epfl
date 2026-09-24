@@ -10,12 +10,12 @@ import { Screen } from '../ui/Screen';
 import { Button, cx, Empty, Skeleton } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 
-const TX_STYLE: Record<TxKind, { icon: typeof Gift; color: string; name: string }> = {
-  bonus: { icon: Gift, color: 'var(--blue)', name: 'Crédit offert' },
-  hold: { icon: ShoppingBag, color: 'var(--orange)', name: 'Réservation' },
-  refund: { icon: RotateCcw, color: 'var(--green)', name: 'Remboursement' },
-  release: { icon: Undo2, color: 'var(--label-2)', name: 'Annulation' },
-  payout: { icon: Bike, color: 'var(--green)', name: 'Livraison' },
+const TX_STYLE: Record<TxKind, { icon: typeof Gift; name: string }> = {
+  bonus: { icon: Gift, name: 'Crédit offert' },
+  hold: { icon: ShoppingBag, name: 'Réservation' },
+  refund: { icon: RotateCcw, name: 'Remboursement' },
+  release: { icon: Undo2, name: 'Annulation' },
+  payout: { icon: Bike, name: 'Livraison' },
 };
 
 export function Wallet() {
@@ -91,7 +91,7 @@ export function Wallet() {
                     onClick={() => t.orderId && navigate(`/orders/${t.orderId}`)}
                     disabled={!t.orderId}
                   >
-                    <span className="tx__icon" style={{ color: style.color }}>
+                    <span className="tx__icon">
                       <style.icon size={18} strokeWidth={2.2} />
                     </span>
                     <span className="tx__text">

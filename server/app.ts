@@ -9,9 +9,10 @@ import * as messages from './services/messages';
 import * as ledger from './services/ledger';
 import * as presence from './services/presence';
 import * as places from './services/places';
+import * as epflMenus from './services/epflMenus';
 import { getUser, publicUser, toMe, updateProfile } from './services/users';
 import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
-import { SPOT_BY_ID } from '../shared/catalog';
+import { CUSTOM_BUDGET_MAX_CENTS, CUSTOM_BUDGET_MIN_CENTS, CUSTOM_TEXT_MAX, SPOT_BY_ID } from '../shared/catalog';
 import type { Conversation } from '../shared/types';
 
 const latLng = { lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) };
@@ -26,7 +27,13 @@ const schemas = {
   }),
   order: z.object({
     spotId: z.string(),
-    items: z.array(z.object({ itemId: z.string(), qty: z.number().int().min(1).max(12) })).min(1).max(20),
+    items: z.array(z.object({ itemId: z.string().max(64), qty: z.number().int().min(1).max(12) })).max(20),
+    custom: z
+      .object({
+        text: z.string().trim().min(3, 'Décris ta demande en quelques mots.').max(CUSTOM_TEXT_MAX),
+        budgetCents: z.number().int().min(CUSTOM_BUDGET_MIN_CENTS).max(CUSTOM_BUDGET_MAX_CENTS),
+      })
+      .nullish(),
     dropoff: z.object({ ...latLng, label: z.string().trim().min(1).max(60), note: z.string().trim().max(140) }),
     tipCents: z.number().int().min(TIP_MIN_CENTS).max(TIP_MAX_CENTS),
   }),
@@ -97,6 +104,17 @@ export function createApp() {
     return c.json({ ok: true });
   });
 
+  /* ── Menus du jour et photos des spots : données publiques, sans session ── */
+
+  const spotParam = (c: Context<AppEnv>) => {
+    const spot = SPOT_BY_ID.get(c.req.param('id') ?? '');
+    if (!spot) throw new HttpError(404, 'Spot inconnu.');
+    return spot;
+  };
+
+  api.get('/spots/:id/menu', async (c) => c.json(await epflMenus.spotMenu(spotParam(c))));
+  api.get('/spots/:id/media', (c) => c.json(places.placeMedia(spotParam(c).id)));
+
   /* Tout ce qui suit exige une session. */
   api.use('*', async (c, next) => {
     const user = auth.userFromToken(getCookie(c, auth.SESSION_COOKIE));
@@ -125,26 +143,17 @@ export function createApp() {
   api.get('/presence', (c) => c.json(presence.getPresence(me(c).id)));
   api.put('/presence', async (c) => c.json(presence.setPresence(me(c).id, await body(c, schemas.presence))));
 
-  /* ── Photos et avis Google Maps (API Places, attributions incluses) ── */
-
-  const spotParam = (c: Context<AppEnv>) => {
-    const spot = SPOT_BY_ID.get(c.req.param('id') ?? '');
-    if (!spot) throw new HttpError(404, 'Spot inconnu.');
-    return spot;
-  };
-
-  api.get('/spots/:id/google', async (c) => c.json(await places.googlePlace(spotParam(c))));
-
-  api.get('/spots/:id/google/photo', async (c) => {
-    const url = await places.googlePhotoUrl(spotParam(c), c.req.query('name') ?? '', Number(c.req.query('w')));
-    return c.redirect(url, 302);
-  });
-
   /* ── Commandes ────────────────────────────────────────────────────── */
 
   api.get('/orders', (c) => c.json(orders.listMine(me(c).id)));
   api.get('/orders/open', (c) => c.json(orders.listOpen(me(c).id)));
-  api.post('/orders', async (c) => c.json(orders.createOrder(me(c).id, await body(c, schemas.order)), 201));
+  api.post('/orders', async (c) => {
+    const input = await body(c, schemas.order);
+    const spot = SPOT_BY_ID.get(input.spotId);
+    // Les prix viennent toujours du serveur : offre du jour EPFL ou carte officielle.
+    const menu = spot ? (await epflMenus.spotMenu(spot)).sections : [];
+    return c.json(orders.createOrder(me(c).id, input, new Date(), menu), 201);
+  });
   api.get('/orders/:id', (c) => c.json(orders.orderFor(c.req.param('id'), me(c).id)));
 
   api.post('/orders/:id/accept', (c) => c.json(orders.accept(c.req.param('id'), me(c).id)));

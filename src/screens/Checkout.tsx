@@ -81,7 +81,8 @@ export function Checkout() {
     create.mutate(
       {
         spotId: spot.id,
-        items: items.map((i) => ({ itemId: i.itemId, qty: i.qty })),
+        items: items.filter((i) => !i.custom).map((i) => ({ itemId: i.itemId, qty: i.qty })),
+        custom: cart.custom,
         dropoff: { lat: dropoff.lat, lng: dropoff.lng, label: dropoff.label, note: dropoff.note },
         tipCents,
       },
@@ -144,13 +145,26 @@ export function Checkout() {
       <p className="group-hint">Glisse l’épingle noire sur la carte pour être précis. La note n’est visible que par ton rusher.</p>
 
       <Group header={plural(count, 'article', 'articles')}>
-        {items.map((i) => (
-          <div key={i.itemId} className="cart-line">
-            <span className="cart-line__name">{i.name}</span>
-            <span className="cart-line__price">{formatCHF(i.priceCents * i.qty)}</span>
-            <Stepper compact value={i.qty} onChange={(n) => cart.setQty(i.itemId, n)} />
-          </div>
-        ))}
+        {items.map((i) =>
+          i.custom ? (
+            <div key={i.itemId} className="cart-line cart-line--custom">
+              <span className="cart-line__name">
+                <span className="cart-line__kicker">Demande libre</span>
+                {i.name}
+              </span>
+              <span className="cart-line__price">max. {formatCHF(i.priceCents)}</span>
+              <button className="link" onClick={() => cart.setCustom(spot.id, null)}>
+                Retirer
+              </button>
+            </div>
+          ) : (
+            <div key={i.itemId} className="cart-line">
+              <span className="cart-line__name">{i.name}</span>
+              <span className="cart-line__price">{formatCHF(i.priceCents * i.qty)}</span>
+              <Stepper compact value={i.qty} onChange={(n) => cart.setQty(i.itemId, n)} />
+            </div>
+          ),
+        )}
         <button className="cart-add" onClick={() => navigate(`/spot/${spot.id}`)}>
           <Plus size={16} strokeWidth={2.6} /> Ajouter des articles
         </button>
@@ -216,16 +230,16 @@ export function Checkout() {
 
       <Group
         header="Paiement"
-        footer="Le montant est réservé sur ton solde. Ton rusher avance l’achat et déclare le ticket exact : ce qui n’est pas dépensé t’est rendu à la livraison."
+        footer="Rush réserve le prix publié le plus élevé (tarif visiteur pour les menus EPFL) et le budget de ta demande libre. Ton rusher avance l’achat et déclare le ticket exact : ce qui n’est pas dépensé t’est rendu à la livraison."
       >
         <div className="summary">
           <div className="summary__line">
-            <span>Articles (prix indicatifs)</span>
+            <span>Articles · montant maximum</span>
             <span>{formatCHF(hold.itemsCents)}</span>
           </div>
           <div className="summary__line">
             <span>
-              Marge de variation de prix <span className="muted">+10 %</span>
+              Marge de sécurité <span className="muted">+10 %</span>
             </span>
             <span>{formatCHF(hold.marginCents)}</span>
           </div>

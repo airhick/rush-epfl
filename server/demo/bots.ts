@@ -17,7 +17,7 @@ import { addMessage } from '../services/messages';
 import * as orders from '../services/orders';
 import { setPresence } from '../services/presence';
 import { balanceOf, bots, createUser, getUser, invalidatePublicUser, type UserRow } from '../services/users';
-import { BUILDINGS, SPOTS, SPOT_BY_ID, spotOf } from '../../shared/catalog';
+import { BUILDINGS, CUSTOM_ITEM_ID, SPOTS, SPOT_BY_ID, spotOf, type Spot, type SpotKind } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { haversine, lerp, type LatLng } from '../../shared/geo';
 import { computeHold, suggestTip } from '../../shared/pricing';
@@ -81,6 +81,18 @@ function ensureBots(): UserRow[] {
   return created;
 }
 
+/** Les rushers simulés passent par des demandes libres : aucun prix n'est inventé. */
+const BOT_REQUESTS: Record<SpotKind, string[]> = {
+  restaurant: ['Le menu du jour', 'Le plat végétarien du jour', 'Une pizza margherita'],
+  cafeteria: ['Un sandwich et une eau plate', 'Une salade', 'Le menu du jour'],
+  cafe: ['Un café et un croissant', 'Un thé et un muffin'],
+  bar: ['Le kit étudiant', 'Un café'],
+  foodtruck: ['Un wrap', 'Un burger végétarien'],
+  grocery: ['Une bouteille d’eau et des fruits', 'Des chips et un soda'],
+};
+
+const botRequest = (spot: Spot) => ({ text: pick(BOT_REQUESTS[spot.kind]), budgetCents: pick([600, 800, 1000, 1200, 1500]) });
+
 /** Quelques livraisons passées entre rushers simulés, pour des notes crédibles. */
 function seedHistory(people: UserRow[]) {
   const spots = SPOTS.filter((s) => s.area === 'EPFL');
@@ -89,7 +101,8 @@ function seedHistory(people: UserRow[]) {
     for (let i = 0; i < count; i++) {
       const requester = pick(people.filter((p) => p.id !== courier.id));
       const spot = pick(spots);
-      const menuItem = pick(spot.menu.flatMap((s) => s.items));
+      const request = botRequest(spot);
+      const menuItem = { id: CUSTOM_ITEM_ID, name: request.text, qty: 1, priceCents: request.budgetCents, custom: true };
       const dest = pick(BUILDINGS);
       const tip = suggestTip({ spot, dropoff: dest, itemCount: 1 }).suggestedCents;
       const hold = computeHold(menuItem.priceCents, tip);
@@ -103,7 +116,7 @@ function seedHistory(people: UserRow[]) {
         requester.id,
         courier.id,
         spot.id,
-        JSON.stringify([{ id: menuItem.id, name: menuItem.name, qty: 1, priceCents: menuItem.priceCents }]),
+        JSON.stringify([menuItem]),
         menuItem.priceCents,
         hold.marginCents,
         tip,
@@ -158,21 +171,14 @@ function postBotRequest(people: UserRow[]) {
     return d > 120 && d < 900;
   });
   const dest = pick(candidates.length ? candidates : BUILDINGS);
-  const menu = spot.menu.flatMap((s) => s.items);
-  const lines = new Map<string, number>();
-  const n = Math.random() < 0.6 ? 1 : Math.random() < 0.7 ? 2 : 3;
-  for (let i = 0; i < n; i++) {
-    const it = pick(menu);
-    lines.set(it.id, (lines.get(it.id) ?? 0) + 1);
-  }
-  const itemCount = [...lines.values()].reduce((a, b) => a + b, 0);
-  const suggestion = suggestTip({ spot, dropoff: dest, itemCount });
+  const suggestion = suggestTip({ spot, dropoff: dest, itemCount: 1 });
   const tipCents = Math.max(100, suggestion.suggestedCents + pick([-50, 0, 0, 50, 100]));
   // Légère dispersion autour du bâtiment pour que les épingles ne se superposent pas.
   const jitter = { lat: dest.lat + rand(-0.00012, 0.00012), lng: dest.lng + rand(-0.00018, 0.00018) };
   orders.createOrder(requester.id, {
     spotId: spot.id,
-    items: [...lines].map(([itemId, qty]) => ({ itemId, qty })),
+    items: [],
+    custom: botRequest(spot),
     dropoff: { ...jitter, label: dest.name, note: pick(NOTES) },
     tipCents,
   });
@@ -228,9 +234,10 @@ function botDeliversForHuman(orderId: string, people: UserRow[]) {
       later(14000, () => {
         const current = orders.getRow(orderId);
         if (current.status !== 'accepted' || current.courier_id !== bot.id) return;
-        const drift = roundTo(current.items_cents * rand(-0.06, 0.06), 10);
+        // Le montant réservé est un plafond (prix visiteur, budget) : le ticket est souvent plus bas.
+        const ticket = roundTo(current.items_cents * rand(0.75, 1), 10);
         const max = current.hold_cents - current.tip_cents;
-        orders.pickUp(orderId, bot.id, Math.min(max, Math.max(50, current.items_cents + drift)));
+        orders.pickUp(orderId, bot.id, Math.min(max, Math.max(50, ticket)));
         const dropoff = { lat: current.dropoff_lat, lng: current.dropoff_lng };
         const steps = Math.max(12, Math.round(haversine(spot, dropoff) / 25));
         walk(orderId, bot.id, walkPath(spot, dropoff, steps), 1500, () => {

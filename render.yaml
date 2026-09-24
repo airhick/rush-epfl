@@ -11,7 +11,3 @@ services:
         value: production
       - key: RUSH_WELCOME_BONUS_CENTS
         value: "100"
-      # Facultatif : photos et avis Google Maps des spots (Places API New).
-      # Sans clé, les fiches affichent la couverture et les liens vers les sources.
-      - key: GOOGLE_MAPS_API_KEY
-        sync: false
