@@ -27,7 +27,7 @@ npm install
 npm run dev
 ```
 
-Ouvre <http://localhost:5173> et connecte-toi avec n'importe quelle adresse `@epfl.ch`. Sans serveur SMTP, le code s'affiche dans la console du serveur **et** dans l'app (bouton « Mode développement »).
+Ouvre <http://localhost:5173> et connecte-toi avec n'importe quelle adresse `@epfl.ch`. Sans envoi d'e-mail configuré, le code s'affiche dans la console du serveur **et** dans l'app (bouton « Mode développement »).
 
 `npm run dev` active le **mode démo** (`RUSH_DEMO=1`) : huit rushers simulés publient des demandes, acceptent les tiennes, se déplacent sur la carte et te répondent dans le chat. Idéal pour tester seul. Pour tester à deux humains, ouvre une seconde fenêtre de navigation privée avec une autre adresse.
 
@@ -93,7 +93,7 @@ Ou avec Docker (c'est ce qu'utilise Render) :
 
 ```bash
 docker build -t rush-epfl .
-docker run -p 8787:8787 -v rush-data:/app/data -e SMTP_URL=… rush-epfl
+docker run -p 8787:8787 -v rush-data:/app/data -e BREVO_API_KEY=… -e MAIL_FROM='Rush <toi@gmail.com>' rush-epfl
 ```
 
 ### Render (offre gratuite)
@@ -104,8 +104,9 @@ docker run -p 8787:8787 -v rush-data:/app/data -e SMTP_URL=… rush-epfl
 |---|---|---|
 | `PORT` | Port HTTP | `8787` |
 | `RUSH_DB` | Fichier SQLite | `data/rush.db` |
-| `SMTP_URL` | Envoi des codes par e-mail (`smtps://user:pass@host`) | console |
-| `MAIL_FROM` | Expéditeur des e-mails | `Rush <no-reply@rush.epfl.ch>` |
+| `BREVO_API_KEY` | Envoi des codes par l'API HTTP de Brevo (prioritaire) | console |
+| `SMTP_URL` | Envoi des codes en SMTP (`smtps://user:pass@host`), hors Render gratuit | console |
+| `MAIL_FROM` | Expéditeur des e-mails (avec Brevo : adresse validée dans Brevo) | `Rush <no-reply@rush.epfl.ch>` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
@@ -113,6 +114,17 @@ docker run -p 8787:8787 -v rush-data:/app/data -e SMTP_URL=… rush-epfl
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
+
+### Envoi des codes de connexion
+
+L'offre gratuite de Render **bloque les ports SMTP** (25, 465, 587) depuis septembre 2025 : un `SMTP_URL` Gmail n'y part jamais. L'app envoie donc les codes par l'API HTTP de [Brevo](https://www.brevo.com) (port 443, offre gratuite de 300 e-mails/jour, aucun nom de domaine requis) :
+
+1. Créer un compte Brevo gratuit (le premier envoi peut attendre une validation du compte par Brevo).
+2. *Senders, domains & dedicated IPs* → *Senders* → ajouter l'adresse d'expéditeur (par ex. une adresse Gmail) et la valider avec le code reçu.
+3. *SMTP & API* → *API keys* → générer une clé.
+4. Sur Render → *Environment* : `BREVO_API_KEY` = la clé, `MAIL_FROM` = `Rush <adresse-validée>`.
+
+Si l'envoi échoue, l'app affiche « L'e-mail n'a pas pu partir » et le détail de l'erreur Brevo est dans les logs. Les e-mails venant d'une adresse Gmail peuvent arriver dans le courrier indésirable EPFL ; authentifier un nom de domaine dans Brevo (SPF/DKIM) règle ça.
 
 ### Photos et avis Google Maps
 
@@ -126,7 +138,7 @@ Côté serveur (`server/services/places.ts`) : le lieu Google est retrouvé par 
 
 ## À savoir avant un vrai lancement
 
-- **SMTP obligatoire en production** : sans `SMTP_URL`, les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
+- **Envoi d'e-mails obligatoire en production** : sans `BREVO_API_KEY` (ou `SMTP_URL` hors Render gratuit), les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
 - **Catalogue** (`shared/catalog.ts`) : liste des points de restauration relevée en septembre 2026 sur les pages officielles de l'EPFL et des enseignes. Chaque spot indique ses sources (affichées et liées dans l'app), si ses horaires sont officiels, et marque d'un ≈ les prix estimés faute de source publique. Les positions sur la carte restent approximatives.
 - **Photos et avis** : ils viennent uniquement de Google Maps (API officielle, crédités). Rien n'est recopié depuis Uber Eats, Tripadvisor ou d'autres sites, dont les contenus appartiennent à leurs auteurs ; l'app renvoie vers eux par lien.
 - **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.

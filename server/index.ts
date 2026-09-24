@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { env } from './env';
+import { mailer } from './mail';
 import { createApp } from './app';
 import { handleClientEvents, sendTo, upgrade } from './realtime';
 import { SESSION_COOKIE, purgeExpired, userFromToken } from './services/auth';
@@ -32,8 +33,11 @@ handleClientEvents((userId, event) => {
   }
 });
 
-if (env.production && !env.smtpUrl) {
-  console.warn('\n  ⚠︎  SMTP_URL non défini : les codes de connexion ne partent que dans ces logs.\n');
+if (env.production && !mailer) {
+  console.warn('\n  ⚠︎  Ni BREVO_API_KEY ni SMTP_URL : les codes de connexion ne partent que dans ces logs.\n');
+}
+if (mailer === 'brevo' && !env.mailFromSet) {
+  console.warn('\n  ⚠︎  MAIL_FROM non défini : Brevo refusera l’envoi, il faut une adresse d’expéditeur validée.\n');
 }
 
 const server = serve({ fetch: app.fetch, port: env.port }, (info) => {

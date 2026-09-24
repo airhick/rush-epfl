@@ -189,6 +189,7 @@ export function Login() {
               </button>
             )}
 
+            <p className="auth__hint">Rien reçu après une minute ? Regarde dans le courrier indésirable.</p>
             <button className="link auth__resend" disabled={request.isPending} onClick={() => request.mutate()}>
               Renvoyer un code
             </button>

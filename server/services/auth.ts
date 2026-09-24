@@ -42,8 +42,16 @@ export async function requestCode(rawEmail: string): Promise<{ devCode?: string 
     Date.now(),
   );
 
-  const delivered = await sendLoginCode(email, code);
-  // Sans SMTP (développement local), le code est renvoyé pour pouvoir tester.
+  let delivered: boolean;
+  try {
+    delivered = await sendLoginCode(email, code);
+  } catch (err) {
+    console.error('[mail]', err instanceof Error ? err.message : err);
+    // Pas de délai d'attente pour un code qui n'est jamais parti.
+    run('DELETE FROM login_codes WHERE email = ?', email);
+    throw new HttpError(502, 'L’e-mail n’a pas pu partir. Réessaie dans un instant.');
+  }
+  // Sans envoi configuré (développement local), le code est renvoyé pour pouvoir tester.
   return delivered || env.production ? {} : { devCode: code };
 }
 

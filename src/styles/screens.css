@@ -112,9 +112,16 @@
   color: var(--green-text);
 }
 
+.auth__hint {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--label-2);
+}
+
 .auth__resend {
   display: block;
-  margin: 22px auto 0;
+  margin: 10px auto 0;
 }
 
 .otp {
