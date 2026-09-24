@@ -6,6 +6,8 @@ export const env = {
   dbPath: process.env.RUSH_DB ?? 'data/rush.db',
   /** Rushers simulés qui acceptent, livrent et répondent : pratique pour tester seul. */
   demo: process.env.RUSH_DEMO === '1',
+  /** Crédit offert à chaque nouveau compte, en centimes (CHF 1.00 par défaut). */
+  welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
   /** Sans SMTP, le code de connexion est affiché dans la console du serveur. */
   smtpUrl: process.env.SMTP_URL ?? null,
   mailFrom: process.env.MAIL_FROM ?? 'Rush <no-reply@rush.epfl.ch>',

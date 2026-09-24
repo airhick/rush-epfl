@@ -11,7 +11,7 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Carte intégrée** | Tous les spots de graille de l'EPFL et autour (UNIL), avec les rushers présents en direct, les trajets et la position du livreur. Style vectoriel maison inspiré d'Apple Plans, bâtiments en 3D, clair/sombre. |
 | **Commander** | Menus par spot, panier, point de livraison par GPS, bâtiment ou épingle déplaçable sur la carte, note visible uniquement par le rusher. |
 | **Livrer** | Tu indiques où tu es et où tu vas : les demandes sont triées selon le **détour** qu'elles t'imposent (« Sur ton chemin », « +320 m de détour »). |
-| **Solde Rush** | Porte-monnaie local : recharge, montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
+| **Solde Rush** | Porte-monnaie local : **CHF 1.00 offert** à chaque nouveau compte, puis le solde se gagne en livrant. Montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
 | **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
@@ -39,6 +39,7 @@ npm run typecheck
 
 Tous les montants sont en centimes, et le solde est **toujours la somme d'un registre append-only** (`transactions`) : rien n'est jamais modifié en place.
 
+0. **Bienvenue** — chaque nouveau compte reçoit CHF 1.00 (`RUSH_WELCOME_BONUS_CENTS`). Il n'y a pas de recharge : le solde s'alimente en livrant pour les autres.
 1. **Publication** — réservation de `articles + 10 % de marge + pourboire` sur le solde du demandeur. La marge absorbe les écarts entre prix indicatifs et prix réels.
 2. **Achat** — le rusher paie au comptoir et déclare le montant du ticket (plafonné au montant réservé).
 3. **Confirmation** — le rusher reçoit `ticket + pourboire`, le demandeur récupère le reste.
@@ -95,13 +96,15 @@ npm start        # sert l'API, le WebSocket et l'app compilée sur le même port
 | `MAIL_FROM` | Expéditeur des e-mails | `Rush <no-reply@rush.epfl.ch>` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
+| `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
 
 ## À savoir avant un vrai lancement
 
+- **SMTP obligatoire en production** : sans `SMTP_URL`, les codes de connexion ne partent que dans les logs du serveur (un avertissement s'affiche au démarrage).
 - **Coordonnées des spots** : placées à la main et approximatives. Elles sont toutes dans `shared/catalog.ts`, à vérifier sur le terrain (les prix aussi sont indicatifs).
-- **Paiements** : la recharge crédite le solde local sans transaction bancaire. Brancher TWINT, Stripe ou Camipro se fait dans `server/services/ledger.ts` (`topUp`).
+- **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 2.40) suppose d'avoir livré au moins une fois.
 - **Authentification** : le code par e-mail limite l'accès aux adresses `@epfl.ch` ; une intégration au SSO EPFL (Microsoft Entra ID) serait l'étape suivante.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

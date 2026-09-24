@@ -31,10 +31,6 @@ const schemas = {
   pickup: z.object({ actualItemsCents: z.number().int().positive() }),
   rate: z.object({ stars: z.number().int().min(1).max(5) }),
   message: z.object({ body: z.string().trim().min(1).max(500) }),
-  topup: z.object({
-    amountCents: z.number().int().min(500).max(20_000),
-    method: z.enum(['twint', 'card', 'camipro']),
-  }),
   presence: z.object({
     available: z.boolean(),
     spotId: z.string().nullable(),
@@ -181,11 +177,6 @@ export function createApp() {
   /* ── Solde ────────────────────────────────────────────────────────── */
 
   api.get('/wallet', (c) => c.json(ledger.wallet(me(c).id)));
-  api.post('/wallet/topup', async (c) => {
-    const { amountCents, method } = await body(c, schemas.topup);
-    ledger.topUp(me(c).id, amountCents, method);
-    return c.json(ledger.wallet(me(c).id));
-  });
 
   app.route('/api', api);
   return app;

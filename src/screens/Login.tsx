@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, Bike, MessageCircle, Wallet } from 'lucide-react';
+import { ArrowRight, Bike, Gift, MessageCircle, Wallet } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
 import { keys, useUpdateProfile } from '../lib/queries';
 import { useMapScene } from '../state/scene';
 import { Button, Chip, cx } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 import type { Me } from '../../shared/types';
+import { formatCHF } from '../../shared/money';
 
 const DOMAIN = '@epfl.ch';
 
@@ -195,6 +196,14 @@ export function Onboarding({ me }: { me: Me }) {
       </div>
       <h1 className="auth__title">Bienvenue sur Rush, {firstName || 'toi'}.</h1>
       <p className="auth__lead">Ton prénom et l’initiale de ton nom sont visibles par les personnes avec qui tu échanges.</p>
+      {me.balanceCents > 0 && (
+        <div className="welcome-gift">
+          <Gift size={18} />
+          <span>
+            <strong>{formatCHF(me.balanceCents)} offert</strong> sur ton solde Rush pour bien démarrer.
+          </span>
+        </div>
+      )}
 
       <form
         className="auth__form"

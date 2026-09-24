@@ -163,18 +163,6 @@ export function useMarkRead(orderId: string) {
   });
 }
 
-export function useTopUp() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: (input: { amountCents: number; method: 'twint' | 'card' | 'camipro' }) =>
-      api<Wallet>('/wallet/topup', { body: input }),
-    onSuccess: (wallet) => {
-      qc.setQueryData(keys.wallet, wallet);
-      qc.setQueryData<Me | null>(keys.me, (me) => (me ? { ...me, balanceCents: wallet.balanceCents } : me));
-    },
-  });
-}
-
 export function useSetPresence() {
   const qc = useQueryClient();
   return useMutation({

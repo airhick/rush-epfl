@@ -11,14 +11,13 @@ import type { LatLng } from './geo';
  * fait jamais confiance aux prix envoyés par le navigateur.
  */
 
-export type SpotKind = 'restaurant' | 'cafe' | 'cafeteria' | 'bar' | 'foodtruck' | 'grocery' | 'vending';
+export type SpotKind = 'restaurant' | 'cafe' | 'cafeteria' | 'bar' | 'foodtruck' | 'vending';
 export type SpotGlyph =
   | 'utensils'
   | 'coffee'
   | 'sandwich'
   | 'beer'
   | 'truck'
-  | 'basket'
   | 'soda'
   | 'pizza'
   | 'burger'
@@ -61,7 +60,6 @@ export const KIND_LABEL: Record<SpotKind, string> = {
   cafeteria: 'Cafétéria',
   bar: 'Bar',
   foodtruck: 'Food truck',
-  grocery: 'Épicerie',
   vending: 'Distributeurs',
 };
 
@@ -553,39 +551,6 @@ export const SPOTS: Spot[] = [
           item('ven-snickers', 'Snickers', 1.8),
           item('ven-chips', 'Chips paprika', 2.2, { tags: ['vegan'] }),
           item('ven-sandwich', 'Sandwich emballé', 5.0),
-        ],
-      },
-    ],
-  },
-  {
-    id: 'epicerie-nord',
-    name: 'Épicerie Quartier Nord',
-    kind: 'grocery',
-    glyph: 'basket',
-    place: 'Quartier Nord',
-    area: 'EPFL',
-    lat: 46.523,
-    lng: 6.5638,
-    tagline: 'Dépannage, fruits, boissons fraîches',
-    priceLevel: 1,
-    hours: week.custom([['07:00', '20:00']], [['08:00', '18:00']]),
-    menu: [
-      {
-        title: 'Frais',
-        items: [
-          item('epi-banane', 'Banane', 0.5),
-          item('epi-pomme', 'Pomme', 0.8),
-          item('epi-yogourt', 'Yogourt nature', 1.2),
-          item('epi-sandwich', 'Sandwich triangle', 4.2),
-        ],
-      },
-      {
-        title: 'Épicerie',
-        items: [
-          item('epi-chocolat', 'Tablette de chocolat', 2.5, { tags: ['popular'] }),
-          item('epi-eau', 'Eau 1.5 L', 1.0),
-          item('epi-pates', 'Pâtes 500 g', 1.9),
-          item('epi-mouchoirs', 'Mouchoirs', 1.5),
         ],
       },
     ],

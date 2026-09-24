@@ -4,9 +4,6 @@ import { HttpError } from '../http';
 import { balanceOf, heldOf } from './users';
 import type { Transaction, TxKind, Wallet } from '../../shared/types';
 
-/** Plafond du solde : Rush n'est pas une banque, juste un porte-monnaie de campus. */
-export const MAX_BALANCE_CENTS = 50_000;
-
 export function record(userId: string, kind: TxKind, amountCents: number, label: string, orderId: string | null = null) {
   if (!Number.isInteger(amountCents)) throw new Error('Montant non entier');
   if (amountCents === 0) return;
@@ -30,17 +27,6 @@ export function debit(userId: string, kind: TxKind, amountCents: number, label: 
       throw new HttpError(402, `Solde insuffisant : il manque CHF ${((amountCents - balance) / 100).toFixed(2)}.`);
     }
     record(userId, kind, -amountCents, label, orderId);
-  });
-}
-
-export const TOPUP_METHODS = { twint: 'TWINT', card: 'Carte', camipro: 'Camipro' } as const;
-
-export function topUp(userId: string, amountCents: number, method: keyof typeof TOPUP_METHODS) {
-  transaction(() => {
-    if (balanceOf(userId) + amountCents > MAX_BALANCE_CENTS) {
-      throw new HttpError(422, 'Le solde Rush est plafonné à CHF 500.');
-    }
-    record(userId, 'topup', amountCents, `Recharge ${TOPUP_METHODS[method]}`);
   });
 }
 

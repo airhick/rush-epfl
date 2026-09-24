@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { ChevronDown, Info, MapPin, Minus, Plus, ShoppingBag, Wallet } from 'lucide-react';
+import { Bike, ChevronDown, Info, MapPin, Minus, Plus, ShoppingBag, Wallet } from 'lucide-react';
 import { nearestBuilding } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { computeHold, describeTip, suggestTip, TIP_MAX_CENTS, TIP_MIN_CENTS, TIP_STEP_CENTS } from '../../shared/pricing';
@@ -12,7 +12,6 @@ import { useCart, useCartSummary } from '../state/cart';
 import { useDropoff } from '../state/location';
 import { arc, useMapScene, useScene } from '../state/scene';
 import { DropoffSheet } from '../features/DropoffPicker';
-import { TopUpSheet } from '../features/TopUpSheet';
 import { Screen } from '../ui/Screen';
 import { Button, cx, Empty, Group, SpotBadge, Stepper } from '../ui/primitives';
 
@@ -24,7 +23,6 @@ export function Checkout() {
   const dropoff = useDropoff();
   const create = useCreateOrder();
   const [dropoffOpen, setDropoffOpen] = useState(false);
-  const [topUpOpen, setTopUpOpen] = useState(false);
   const [why, setWhy] = useState(false);
 
   const suggestion = useMemo(
@@ -108,8 +106,8 @@ export function Checkout() {
         <>
           {create.error && <p className="form-error">{(create.error as Error).message}</p>}
           {missing > 0 ? (
-            <Button block icon={<Wallet size={18} />} onClick={() => setTopUpOpen(true)}>
-              Recharger pour publier · il manque {formatCHF(missing)}
+            <Button block icon={<Bike size={18} />} onClick={() => navigate('/deliver')}>
+              Gagner {formatCHF(missing)} en livrant
             </Button>
           ) : (
             <Button block loading={create.isPending} disabled={!open} onClick={submit}>
@@ -251,14 +249,15 @@ export function Checkout() {
               {missing === 0 && ` · ${formatCHF(balance - hold.holdCents)} après réservation`}
             </span>
           </span>
-          <button className="link" onClick={() => setTopUpOpen(true)}>
-            Recharger
-          </button>
+          {missing > 0 && (
+            <button className="link" onClick={() => navigate('/deliver')}>
+              Gagner du solde
+            </button>
+          )}
         </div>
       </Group>
 
       <DropoffSheet open={dropoffOpen} onClose={() => setDropoffOpen(false)} />
-      <TopUpSheet open={topUpOpen} onClose={() => setTopUpOpen(false)} suggestedCents={missing} />
     </Screen>
   );
 }

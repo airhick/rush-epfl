@@ -25,7 +25,6 @@ const FILTERS: { id: Filter; label: string }[] = [
   { id: 'cafeteria', label: 'Cafétérias' },
   { id: 'foodtruck', label: 'Food trucks' },
   { id: 'bar', label: 'Bars' },
-  { id: 'grocery', label: 'Épicerie' },
   { id: 'open-late', label: 'Ouvert tard' },
 ];
 

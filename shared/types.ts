@@ -78,7 +78,7 @@ export interface Conversation {
   unread: number;
 }
 
-export type TxKind = 'topup' | 'hold' | 'refund' | 'payout' | 'release';
+export type TxKind = 'bonus' | 'hold' | 'refund' | 'payout' | 'release';
 
 export interface Transaction {
   id: string;

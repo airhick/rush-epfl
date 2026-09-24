@@ -126,8 +126,9 @@ function seedHistory(people: UserRow[]) {
   people.forEach((p) => invalidatePublicUser(p.id));
 }
 
-function topUpBots(people: UserRow[]) {
-  for (const b of people) if (balanceOf(b.id) < 10_000) record(b.id, 'topup', 20_000, 'Recharge TWINT');
+/** Les rushers simulés ont besoin de solde pour publier leurs demandes. */
+function fundBots(people: UserRow[]) {
+  for (const b of people) if (balanceOf(b.id) < 10_000) record(b.id, 'bonus', 20_000, 'Crédit démo');
 }
 
 const openSpots = () => SPOTS.filter((s) => s.area === 'EPFL' && openStatus(s.hours).open);
@@ -246,7 +247,7 @@ function botDeliversForHuman(orderId: string, people: UserRow[]) {
 export function startDemo() {
   const people = ensureBots();
   const botIds = new Set(people.map((p) => p.id));
-  topUpBots(people);
+  fundBots(people);
   shufflePresence(people);
 
   const keepFeedAlive = () => {
@@ -258,7 +259,7 @@ export function startDemo() {
   };
   for (let i = 0; i < 4; i++) keepFeedAlive();
   setInterval(() => {
-    topUpBots(people);
+    fundBots(people);
     keepFeedAlive();
   }, 45_000);
   setInterval(() => shufflePresence(people), 5 * 60_000);

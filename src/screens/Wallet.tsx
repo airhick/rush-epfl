@@ -1,19 +1,17 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion } from 'motion/react';
-import { ArrowDownLeft, Bike, Lock, Plus, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
+import { Bike, Gift, Lock, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
 import { formatCHF } from '../../shared/money';
 import type { TxKind } from '../../shared/types';
 import { useMe, useWallet } from '../lib/queries';
 import { clock, groupByDay } from '../lib/format';
 import { useMapScene } from '../state/scene';
-import { TopUpSheet } from '../features/TopUpSheet';
 import { Screen } from '../ui/Screen';
 import { Button, cx, Empty, Skeleton } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 
-const TX_STYLE: Record<TxKind, { icon: typeof Plus; color: string; name: string }> = {
-  topup: { icon: ArrowDownLeft, color: 'var(--blue)', name: 'Recharge' },
+const TX_STYLE: Record<TxKind, { icon: typeof Gift; color: string; name: string }> = {
+  bonus: { icon: Gift, color: 'var(--blue)', name: 'Crédit offert' },
   hold: { icon: ShoppingBag, color: 'var(--orange)', name: 'Réservation' },
   refund: { icon: RotateCcw, color: 'var(--green)', name: 'Remboursement' },
   release: { icon: Undo2, color: 'var(--label-2)', name: 'Annulation' },
@@ -24,7 +22,6 @@ export function Wallet() {
   const { data: wallet, isLoading } = useWallet();
   const { data: me } = useMe();
   const navigate = useNavigate();
-  const [topUp, setTopUp] = useState(false);
 
   useMapScene(() => ({ cameraKey: 'overview', camera: { kind: 'overview' } }), []);
 
@@ -53,8 +50,8 @@ export function Wallet() {
         </motion.div>
 
         <div className="wallet-actions">
-          <Button icon={<Plus size={18} strokeWidth={2.6} />} onClick={() => setTopUp(true)}>
-            Recharger
+          <Button variant="secondary" icon={<Bike size={18} strokeWidth={2.2} />} onClick={() => navigate('/deliver')}>
+            Livrer pour gagner du solde
           </Button>
         </div>
 
@@ -73,7 +70,7 @@ export function Wallet() {
       </div>
 
       {wallet && wallet.transactions.length === 0 && (
-        <Empty icon={<ArrowDownLeft size={24} />} title="Aucun mouvement" body="Recharge ton solde pour passer ta première demande." />
+        <Empty icon={<Gift size={24} />} title="Aucun mouvement" body="Livre une demande pour gagner ton premier solde." />
       )}
 
       {wallet &&
@@ -84,7 +81,8 @@ export function Wallet() {
             </div>
             <div className="tx-list">
               {g.items.map((t) => {
-                const style = TX_STYLE[t.kind];
+                // Écritures d'anciennes versions (ex. recharges) : affichage neutre.
+                const style = TX_STYLE[t.kind] ?? TX_STYLE.release;
                 const [, context] = t.label.split(' · ');
                 return (
                   <button
@@ -109,11 +107,9 @@ export function Wallet() {
         ))}
 
       <p className="footnote">
-        Le solde Rush est un porte-monnaie interne à l’app, plafonné à CHF 500. Les montants réservés pour une demande restent bloqués
-        jusqu’à la livraison ou l’annulation.
+        Le solde Rush se gagne en livrant : chaque livraison te rembourse l’achat avancé et te verse le pourboire. Il sert à payer tes
+        propres demandes. Les montants réservés restent bloqués jusqu’à la livraison ou l’annulation.
       </p>
-
-      <TopUpSheet open={topUp} onClose={() => setTopUp(false)} />
     </Screen>
   );
 }

@@ -92,6 +92,26 @@
   color: var(--label-3);
 }
 
+.welcome-gift {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -10px 0 24px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--green-soft);
+  color: var(--green-text);
+  font-size: 14px;
+}
+
+.welcome-gift span {
+  color: var(--label);
+}
+
+.welcome-gift strong {
+  color: var(--green-text);
+}
+
 .auth__resend {
   display: block;
   margin: 22px auto 0;

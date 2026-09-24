@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { db } from '../server/db';
 import { HttpError } from '../server/http';
 import { createUser, balanceOf, heldOf } from '../server/services/users';
-import { topUp, wallet } from '../server/services/ledger';
+import { record, wallet } from '../server/services/ledger';
 import * as orders from '../server/services/orders';
 import { listMessages } from '../server/services/messages';
-import { normalizeEmail } from '../server/services/auth';
+import { normalizeEmail, requestCode, verifyCode } from '../server/services/auth';
+import { env } from '../server/env';
 
 // Distributeurs ouverts 24h/24 : les tests ne dépendent pas de l'heure.
 const SPOT = 'vending-inf';
@@ -13,6 +14,7 @@ const dropoff = { lat: 46.5201, lng: 6.5652, label: 'CO', note: 'Hall' };
 
 let n = 0;
 const user = () => createUser(`test.user${++n}@epfl.ch`);
+const fund = (userId: string, cents: number) => record(userId, 'bonus', cents, 'Test');
 const code = (fn: () => unknown) => {
   try {
     fn();
@@ -23,14 +25,14 @@ const code = (fn: () => unknown) => {
 };
 
 beforeEach(() => {
-  db.exec('DELETE FROM messages; DELETE FROM transactions; DELETE FROM orders; DELETE FROM presence; DELETE FROM users;');
+  db.exec('DELETE FROM messages; DELETE FROM transactions; DELETE FROM orders; DELETE FROM presence; DELETE FROM sessions; DELETE FROM login_codes; DELETE FROM users;');
 });
 
 describe('cycle de vie d’une commande', () => {
   it('réserve, règle le rusher et rend le reste', () => {
     const alice = user();
     const bob = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
 
     const order = orders.createOrder(alice.id, {
       spotId: SPOT,
@@ -61,7 +63,7 @@ describe('cycle de vie d’une commande', () => {
 
   it('refuse une demande sans solde suffisant, sans rien écrire', () => {
     const alice = user();
-    topUp(alice.id, 500, 'card');
+    fund(alice.id, 500);
     const status = code(() =>
       orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'ven-sandwich', qty: 1 }], dropoff, tipCents: 200 }),
     );
@@ -72,7 +74,7 @@ describe('cycle de vie d’une commande', () => {
 
   it('ignore les prix envoyés par le client et recalcule depuis le catalogue', () => {
     const alice = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
     const status = code(() =>
       orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'esp-viande', qty: 1 }], dropoff, tipCents: 200 }),
     );
@@ -82,7 +84,7 @@ describe('cycle de vie d’une commande', () => {
   it('empêche de livrer sa propre demande et de dépasser le montant réservé', () => {
     const alice = user();
     const bob = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
     const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'ven-coca', qty: 1 }], dropoff, tipCents: 200 });
     expect(code(() => orders.accept(order.id, alice.id))).toBe(403);
     orders.accept(order.id, bob.id);
@@ -92,7 +94,7 @@ describe('cycle de vie d’une commande', () => {
 
   it('rembourse intégralement une annulation et une expiration', () => {
     const alice = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
     const a = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'ven-eau', qty: 1 }], dropoff, tipCents: 150 });
     orders.cancel(a.id, alice.id);
     expect(balanceOf(alice.id)).toBe(2000);
@@ -106,7 +108,7 @@ describe('cycle de vie d’une commande', () => {
   it('remet la demande dans le fil quand le rusher se désiste', () => {
     const alice = user();
     const bob = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
     const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'ven-eau', qty: 1 }], dropoff, tipCents: 150 });
     orders.accept(order.id, bob.id);
     orders.release(order.id, bob.id);
@@ -116,7 +118,7 @@ describe('cycle de vie d’une commande', () => {
   it('cache la note de livraison aux non-participants', () => {
     const alice = user();
     const carol = user();
-    topUp(alice.id, 2000, 'twint');
+    fund(alice.id, 2000);
     const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'ven-eau', qty: 1 }], dropoff, tipCents: 150 });
     expect(orders.orderFor(order.id, carol.id).dropoff.note).toBe('');
     expect(orders.orderFor(order.id, alice.id).dropoff.note).toBe('Hall');
@@ -124,6 +126,35 @@ describe('cycle de vie d’une commande', () => {
 });
 
 describe('authentification', () => {
+  it('offre le crédit de bienvenue une seule fois, à la création du compte', async () => {
+    const login = async () => {
+      const { devCode } = await requestCode('new.person@epfl.ch');
+      db.exec("UPDATE login_codes SET last_sent_at = 0");
+      return verifyCode('new.person@epfl.ch', devCode!).user;
+    };
+    const first = await login();
+    expect(env.welcomeBonusCents).toBe(100);
+    expect(balanceOf(first.id)).toBe(100);
+    expect(wallet(first.id).transactions.map((t) => t.kind)).toEqual(['bonus']);
+
+    const again = await login();
+    expect(again.id).toBe(first.id);
+    expect(balanceOf(first.id)).toBe(100);
+  });
+
+  it('ne permet plus de créditer son solde depuis l’API', async () => {
+    const { createApp } = await import('../server/app');
+    const { devCode } = await requestCode('someone.else@epfl.ch');
+    const { user: u, token } = verifyCode('someone.else@epfl.ch', devCode!);
+    const res = await createApp().request('/api/wallet/topup', {
+      method: 'POST',
+      headers: { cookie: `rush_session=${token}`, 'content-type': 'application/json' },
+      body: JSON.stringify({ amountCents: 5000, method: 'twint' }),
+    });
+    expect(res.status).toBe(404);
+    expect(balanceOf(u.id)).toBe(env.welcomeBonusCents);
+  });
+
   it('n’accepte que les adresses EPFL', () => {
     expect(normalizeEmail(' Eric.Aellen@EPFL.ch ')).toBe('eric.aellen@epfl.ch');
     expect(code(() => normalizeEmail('someone@gmail.com'))).toBe(422);

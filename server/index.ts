@@ -32,6 +32,10 @@ handleClientEvents((userId, event) => {
   }
 });
 
+if (env.production && !env.smtpUrl) {
+  console.warn('\n  ⚠︎  SMTP_URL non défini : les codes de connexion ne partent que dans ces logs.\n');
+}
+
 const server = serve({ fetch: app.fetch, port: env.port }, (info) => {
   console.log(`\n  Rush API · http://localhost:${info.port}${env.demo ? '  (mode démo : rushers simulés actifs)' : ''}\n`);
 });

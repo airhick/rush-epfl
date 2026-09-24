@@ -1,8 +1,9 @@
 import { createHash, randomBytes, randomInt } from 'node:crypto';
 import { env } from '../env';
-import { one, run } from '../db';
+import { one, run, transaction } from '../db';
 import { HttpError } from '../http';
 import { sendLoginCode } from '../mail';
+import { record } from './ledger';
 import { createUser, findUserByEmail, getUser, type UserRow } from './users';
 
 const CODE_TTL_MS = 10 * 60_000;
@@ -61,7 +62,7 @@ export function verifyCode(rawEmail: string, code: string): { user: UserRow; tok
   }
   run('DELETE FROM login_codes WHERE email = ?', email);
 
-  const user = findUserByEmail(email) ?? createUser(email);
+  const user = findUserByEmail(email) ?? createAccount(email);
   const token = randomBytes(32).toString('base64url');
   run(
     'INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
@@ -71,6 +72,15 @@ export function verifyCode(rawEmail: string, code: string): { user: UserRow; tok
     Date.now() + SESSION_TTL_MS,
   );
   return { user, token };
+}
+
+/** Nouveau compte, avec le crédit de bienvenue écrit dans la même transaction. */
+function createAccount(email: string): UserRow {
+  return transaction(() => {
+    const user = createUser(email);
+    if (env.welcomeBonusCents > 0) record(user.id, 'bonus', env.welcomeBonusCents, 'Bienvenue sur Rush');
+    return user;
+  });
 }
 
 export function userFromToken(token: string | undefined): UserRow | null {

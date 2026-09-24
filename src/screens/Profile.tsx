@@ -169,6 +169,7 @@ const STEPS = [
   ['Un rusher sur place accepte', 'Quelqu’un qui est déjà au spot, ou qui passe par là, prend ta demande. Vous pouvez vous écrire.'],
   ['Il avance l’achat', 'Il paie au comptoir et déclare le montant exact du ticket.'],
   ['Tu confirmes la réception', 'Il est remboursé avec son pourboire, et ce qui n’a pas été dépensé revient sur ton solde.'],
+  ['Ton solde se gagne en livrant', 'Chaque nouveau compte reçoit un petit crédit de bienvenue ; ensuite, chaque livraison remplit ton solde.'],
 ];
 
 function HowItWorks({ open, onClose }: { open: boolean; onClose: () => void }) {
