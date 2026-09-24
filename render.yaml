@@ -1,0 +1,19 @@
+# Blueprint Render : https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: rush-epfl
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Obligatoire pour que les codes de connexion partent par e-mail.
+      # Ex. Gmail : smtps://prenom.nom%40gmail.com:MOT_DE_PASSE_APPLI@smtp.gmail.com:465
+      - key: SMTP_URL
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: RUSH_WELCOME_BONUS_CENTS
+        value: "100"

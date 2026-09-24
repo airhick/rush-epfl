@@ -57,6 +57,9 @@ export function createApp() {
 
   const api = new Hono<AppEnv>();
 
+  /* Sonde de santé pour l'hébergeur (Render, Docker…). */
+  api.get('/health', (c) => c.json({ ok: true }));
+
   /* ── Authentification ─────────────────────────────────────────────── */
 
   api.post('/auth/request', async (c) => {
@@ -177,6 +180,9 @@ export function createApp() {
   /* ── Solde ────────────────────────────────────────────────────────── */
 
   api.get('/wallet', (c) => c.json(ledger.wallet(me(c).id)));
+
+  // Route d'API inconnue : 404 JSON plutôt que la page de l'app.
+  api.all('*', (c) => c.json({ error: 'Introuvable.' }, 404));
 
   app.route('/api', api);
   return app;

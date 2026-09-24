@@ -88,6 +88,17 @@ npm run build
 npm start        # sert l'API, le WebSocket et l'app compilée sur le même port
 ```
 
+Ou avec Docker (c'est ce qu'utilise Render) :
+
+```bash
+docker build -t rush-epfl .
+docker run -p 8787:8787 -v rush-data:/app/data -e SMTP_URL=… rush-epfl
+```
+
+### Render (offre gratuite)
+
+`render.yaml` décrit le service : image Docker, région Francfort, sonde `/api/health`. Sur l'offre gratuite, l'instance se met en veille après 15 min sans visite (premier chargement ~1 min ensuite) et **le disque n'est pas persistant** : la base SQLite repart de zéro à chaque redémarrage ou déploiement. Pour garder les données, passer à une instance avec disque persistant monté sur `/app/data`.
+
 | Variable | Rôle | Défaut |
 |---|---|---|
 | `PORT` | Port HTTP | `8787` |
