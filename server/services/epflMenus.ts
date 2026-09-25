@@ -185,6 +185,7 @@ async function load(date: string): Promise<CacheEntry> {
   const previous = cache.get(date);
   try {
     const offers = parseOffers(await fetcher(`${EPFL_MENU_URL}?date=${date}`));
+    if (process.env.NODE_ENV !== 'test') console.log(`[epfl-menus] ${date} : ${offers.length} offres lues`);
     const entry = { offers, fetchedAt: Date.now(), retryAt: Date.now() + TTL_MS };
     cache.set(date, entry);
     return entry;
