@@ -423,6 +423,11 @@
   color: var(--green-text);
 }
 
+.pill--red {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
 .pill--orange {
   background: var(--orange-soft);
   color: color-mix(in srgb, var(--orange) 80%, var(--label));

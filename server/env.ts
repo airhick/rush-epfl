@@ -1,5 +1,11 @@
 const production = process.env.NODE_ENV === 'production';
 
+const list = (raw: string) =>
+  raw
+    .split(',')
+    .map((d) => d.trim().toLowerCase())
+    .filter(Boolean);
+
 export const env = {
   production,
   port: Number(process.env.PORT ?? process.env.RUSH_API_PORT ?? 8787),
@@ -9,8 +15,15 @@ export const env = {
   /** Crédit offert à chaque nouveau compte, en centimes (CHF 1.00 par défaut). */
   welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
   /** Domaines autorisés à se connecter. */
-  allowedDomains: (process.env.RUSH_ALLOWED_DOMAINS ?? 'epfl.ch')
-    .split(',')
-    .map((d) => d.trim().toLowerCase())
-    .filter(Boolean),
+  allowedDomains: list(process.env.RUSH_ALLOWED_DOMAINS ?? 'epfl.ch'),
+  /** Adresses de l'équipe Rush : elles traitent les retraits (et peuvent se connecter hors @epfl.ch). */
+  adminEmails: list(process.env.RUSH_ADMIN_EMAILS ?? ''),
+  /** Lien de paiement Stripe « montant libre » (https://buy.stripe.com/…) pour recharger le solde. */
+  stripeTopupUrl: process.env.STRIPE_TOPUP_URL ?? '',
+  /** Secret de signature du webhook Stripe (whsec_…) : seul un évènement signé crédite un solde. */
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
+  /** Sujet ntfy.sh facultatif : notification sur téléphone à chaque demande de retrait. */
+  ntfyTopic: process.env.RUSH_NTFY_TOPIC ?? '',
+  /** Adresse publique de l'app (fournie par Render), pour les liens des notifications. */
+  publicUrl: (process.env.RUSH_PUBLIC_URL ?? process.env.RENDER_EXTERNAL_URL ?? '').replace(/\/$/, ''),
 };

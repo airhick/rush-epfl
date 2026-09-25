@@ -11,3 +11,13 @@ services:
         value: production
       - key: RUSH_WELCOME_BONUS_CENTS
         value: "100"
+      # Recharges : lien de paiement Stripe « montant libre » (public).
+      - key: STRIPE_TOPUP_URL
+        value: https://buy.stripe.com/eVq5kCgT14NF03HgbOe7m00
+      # Secrets et réglages de l'équipe, à saisir dans le tableau de bord Render.
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: RUSH_ADMIN_EMAILS
+        sync: false
+      - key: RUSH_NTFY_TOPIC
+        sync: false

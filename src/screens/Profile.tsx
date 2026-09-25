@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { BookOpen, LogOut, Moon, Pencil, ShieldCheck } from 'lucide-react';
-import { useLogout, useMe, useUpdateProfile } from '../lib/queries';
+import { useNavigate } from 'react-router';
+import { ArrowUpRight, BookOpen, LogOut, Moon, Pencil, ShieldCheck } from 'lucide-react';
+import { formatCHF } from '../../shared/money';
+import { useLogout, useMe, useOwnerOverview, useUpdateProfile } from '../lib/queries';
 import { useMapScene } from '../state/scene';
 import { usePrefs, type ThemePref } from '../state/ui';
 import { Screen } from '../ui/Screen';
@@ -13,6 +15,9 @@ export function Profile() {
   const { theme, setTheme } = usePrefs();
   const [edit, setEdit] = useState(false);
   const [how, setHow] = useState(false);
+  const navigate = useNavigate();
+  const { data: owner } = useOwnerOverview(Boolean(me?.isAdmin));
+  const pending = owner?.pending ?? [];
 
   useMapScene(() => ({ cameraKey: 'overview', camera: { kind: 'overview' } }), []);
   if (!me) return null;
@@ -42,6 +47,23 @@ export function Profile() {
           </strong>
         </div>
       </div>
+
+      {me.isAdmin && (
+        <Group header="Équipe Rush">
+          <Row
+            onClick={() => navigate('/admin')}
+            leading={
+              <IconTile>
+                <ArrowUpRight size={15} color="#fff" />
+              </IconTile>
+            }
+            title="Retraits à envoyer"
+            subtitle={pending.length ? `${formatCHF(pending.reduce((s, w) => s + w.amountCents, 0))} par TWINT` : 'Aucune demande en attente'}
+            trailing={pending.length ? <span className="count-badge">{pending.length}</span> : undefined}
+            chevron
+          />
+        </Group>
+      )}
 
       <Group>
         <Row
@@ -169,7 +191,7 @@ const STEPS = [
   ['Un rusher sur place accepte', 'Quelqu’un qui est déjà au spot, ou qui passe par là, prend ta demande. Vous pouvez vous écrire.'],
   ['Il avance l’achat', 'Il paie au comptoir et déclare le montant exact du ticket.'],
   ['Tu confirmes la réception', 'Il est remboursé avec son pourboire, et ce qui n’a pas été dépensé revient sur ton solde.'],
-  ['Ton solde se gagne en livrant', 'Chaque nouveau compte reçoit un petit crédit de bienvenue ; ensuite, chaque livraison remplit ton solde.'],
+  ['Ton solde se recharge ou se gagne', 'Recharge-le par carte (CHF 1 à 100) ou gagne-le en livrant. Tu peux le retirer par TWINT : l’équipe Rush te l’envoie.'],
 ];
 
 function HowItWorks({ open, onClose }: { open: boolean; onClose: () => void }) {

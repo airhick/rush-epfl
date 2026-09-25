@@ -6,11 +6,12 @@ import { HttpError, type AppEnv } from './http';
 import * as auth from './services/auth';
 import * as orders from './services/orders';
 import * as messages from './services/messages';
-import * as ledger from './services/ledger';
 import * as presence from './services/presence';
 import * as places from './services/places';
 import * as epflMenus from './services/epflMenus';
-import { getUser, publicUser, toMe, updateProfile } from './services/users';
+import * as stripe from './services/stripe';
+import * as payments from './services/payments';
+import { getUser, isAdmin, publicUser, toMe, updateProfile } from './services/users';
 import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
 import { CUSTOM_BUDGET_MAX_CENTS, CUSTOM_BUDGET_MIN_CENTS, CUSTOM_TEXT_MAX, SPOT_BY_ID } from '../shared/catalog';
 import type { Conversation } from '../shared/types';
@@ -40,6 +41,9 @@ const schemas = {
   pickup: z.object({ actualItemsCents: z.number().int().positive() }),
   rate: z.object({ stars: z.number().int().min(1).max(5) }),
   message: z.object({ body: z.string().trim().min(1).max(500) }),
+  topup: z.object({ amountCents: z.number().int() }),
+  withdrawal: z.object({ amountCents: z.number().int().positive(), phone: z.string().max(40) }),
+  reject: z.object({ reason: z.string().trim().min(3, 'Explique le refus en quelques mots.').max(200) }),
   presence: z.object({
     available: z.boolean(),
     spotId: z.string().nullable(),
@@ -114,6 +118,12 @@ export function createApp() {
 
   api.get('/spots/:id/menu', async (c) => c.json(await epflMenus.spotMenu(spotParam(c))));
   api.get('/spots/:id/media', (c) => c.json(places.placeMedia(spotParam(c).id)));
+
+  /* Webhook Stripe : authentifié par sa signature, pas par une session. */
+  api.post('/stripe/webhook', async (c) => {
+    const event = stripe.verifyWebhook(await c.req.text(), c.req.header('stripe-signature'));
+    return c.json({ received: true, outcome: payments.handleStripeEvent(event) });
+  });
 
   /* Tout ce qui suit exige une session. */
   api.use('*', async (c, next) => {
@@ -213,7 +223,39 @@ export function createApp() {
 
   /* ── Solde ────────────────────────────────────────────────────────── */
 
-  api.get('/wallet', (c) => c.json(ledger.wallet(me(c).id)));
+  api.get('/wallet', (c) => c.json(payments.walletView(me(c).id)));
+
+  /* Recharge : lien de paiement Stripe prérempli, puis crédit par le webhook. */
+  api.post('/topups', async (c) => {
+    const { amountCents } = await body(c, schemas.topup);
+    return c.json({ url: stripe.topupUrl(me(c), amountCents) });
+  });
+  api.get('/topups/:sessionId', (c) => c.json(payments.topupStatus(me(c).id, c.req.param('sessionId'))));
+
+  /* Retrait : demandé ici, envoyé par TWINT par l'équipe Rush. */
+  api.post('/withdrawals', async (c) => {
+    const { amountCents, phone } = await body(c, schemas.withdrawal);
+    return c.json(payments.requestWithdrawal(me(c).id, amountCents, phone), 201);
+  });
+  api.post('/withdrawals/:id/cancel', (c) => c.json(payments.cancelWithdrawal(me(c).id, c.req.param('id'))));
+
+  /* ── Équipe Rush ──────────────────────────────────────────────────── */
+
+  const owner = (c: Context<AppEnv>) => {
+    if (!isAdmin(me(c))) throw new HttpError(403, 'Réservé à l’équipe Rush.');
+    return me(c);
+  };
+
+  api.get('/admin/withdrawals', (c) => {
+    owner(c);
+    return c.json(payments.ownerOverview());
+  });
+  api.post('/admin/withdrawals/:id/paid', (c) => c.json(payments.markPaid(owner(c).id, c.req.param('id'))));
+  api.post('/admin/withdrawals/:id/reject', async (c) => {
+    const admin = owner(c);
+    const { reason } = await body(c, schemas.reject);
+    return c.json(payments.reject(admin.id, c.req.param('id'), reason));
+  });
 
   // Route d'API inconnue : 404 JSON plutôt que la page de l'app.
   api.all('*', (c) => c.json({ error: 'Introuvable.' }, 404));

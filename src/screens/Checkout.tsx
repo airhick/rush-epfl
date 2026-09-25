@@ -5,13 +5,15 @@ import { Bike, ChevronDown, Info, MapPin, Minus, Plus, ShoppingBag, Wallet } fro
 import { nearestBuilding } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { computeHold, describeTip, suggestTip, TIP_MAX_CENTS, TIP_MIN_CENTS, TIP_STEP_CENTS } from '../../shared/pricing';
-import { formatCHF } from '../../shared/money';
-import { useCreateOrder, useMe } from '../lib/queries';
+import { clamp, formatCHF } from '../../shared/money';
+import { TOPUP_MAX_CENTS, TOPUP_MIN_CENTS } from '../../shared/payments';
+import { useCreateOrder, useMe, useWallet } from '../lib/queries';
 import { plural } from '../lib/format';
 import { useCart, useCartSummary } from '../state/cart';
 import { useDropoff } from '../state/location';
 import { arc, useMapScene, useScene } from '../state/scene';
 import { DropoffSheet } from '../features/DropoffPicker';
+import { TopupSheet } from '../features/Money';
 import { Screen } from '../ui/Screen';
 import { Button, cx, Empty, Group, SpotBadge, Stepper } from '../ui/primitives';
 
@@ -24,6 +26,8 @@ export function Checkout() {
   const create = useCreateOrder();
   const [dropoffOpen, setDropoffOpen] = useState(false);
   const [why, setWhy] = useState(false);
+  const [topup, setTopup] = useState(false);
+  const { data: wallet } = useWallet();
 
   const suggestion = useMemo(
     () => (spot ? suggestTip({ spot, dropoff, itemCount: count }) : null),
@@ -33,6 +37,8 @@ export function Checkout() {
   const hold = computeHold(subtotalCents, tipCents);
   const balance = me?.balanceCents ?? 0;
   const missing = Math.max(0, hold.holdCents - balance);
+  // Recharge proposée : ce qui manque, arrondi au franc, dans les limites de Stripe.
+  const topupCents = clamp(Math.ceil(missing / 100) * 100, TOPUP_MIN_CENTS, TOPUP_MAX_CENTS);
   const open = spot ? openStatus(spot.hours).open : false;
 
   // L'épingle de livraison se déplace directement sur la carte.
@@ -106,7 +112,11 @@ export function Checkout() {
       footer={
         <>
           {create.error && <p className="form-error">{(create.error as Error).message}</p>}
-          {missing > 0 ? (
+          {missing > 0 && wallet?.topupsEnabled ? (
+            <Button block icon={<Plus size={18} strokeWidth={2.4} />} onClick={() => setTopup(true)}>
+              Recharger {formatCHF(topupCents)}
+            </Button>
+          ) : missing > 0 ? (
             <Button block icon={<Bike size={18} />} onClick={() => navigate('/deliver')}>
               Gagner {formatCHF(missing)} en livrant
             </Button>
@@ -272,6 +282,7 @@ export function Checkout() {
       </Group>
 
       <DropoffSheet open={dropoffOpen} onClose={() => setDropoffOpen(false)} />
+      <TopupSheet open={topup} onClose={() => setTopup(false)} initialCents={topupCents} />
     </Screen>
   );
 }

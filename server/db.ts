@@ -82,6 +82,33 @@ const SCHEMA = /* sql */ `
   );
   CREATE INDEX IF NOT EXISTS tx_user ON transactions(user_id, created_at);
 
+  -- Recharges Stripe, une ligne par session de paiement : un webhook rejoué ne crédite pas deux fois.
+  CREATE TABLE IF NOT EXISTS topups (
+    session_id      TEXT PRIMARY KEY,
+    user_id         TEXT REFERENCES users(id),
+    amount_cents    INTEGER NOT NULL,
+    currency        TEXT NOT NULL,
+    email           TEXT,
+    payment_intent  TEXT,
+    -- credited : ajouté au solde ; unmatched : aucun compte trouvé, à traiter par l'équipe.
+    status          TEXT NOT NULL,
+    created_at      TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS withdrawals (
+    id            TEXT PRIMARY KEY,
+    user_id       TEXT NOT NULL REFERENCES users(id),
+    amount_cents  INTEGER NOT NULL,
+    twint_phone   TEXT NOT NULL,
+    status        TEXT NOT NULL,
+    note          TEXT,
+    created_at    TEXT NOT NULL,
+    processed_at  TEXT,
+    processed_by  TEXT REFERENCES users(id)
+  );
+  CREATE INDEX IF NOT EXISTS withdrawals_status ON withdrawals(status, created_at);
+  CREATE INDEX IF NOT EXISTS withdrawals_user   ON withdrawals(user_id, created_at);
+
   CREATE TABLE IF NOT EXISTS messages (
     id          TEXT PRIMARY KEY,
     order_id    TEXT NOT NULL REFERENCES orders(id),

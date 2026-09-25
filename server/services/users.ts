@@ -1,5 +1,6 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { all, nowIso, one, run } from '../db';
+import { env } from '../env';
 import type { Me, PublicUser } from '../../shared/types';
 import { ACTIVE_STATUSES } from '../../shared/types';
 
@@ -132,7 +133,16 @@ export function toMe(user: UserRow): Me {
     balanceCents: balanceOf(user.id),
     heldCents: heldOf(user.id),
     onboarded: user.onboarded === 1,
+    isAdmin: isAdmin(user),
   };
+}
+
+export const isAdmin = (user: Pick<UserRow, 'email'>) => env.adminEmails.includes(user.email);
+
+/** Comptes de l'équipe Rush déjà inscrits. */
+export function admins(): UserRow[] {
+  if (!env.adminEmails.length) return [];
+  return all<UserRow>(`SELECT * FROM users WHERE email IN (${env.adminEmails.map(() => '?').join(',')})`, ...env.adminEmails);
 }
 
 export function updateProfile(userId: string, patch: { firstName: string; lastName: string; section: string | null }) {

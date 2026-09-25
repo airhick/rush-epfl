@@ -24,7 +24,8 @@ export function normalizeEmail(raw: string): string {
   const email = raw.trim().toLowerCase();
   const match = /^[a-z0-9._%+-]+@([a-z0-9.-]+)$/.exec(email);
   const domain = match?.[1];
-  if (!domain || !env.allowedDomains.some((d) => domain === d || domain.endsWith(`.${d}`))) {
+  const allowed = domain && (env.allowedDomains.some((d) => domain === d || domain.endsWith(`.${d}`)) || env.adminEmails.includes(email));
+  if (!allowed) {
     throw new HttpError(422, 'Rush est réservé à la communauté EPFL : utilise ton adresse @epfl.ch.');
   }
   return email;

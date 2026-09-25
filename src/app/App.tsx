@@ -17,6 +17,7 @@ import { Messages } from '../screens/Messages';
 import { Chat } from '../screens/Chat';
 import { Wallet } from '../screens/Wallet';
 import { Profile } from '../screens/Profile';
+import { Owners } from '../screens/Owners';
 import { Logo } from '../ui/Logo';
 
 export function App() {
@@ -67,6 +68,7 @@ export function App() {
         <Route path="messages/:id" element={<Chat />} />
         <Route path="wallet" element={<Wallet />} />
         <Route path="profile" element={<Profile />} />
+        <Route path="admin" element={<Owners />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

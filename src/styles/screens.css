@@ -2241,7 +2241,13 @@
 
 .wallet-actions {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   margin: 14px 0;
+}
+
+.wallet-actions__wide {
+  grid-column: 1 / -1;
 }
 
 .stat-tiles {
@@ -2371,8 +2377,210 @@
   height: 72px;
   margin-bottom: 10px;
   border-radius: 50%;
-  background: var(--green);
-  color: #fff;
+  background: var(--icon-bg);
+  color: var(--icon-fg);
+  box-shadow: inset 0 0 0 0.5px var(--icon-ring);
+}
+
+.topup-done .topup-done__check {
+  color: var(--icon-fg);
+}
+
+.topup-done__check .spinner {
+  fill: currentColor;
+}
+
+/* ── Recharge et retrait ─────────────────────────────────────────────── */
+
+.money-input {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 20px 2px;
+  font-family: var(--font-rounded);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.money-input > span {
+  font-size: 22px;
+  color: var(--label-2);
+}
+
+.money-input input {
+  max-width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 50px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  border-bottom: 2px solid var(--separator);
+  transition: border-color 0.2s;
+}
+
+.money-input input:focus {
+  border-color: var(--ink);
+}
+
+.money-input__hint {
+  padding: 4px 20px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--label-2);
+}
+
+.money-input__hint.is-error {
+  color: var(--red);
+}
+
+.sheet-note svg {
+  vertical-align: -1px;
+}
+
+.withdrawal {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+}
+
+.withdrawal + .withdrawal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 14px;
+  right: 0;
+  height: 0.5px;
+  background: var(--separator);
+}
+
+.withdrawal__text {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.withdrawal__text strong {
+  font-size: 15px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+}
+
+.withdrawal__text span {
+  font-size: 12.5px;
+  color: var(--label-2);
+}
+
+.withdrawal__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Équipe Rush ─────────────────────────────────────────────────────── */
+
+.owner-list {
+  display: grid;
+  gap: 12px;
+  padding: 0 16px 8px;
+}
+
+.owner-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--lg-sheen), var(--bg-elevated);
+  box-shadow: var(--lg-rim), 0 0 0 0.5px var(--separator);
+}
+
+.owner-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.owner-card__head > span:first-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.owner-card__head strong {
+  font-size: 16px;
+}
+
+.owner-card__head > span:first-child > span {
+  font-size: 12.5px;
+  color: var(--label-2);
+  overflow-wrap: anywhere;
+}
+
+.owner-card__amount {
+  font-family: var(--font-rounded);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.owner-card__phone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--fill);
+  text-align: left;
+}
+
+.owner-card__phone > span {
+  display: grid;
+  gap: 1px;
+}
+
+.owner-card__phone strong {
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.owner-card__label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--label-2);
+}
+
+.owner-card__meta {
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--label-2);
+}
+
+.owner-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.count-badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--ink-contrast);
+  font-size: 12.5px;
+  font-weight: 700;
 }
 
 .topup-done strong {

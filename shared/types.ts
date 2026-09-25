@@ -23,6 +23,8 @@ export interface Me extends PublicUser {
   balanceCents: number;
   heldCents: number;
   onboarded: boolean;
+  /** Membre de l'équipe Rush : voit et traite les demandes de retrait. */
+  isAdmin: boolean;
 }
 
 export interface OrderItem {
@@ -81,7 +83,7 @@ export interface Conversation {
   unread: number;
 }
 
-export type TxKind = 'bonus' | 'hold' | 'refund' | 'payout' | 'release';
+export type TxKind = 'bonus' | 'hold' | 'refund' | 'payout' | 'release' | 'topup' | 'withdrawal' | 'withdrawal_refund';
 
 export interface Transaction {
   id: string;
@@ -98,6 +100,53 @@ export interface Wallet {
   earnedThisMonthCents: number;
   spentThisMonthCents: number;
   transactions: Transaction[];
+}
+
+export type WithdrawalStatus = 'pending' | 'paid' | 'cancelled' | 'rejected';
+
+/** Demande de retrait : le montant quitte le solde tout de suite, l'équipe l'envoie par TWINT. */
+export interface Withdrawal {
+  id: string;
+  amountCents: number;
+  phone: string;
+  status: WithdrawalStatus;
+  note: string | null;
+  createdAt: string;
+  processedAt: string | null;
+}
+
+/** Solde, avec ce qui peut en sortir et entrer. */
+export interface WalletView extends Wallet {
+  /** Le crédit offert à l'inscription reste dans l'app : il ne se retire pas. */
+  withdrawableCents: number;
+  topupsEnabled: boolean;
+  withdrawals: Withdrawal[];
+}
+
+export interface TopupStatus {
+  status: 'credited' | 'pending';
+  amountCents: number | null;
+}
+
+/** Vue de l'équipe Rush : retraits à envoyer par TWINT et paiements Stripe à rattacher. */
+export interface OwnerWithdrawal extends Withdrawal {
+  user: { id: string; firstName: string; lastName: string; email: string; section: string | null };
+  /** Contexte pour juger la demande : d'où vient l'argent de ce compte. */
+  stats: { topupsCents: number; earnedCents: number; balanceCents: number };
+}
+
+export interface UnmatchedTopup {
+  sessionId: string;
+  amountCents: number;
+  currency: string;
+  email: string | null;
+  createdAt: string;
+}
+
+export interface OwnerOverview {
+  pending: OwnerWithdrawal[];
+  recent: OwnerWithdrawal[];
+  unmatchedTopups: UnmatchedTopup[];
 }
 
 export interface Presence {
@@ -158,7 +207,8 @@ export type ServerEvent =
   | { type: 'wallet.updated' }
   | { type: 'activity.updated' }
   | { type: 'courier.location'; orderId: string; lat: number; lng: number; at: string }
-  | { type: 'toast'; title: string; body?: string; orderId?: string };
+  | { type: 'withdrawals.updated' }
+  | { type: 'toast'; title: string; body?: string; orderId?: string; href?: string };
 
 export type ClientEvent =
   | { type: 'typing'; orderId: string }

@@ -1,13 +1,18 @@
-import { useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { motion } from 'motion/react';
-import { Bike, Gift, Lock, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
+import { ArrowUpRight, Bike, Check, CreditCard, Gift, Lock, Plus, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { formatCHF } from '../../shared/money';
 import type { TxKind } from '../../shared/types';
-import { useMe, useWallet } from '../lib/queries';
+import { keys, useMe, useTopupStatus, useWallet } from '../lib/queries';
 import { clock, groupByDay } from '../lib/format';
+import { useCartSummary } from '../state/cart';
 import { useMapScene } from '../state/scene';
+import { TopupSheet, WithdrawalList, WithdrawSheet } from '../features/Money';
 import { Screen } from '../ui/Screen';
-import { Button, cx, Empty, Skeleton } from '../ui/primitives';
+import { Sheet } from '../ui/Sheet';
+import { Button, cx, Empty, Skeleton, Spinner } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 
 const TX_STYLE: Record<TxKind, { icon: typeof Gift; name: string }> = {
@@ -16,12 +21,17 @@ const TX_STYLE: Record<TxKind, { icon: typeof Gift; name: string }> = {
   refund: { icon: RotateCcw, name: 'Remboursement' },
   release: { icon: Undo2, name: 'Annulation' },
   payout: { icon: Bike, name: 'Livraison' },
+  topup: { icon: CreditCard, name: 'Recharge' },
+  withdrawal: { icon: ArrowUpRight, name: 'Retrait' },
+  withdrawal_refund: { icon: Undo2, name: 'Retrait' },
 };
 
 export function Wallet() {
   const { data: wallet, isLoading } = useWallet();
   const { data: me } = useMe();
   const navigate = useNavigate();
+  const [topup, setTopup] = useState(false);
+  const [withdraw, setWithdraw] = useState(false);
 
   useMapScene(() => ({ cameraKey: 'overview', camera: { kind: 'overview' } }), []);
 
@@ -50,7 +60,21 @@ export function Wallet() {
         </motion.div>
 
         <div className="wallet-actions">
-          <Button variant="secondary" icon={<Bike size={18} strokeWidth={2.2} />} onClick={() => navigate('/deliver')}>
+          {wallet?.topupsEnabled && (
+            <Button icon={<Plus size={18} strokeWidth={2.4} />} onClick={() => setTopup(true)}>
+              Recharger
+            </Button>
+          )}
+          <Button
+            variant="secondary"
+            icon={<ArrowUpRight size={18} strokeWidth={2.4} />}
+            disabled={!wallet}
+            onClick={() => setWithdraw(true)}
+            className={cx(!wallet?.topupsEnabled && 'wallet-actions__wide')}
+          >
+            Retirer
+          </Button>
+          <Button className="wallet-actions__wide" variant="secondary" icon={<Bike size={18} strokeWidth={2.2} />} onClick={() => navigate('/deliver')}>
             Livrer pour gagner du solde
           </Button>
         </div>
@@ -69,8 +93,10 @@ export function Wallet() {
         )}
       </div>
 
+      {wallet && <WithdrawalList withdrawals={wallet.withdrawals} />}
+
       {wallet && wallet.transactions.length === 0 && (
-        <Empty icon={<Gift size={24} />} title="Aucun mouvement" body="Livre une demande pour gagner ton premier solde." />
+        <Empty icon={<Gift size={24} />} title="Aucun mouvement" body="Recharge ton solde ou livre une demande pour gagner tes premiers francs." />
       )}
 
       {wallet &&
@@ -81,9 +107,9 @@ export function Wallet() {
             </div>
             <div className="tx-list">
               {g.items.map((t) => {
-                // Écritures d'anciennes versions (ex. recharges) : affichage neutre.
+                // Écritures d'anciennes versions : affichage neutre.
                 const style = TX_STYLE[t.kind] ?? TX_STYLE.release;
-                const [, context] = t.label.split(' · ');
+                const [kind, context] = t.label.split(' · ');
                 return (
                   <button
                     key={t.id}
@@ -96,7 +122,7 @@ export function Wallet() {
                     </span>
                     <span className="tx__text">
                       <strong>{context ?? t.label}</strong>
-                      <span>{context ? `${style.name} · ${clock(t.createdAt)}` : clock(t.createdAt)}</span>
+                      <span>{context ? `${t.orderId ? style.name : kind} · ${clock(t.createdAt)}` : clock(t.createdAt)}</span>
                     </span>
                     <span className={cx('tx__amount', t.amountCents > 0 && 'is-positive')}>{formatCHF(t.amountCents, { sign: true })}</span>
                   </button>
@@ -107,9 +133,78 @@ export function Wallet() {
         ))}
 
       <p className="footnote">
-        Le solde Rush se gagne en livrant : chaque livraison te rembourse l’achat avancé et te verse le pourboire. Il sert à payer tes
-        propres demandes. Les montants réservés restent bloqués jusqu’à la livraison ou l’annulation.
+        Recharge ton solde par carte (CHF 1 à 100) ou gagne-le en livrant : chaque livraison te rembourse l’achat avancé et te verse le
+        pourboire. Tu peux retirer ton solde par TWINT, l’équipe Rush te l’envoie. Le crédit offert à l’inscription sert à tes demandes et
+        ne se retire pas. Les montants réservés restent bloqués jusqu’à la livraison ou l’annulation.
       </p>
+
+      <TopupSheet open={topup} onClose={() => setTopup(false)} />
+      {wallet && <WithdrawSheet open={withdraw} onClose={() => setWithdraw(false)} wallet={wallet} />}
+      <TopupReturn />
     </Screen>
+  );
+}
+
+/** Retour de la page Stripe (/wallet?recharge=cs_…) : on attend le crédit envoyé par le webhook. */
+function TopupReturn() {
+  const [params, setParams] = useSearchParams();
+  const sessionId = params.get('recharge');
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const cart = useCartSummary();
+  const { data, dataUpdatedAt, isError } = useTopupStatus(sessionId);
+  const [startedAt] = useState(Date.now);
+
+  const credited = data?.status === 'credited';
+  const slow = !credited && (isError || dataUpdatedAt - startedAt > 55_000);
+
+  useEffect(() => {
+    if (credited) {
+      qc.invalidateQueries({ queryKey: keys.wallet });
+      qc.invalidateQueries({ queryKey: keys.me });
+    }
+  }, [credited, qc]);
+
+  const close = () => setParams({}, { replace: true });
+
+  return (
+    <Sheet open={Boolean(sessionId)} onClose={close} title="Recharge">
+      <div className="topup-done">
+        <span className={cx('topup-done__check', !credited && 'is-waiting')}>{credited ? <Check size={34} strokeWidth={3} /> : <Spinner size={30} />}</span>
+        {credited ? (
+          <>
+            <strong>+{formatCHF(data.amountCents ?? 0)}</strong>
+            <span>ajoutés à ton solde. Merci !</span>
+          </>
+        ) : slow ? (
+          <>
+            <strong>Paiement en cours</strong>
+            <span>Stripe n’a pas encore confirmé. Ton solde sera crédité automatiquement dès la confirmation : rien à refaire.</span>
+          </>
+        ) : (
+          <>
+            <strong>Paiement reçu</strong>
+            <span>On attend la confirmation de Stripe…</span>
+          </>
+        )}
+      </div>
+      <div className="sheet-actions">
+        {credited && cart.count > 0 ? (
+          <Button
+            block
+            onClick={() => {
+              close();
+              navigate('/checkout');
+            }}
+          >
+            Reprendre ma demande
+          </Button>
+        ) : (
+          <Button block variant={credited ? 'primary' : 'secondary'} onClick={close}>
+            {credited ? 'Voir mon solde' : 'Fermer'}
+          </Button>
+        )}
+      </div>
+    </Sheet>
   );
 }

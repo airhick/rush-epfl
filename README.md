@@ -12,7 +12,8 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Fiches spots** | Menu du jour des restaurants EPFL lu en direct sur epfl.ch, avec les prix exacts étudiant, doctorant, campus et visiteur ; horaires officiels ; photos et avis Google Maps crédités à leurs auteurs. |
 | **Commander** | Plats du jour et cartes officielles, ou **demande libre** avec un budget maximum là où aucun prix n'est publié. Point de livraison par GPS, bâtiment ou épingle déplaçable sur la carte, note visible uniquement par le rusher. |
 | **Livrer** | Tu indiques où tu es et où tu vas : les demandes sont triées selon le **détour** qu'elles t'imposent (« Sur ton chemin », « +320 m de détour »). |
-| **Solde Rush** | Porte-monnaie local : **CHF 1.00 offert** à chaque nouveau compte, puis le solde se gagne en livrant. Montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
+| **Solde Rush** | **CHF 1.00 offert** à chaque nouveau compte, **recharge par carte via Stripe** (montant libre de CHF 1 à 100) et gains des livraisons. Montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
+| **Retraits TWINT** | Chacun demande un retrait depuis son solde ; l'équipe Rush reçoit une notification, envoie l'argent par TWINT et marque la demande comme envoyée. |
 | **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
@@ -40,13 +41,21 @@ npm run typecheck
 
 Tous les montants sont en centimes, et le solde est **toujours la somme d'un registre append-only** (`transactions`) : rien n'est jamais modifié en place.
 
-0. **Bienvenue** — chaque nouveau compte reçoit CHF 1.00 (`RUSH_WELCOME_BONUS_CENTS`). Il n'y a pas de recharge : le solde s'alimente en livrant pour les autres.
+0. **Entrées** — chaque nouveau compte reçoit CHF 1.00 (`RUSH_WELCOME_BONUS_CENTS`). Le solde se recharge ensuite par carte (Stripe) ou se gagne en livrant.
 1. **Publication** — réservation de `articles + 10 % de marge + pourboire` sur le solde du demandeur. Pour un menu EPFL, l'article compte au prix publié le plus élevé (visiteur), puisque le prix payé dépend du statut du rusher ; une demande libre compte pour son budget.
 2. **Achat** — le rusher paie au comptoir et déclare le montant du ticket (plafonné au montant réservé).
 3. **Confirmation** — le rusher reçoit `ticket + pourboire`, le demandeur récupère le reste.
 4. **Annulation / expiration** — tout est rendu. Une demande sans rusher expire après 40 min ; une livraison non confirmée est validée automatiquement après 15 min.
 
+5. **Retrait** — le montant quitte le solde dès la demande (écriture `withdrawal`) ; s'il est annulé ou refusé, il revient (`withdrawal_refund`). Le crédit offert ne se retire pas.
+
 Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) et ne fait jamais confiance aux montants envoyés par le navigateur.
+
+## Recharges Stripe et retraits TWINT
+
+**Recharge.** Un seul [lien de paiement Stripe](https://docs.stripe.com/payment-links) « montant libre » (CHF 1 à 100, métadonnée `rush=topup`). L'app choisit le montant et ouvre le lien avec `client_reference_id` (le compte), `prefilled_amount` et `locked_prefilled_email`. Après le paiement, Stripe renvoie sur `/wallet?recharge={CHECKOUT_SESSION_ID}` et envoie un webhook `checkout.session.completed` à `/api/stripe/webhook`. Le serveur vérifie la signature (HMAC avec `STRIPE_WEBHOOK_SECRET`, sans SDK ni clé secrète), puis crédite le montant réellement payé, une seule fois par session (table `topups`). Un paiement sans compte correspondant, ou dans une autre devise que le CHF, n'est pas crédité : il apparaît dans l'écran de l'équipe pour être remboursé depuis Stripe.
+
+**Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS` voient l'écran **Retraits** (Profil → Équipe Rush) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
 
 ## Pourboire suggéré
 
@@ -109,6 +118,10 @@ docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
+| `STRIPE_TOPUP_URL` | Lien de paiement Stripe « montant libre » des recharges | recharges désactivées |
+| `STRIPE_WEBHOOK_SECRET` | Secret `whsec_…` du webhook Stripe vers `/api/stripe/webhook` | recharges désactivées |
+| `RUSH_ADMIN_EMAILS` | Adresses de l'équipe Rush (traitent les retraits, peuvent se connecter hors `@epfl.ch`) | aucune |
+| `RUSH_NTFY_TOPIC` | Sujet ntfy.sh pour être prévenu des retraits sur téléphone | désactivé |
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
@@ -126,6 +139,7 @@ Les restaurants de l'EPFL publient chaque jour leurs menus et leurs prix sur la 
 - **Catalogue** (`shared/catalog.ts`) : tous les points de restauration du campus de Lausanne listés par l'EPFL, plus les commerces des Arcades. Horaires officiels (page Horaires de l'EPFL ou site du commerce), aucun prix estimé. Les positions viennent des fiches Google Maps quand elles sont précises, sinon du plan du campus.
 - **Prix hors EPFL** : Holy Cow!, Migros, Denner et Le Négoce ne publient pas leurs prix en magasin (ceux d'Uber Eats sont majorés, donc faux au comptoir) : on y passe par une demande libre avec budget. La carte de Gina vient de son site officiel.
 - **Photos et avis** : relevé Google Maps crédité, plus quelques photos des pages EPFL. Rien n'est repris d'Uber Eats ou de Tripadvisor.
-- **Pas de recharge** : retirée tant qu'aucun vrai moyen de paiement (TWINT, Stripe, Camipro) n'est branché. Avec le crédit par défaut, une première commande (minimum ~CHF 3.20) suppose d'avoir livré au moins une fois.
+- **Argent réel et disque non persistant** : sur l'offre gratuite de Render, la base repart de zéro à chaque veille ou déploiement, soldes rechargés compris. Avant d'ouvrir les recharges à d'autres personnes, monter un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
+- **Frais Stripe** : prélevés sur chaque recharge et payés par l'équipe (le solde est crédité du montant payé). Le compte Stripe encaisse en EUR : les paiements en CHF sont convertis. TWINT n'est pas activé sur ce compte Stripe ; les recharges passent par carte, Apple Pay ou Google Pay.
 - **Authentification** : adresse `@epfl.ch` + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours). Aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** : quelqu'un pourrait s'inscrire avec une adresse EPFL qui n'est pas la sienne, et il n'y a pas de réinitialisation du mot de passe. Pour vérifier l'appartenance à l'EPFL, l'étape suivante est le SSO EPFL (Microsoft Entra ID, qui a remplacé Tequila), à demander au service informatique de l'EPFL. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

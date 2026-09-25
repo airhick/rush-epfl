@@ -96,8 +96,11 @@ export function useRealtime(me: Me | null | undefined) {
             o ? { ...o, courierLocation: { lat: event.lat, lng: event.lng, at: event.at } } : o,
           );
           break;
+        case 'withdrawals.updated':
+          qc.invalidateQueries({ queryKey: keys.owner });
+          break;
         case 'toast':
-          toast({ title: event.title, body: event.body, href: event.orderId ? `/orders/${event.orderId}` : undefined });
+          toast({ title: event.title, body: event.body, href: event.href ?? (event.orderId ? `/orders/${event.orderId}` : undefined) });
           break;
       }
     };

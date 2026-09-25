@@ -5,11 +5,14 @@ import type {
   Me,
   Message,
   Order,
+  OwnerOverview,
   PlaceMedia,
   Presence,
   SpotActivity,
   SpotMenu,
-  Wallet,
+  TopupStatus,
+  WalletView,
+  Withdrawal,
 } from '../../shared/types';
 import type { CreateOrderInput } from './types';
 
@@ -33,6 +36,7 @@ export const keys = {
   conversations: ['conversations'] as const,
   wallet: ['wallet'] as const,
   presence: ['presence'] as const,
+  owner: ['owner', 'withdrawals'] as const,
 };
 
 export const useMe = () =>
@@ -81,7 +85,7 @@ export const useMessages = (orderId: string | undefined, enabled = true) =>
   });
 export const useConversations = () =>
   useQuery({ queryKey: keys.conversations, queryFn: () => api<Conversation[]>('/conversations') });
-export const useWallet = () => useQuery({ queryKey: keys.wallet, queryFn: () => api<Wallet>('/wallet') });
+export const useWallet = () => useQuery({ queryKey: keys.wallet, queryFn: () => api<WalletView>('/wallet') });
 export const usePresence = () => useQuery({ queryKey: keys.presence, queryFn: () => api<Presence>('/presence') });
 
 /** Met à jour une commande partout où elle apparaît dans le cache. */
@@ -212,5 +216,57 @@ export function useLogout() {
       qc.clear();
       qc.setQueryData(keys.me, null);
     },
+  });
+}
+
+/* ── Recharges et retraits ───────────────────────────────────────────── */
+
+/** Ouvre le lien de paiement Stripe prérempli ; le retour se fait sur /wallet. */
+export function useStartTopup() {
+  return useMutation({
+    mutationFn: (amountCents: number) => api<{ url: string }>('/topups', { body: { amountCents } }),
+    onSuccess: ({ url }) => window.location.assign(url),
+  });
+}
+
+/** Au retour de Stripe : interroge le serveur jusqu'à ce que le webhook ait crédité le solde. */
+export const useTopupStatus = (sessionId: string | null) =>
+  useQuery({
+    queryKey: ['topup', sessionId ?? ''] as const,
+    queryFn: () => api<TopupStatus>(`/topups/${encodeURIComponent(sessionId!)}`),
+    enabled: Boolean(sessionId),
+    refetchInterval: (q) => (q.state.data?.status === 'credited' || q.state.dataUpdateCount > 40 ? false : 1500),
+    staleTime: 0,
+  });
+
+function useWalletMutation<TInput>(fn: (input: TInput) => Promise<Withdrawal>) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: fn,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.wallet });
+      qc.invalidateQueries({ queryKey: keys.me });
+    },
+  });
+}
+
+export const useRequestWithdrawal = () =>
+  useWalletMutation((input: { amountCents: number; phone: string }) => api<Withdrawal>('/withdrawals', { body: input }));
+
+export const useCancelWithdrawal = () =>
+  useWalletMutation((id: string) => api<Withdrawal>(`/withdrawals/${id}/cancel`, { method: 'POST' }));
+
+/* ── Équipe Rush ─────────────────────────────────────────────────────── */
+
+export const useOwnerOverview = (enabled = true) =>
+  useQuery({ queryKey: keys.owner, queryFn: () => api<OwnerOverview>('/admin/withdrawals'), enabled, refetchInterval: 60_000 });
+
+export function useOwnerAction() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (a: { id: string; action: 'paid' } | { id: string; action: 'reject'; reason: string }) =>
+      api<Withdrawal>(`/admin/withdrawals/${a.id}/${a.action}`, a.action === 'reject' ? { body: { reason: a.reason } } : { method: 'POST' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: keys.owner }),
+    onError: () => qc.invalidateQueries({ queryKey: keys.owner }),
   });
 }
