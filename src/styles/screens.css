@@ -93,6 +93,12 @@
   color: var(--label-3);
 }
 
+.auth__alt {
+  justify-self: center;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
 .welcome-gift {
   display: flex;
   align-items: center;
@@ -2514,10 +2520,15 @@
   font-size: 16px;
 }
 
-.owner-card__head > span:first-child > span {
+.owner-card__head > span:first-child > span:not(.pill) {
   font-size: 12.5px;
   color: var(--label-2);
   overflow-wrap: anywhere;
+}
+
+.owner-card__head .pill {
+  justify-self: start;
+  margin-top: 4px;
 }
 
 .owner-card__amount {

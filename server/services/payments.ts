@@ -4,7 +4,7 @@ import { all, nowIso, one, run, transaction } from '../db';
 import { HttpError } from '../http';
 import { sendTo } from '../realtime';
 import { record, wallet } from './ledger';
-import { admins, balanceOf, findUserByEmail, getUser } from './users';
+import { admins, balanceOf, findUserByEmail, getUser, linkedToEpfl } from './users';
 import { topupsEnabled, type StripeEvent } from './stripe';
 import { formatCHF } from '../../shared/money';
 import { formatPhone, normalizeTwintPhone, WITHDRAW_MIN_CENTS } from '../../shared/payments';
@@ -262,7 +262,7 @@ interface OwnerRow extends WithdrawalRow {
 
 const toOwnerWithdrawal = (r: OwnerRow): OwnerWithdrawal => ({
   ...toWithdrawal(r),
-  user: { id: r.user_id, firstName: r.first_name, lastName: r.last_name, email: r.email, section: r.section },
+  user: { id: r.user_id, firstName: r.first_name, lastName: r.last_name, email: r.email, section: r.section, epfl: linkedToEpfl(r.user_id) },
   stats: { topupsCents: sumOf(r.user_id, 'topup'), earnedCents: sumOf(r.user_id, 'payout'), balanceCents: balanceOf(r.user_id) },
 });
 

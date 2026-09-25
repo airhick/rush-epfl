@@ -21,3 +21,7 @@ services:
         sync: false
       - key: RUSH_NTFY_TOPIC
         sync: false
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ENTRA_CLIENT_SECRET
+        sync: false

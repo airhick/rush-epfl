@@ -33,6 +33,11 @@ export function Profile() {
           {me.email}
           {me.section && ` · ${me.section}`}
         </p>
+        {me.epfl && (
+          <span className="pill pill--green">
+            <ShieldCheck size={13} strokeWidth={2.4} /> Compte EPFL vérifié
+          </span>
+        )}
       </div>
 
       <div className="stat-tiles pad-x">

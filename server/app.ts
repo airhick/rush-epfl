@@ -9,12 +9,13 @@ import * as messages from './services/messages';
 import * as presence from './services/presence';
 import * as places from './services/places';
 import * as epflMenus from './services/epflMenus';
+import * as entra from './services/entra';
 import * as stripe from './services/stripe';
 import * as payments from './services/payments';
 import { getUser, isAdmin, publicUser, toMe, updateProfile } from './services/users';
 import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
 import { CUSTOM_BUDGET_MAX_CENTS, CUSTOM_BUDGET_MIN_CENTS, CUSTOM_TEXT_MAX, SPOT_BY_ID } from '../shared/catalog';
-import type { Conversation } from '../shared/types';
+import type { AuthOptions, Conversation } from '../shared/types';
 
 const latLng = { lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) };
 
@@ -100,6 +101,46 @@ export function createApp() {
   api.post('/auth/register', async (c) => {
     const { email, password } = await body(c, schemas.credentials);
     return c.json(signIn(c, await auth.register(email, password)), 201);
+  });
+
+  /* ── Connexion EPFL (Entra ID) : aller-retour chez Microsoft, puis session Rush ── */
+
+  const EPFL_COOKIE = 'rush_epfl';
+  const EPFL_PATH = '/api/auth/epfl';
+  // Derrière le proxy de l'hébergeur, l'URL reçue est en http : on prend l'adresse publique.
+  const epflCallback = (c: Context) => `${env.publicUrl || new URL(c.req.url).origin}${EPFL_PATH}/callback`;
+
+  api.get('/auth/options', (c) => c.json<AuthOptions>({ epfl: entra.epflEnabled() }));
+
+  api.get('/auth/epfl', (c) => {
+    try {
+      const { url, state } = entra.beginLogin(epflCallback(c), { next: c.req.query('next'), loginHint: c.req.query('login_hint') });
+      setCookie(c, EPFL_COOKIE, entra.encodeState(state), {
+        httpOnly: true,
+        sameSite: 'Lax',
+        secure: env.production,
+        path: EPFL_PATH,
+        maxAge: 600,
+      });
+      return c.redirect(url, 302);
+    } catch (err) {
+      if (err instanceof entra.EpflLoginError) return c.redirect(`/?epfl=${err.code}`, 302);
+      throw err;
+    }
+  });
+
+  api.get('/auth/epfl/callback', async (c) => {
+    const saved = entra.decodeState(getCookie(c, EPFL_COOKIE));
+    deleteCookie(c, EPFL_COOKIE, { path: EPFL_PATH });
+    try {
+      const profile = await entra.completeLogin(c.req.query(), saved, epflCallback(c));
+      signIn(c, auth.signInWithEpfl(profile));
+      return c.redirect(entra.safeNext(saved?.next), 302);
+    } catch (err) {
+      const code = err instanceof entra.EpflLoginError ? err.code : err instanceof HttpError ? 'account' : 'failed';
+      console.warn(`[epfl] connexion refusée (${code}) : ${(err as Error).message}`);
+      return c.redirect(`/?epfl=${code}`, 302);
+    }
   });
 
   api.post('/auth/logout', (c) => {

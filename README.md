@@ -17,7 +17,7 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
-| **Accès EPFL** | Compte créé avec une adresse `@epfl.ch` et un mot de passe, sans e-mail à attendre. |
+| **Accès EPFL** | « Continuer avec EPFL » : connexion avec le compte EPFL (Microsoft Entra ID), adresse et nom fournis par l'annuaire. Sans configuration Entra, compte `@epfl.ch` + mot de passe. |
 
 ## Démarrer
 
@@ -28,7 +28,7 @@ npm install
 npm run dev
 ```
 
-Ouvre <http://localhost:5173> et crée un compte avec n'importe quelle adresse `@epfl.ch` et un mot de passe (8 caractères minimum).
+Ouvre <http://localhost:5173> et crée un compte avec n'importe quelle adresse `@epfl.ch` et un mot de passe (8 caractères minimum). La connexion EPFL n'apparaît que si `ENTRA_CLIENT_ID` et `ENTRA_CLIENT_SECRET` sont définis.
 
 `npm run dev` active le **mode démo** (`RUSH_DEMO=1`) : huit rushers simulés publient des demandes, acceptent les tiennes, se déplacent sur la carte et te répondent dans le chat. Idéal pour tester seul. Pour tester à deux humains, ouvre une seconde fenêtre de navigation privée avec une autre adresse.
 
@@ -56,6 +56,20 @@ Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) e
 **Recharge.** Un seul [lien de paiement Stripe](https://docs.stripe.com/payment-links) « montant libre » (CHF 1 à 100, métadonnée `rush=topup`). L'app choisit le montant et ouvre le lien avec `client_reference_id` (le compte), `prefilled_amount` et `locked_prefilled_email`. Après le paiement, Stripe renvoie sur `/wallet?recharge={CHECKOUT_SESSION_ID}` et envoie un webhook `checkout.session.completed` à `/api/stripe/webhook`. Le serveur vérifie la signature (HMAC avec `STRIPE_WEBHOOK_SECRET`, sans SDK ni clé secrète), puis crédite le montant réellement payé, une seule fois par session (table `topups`). Un paiement sans compte correspondant, ou dans une autre devise que le CHF, n'est pas crédité : il apparaît dans l'écran de l'équipe pour être remboursé depuis Stripe.
 
 **Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS` voient l'écran **Retraits** (Profil → Équipe Rush) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
+
+## Connexion EPFL (Microsoft Entra ID)
+
+L'EPFL authentifie avec Microsoft Entra ID (qui remplace Tequila). Rush utilise OpenID Connect : code d'autorisation avec PKCE, puis jeton d'identité vérifié côté serveur (signature RS256 avec les clés publiées par Microsoft, émetteur, audience, nonce, et annuaire EPFL `f6c2556a-c4fb-4ab1-a2c7-9e220df11c43`). Un compte d'un autre annuaire est refusé.
+
+1. Enregistrer l'application sur [app-portal.epfl.ch](https://app-portal.epfl.ch/) (compte EPFL ; sinon passer par le Service Desk, 1234@epfl.ch), en application web avec l'adresse de retour `https://rush-epfl.onrender.com/api/auth/epfl/callback`.
+2. Mettre l'identifiant et le secret obtenus dans `ENTRA_CLIENT_ID` et `ENTRA_CLIENT_SECRET` sur Render.
+
+Dès que ces deux variables existent :
+
+- L'écran de connexion propose **Continuer avec EPFL**. Un compte est créé à la première connexion (nom et prénom de l'annuaire, crédit de bienvenue), puis retrouvé par l'identifiant immuable du compte EPFL.
+- Une adresse EPFL ne peut plus créer de mot de passe : c'est l'annuaire qui prouve l'adresse. Si un compte à mot de passe existait déjà pour cette adresse, la connexion EPFL le reprend, supprime le mot de passe et ferme les sessions ouvertes avec lui.
+- Le mot de passe reste pour les adresses de l'équipe hors EPFL (`RUSH_ADMIN_EMAILS`).
+- Le profil affiche « Compte EPFL vérifié », et l'écran Retraits indique pour chaque demande si l'adresse est vérifiée par l'EPFL.
 
 ## Pourboire suggéré
 
@@ -122,6 +136,9 @@ docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 | `STRIPE_WEBHOOK_SECRET` | Secret `whsec_…` du webhook Stripe vers `/api/stripe/webhook` | recharges désactivées |
 | `RUSH_ADMIN_EMAILS` | Adresses de l'équipe Rush (traitent les retraits, peuvent se connecter hors `@epfl.ch`) | aucune |
 | `RUSH_NTFY_TOPIC` | Sujet ntfy.sh pour être prévenu des retraits sur téléphone | désactivé |
+| `ENTRA_CLIENT_ID` | Identifiant de l'application enregistrée sur app-portal.epfl.ch | connexion EPFL désactivée |
+| `ENTRA_CLIENT_SECRET` | Secret de cette application | connexion EPFL désactivée |
+| `ENTRA_TENANT_ID` | Annuaire Microsoft autorisé | annuaire EPFL |
 | `VITE_MAP_STYLE` | URL d'un style MapLibre alternatif (au build) | style maison |
 
 Les tuiles viennent d'[OpenFreeMap](https://openfreemap.org) (gratuit, sans clé). Si elles ne répondent pas, la carte bascule automatiquement sur un fond raster CARTO.
@@ -141,5 +158,5 @@ Les restaurants de l'EPFL publient chaque jour leurs menus et leurs prix sur la 
 - **Photos et avis** : relevé Google Maps crédité, plus quelques photos des pages EPFL. Rien n'est repris d'Uber Eats ou de Tripadvisor.
 - **Argent réel et disque non persistant** : sur l'offre gratuite de Render, la base repart de zéro à chaque veille ou déploiement, soldes rechargés compris. Avant d'ouvrir les recharges à d'autres personnes, monter un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
 - **Frais Stripe** : prélevés sur chaque recharge et payés par l'équipe (le solde est crédité du montant payé). Le compte Stripe encaisse en EUR : les paiements en CHF sont convertis. TWINT n'est pas activé sur ce compte Stripe ; les recharges passent par carte, Apple Pay ou Google Pay.
-- **Authentification** : adresse `@epfl.ch` + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours). Aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** : quelqu'un pourrait s'inscrire avec une adresse EPFL qui n'est pas la sienne, et il n'y a pas de réinitialisation du mot de passe. Pour vérifier l'appartenance à l'EPFL, l'étape suivante est le SSO EPFL (Microsoft Entra ID, qui a remplacé Tequila), à demander au service informatique de l'EPFL. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
+- **Authentification** : avec la connexion EPFL configurée, les adresses EPFL sont prouvées par l'annuaire de l'EPFL. Sans elle, et pour l'équipe hors EPFL, c'est une adresse + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours) : aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** et il n'y a pas de réinitialisation du mot de passe. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

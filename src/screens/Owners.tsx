@@ -50,6 +50,9 @@ export function Owners() {
                     {w.user.email}
                     {w.user.section && ` · ${w.user.section}`}
                   </span>
+                  <span className={cx('pill', w.user.epfl ? 'pill--green' : 'pill--orange')}>
+                    {w.user.epfl ? 'Vérifié par l’EPFL' : 'Adresse non vérifiée'}
+                  </span>
                 </span>
                 <span className="owner-card__amount">{formatCHF(w.amountCents)}</span>
               </header>

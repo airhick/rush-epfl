@@ -28,6 +28,17 @@ const SCHEMA = /* sql */ `
   -- Ancienne connexion par code e-mail.
   DROP TABLE IF EXISTS login_codes;
 
+  -- Comptes reliés à une connexion externe (EPFL / Entra ID), par identifiant immuable.
+  CREATE TABLE IF NOT EXISTS identities (
+    provider    TEXT NOT NULL,
+    subject     TEXT NOT NULL,
+    user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    sciper      TEXT,
+    created_at  INTEGER NOT NULL,
+    PRIMARY KEY (provider, subject)
+  );
+  CREATE INDEX IF NOT EXISTS identities_user ON identities(user_id);
+
   CREATE TABLE IF NOT EXISTS sessions (
     token_hash  TEXT PRIMARY KEY,
     user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,

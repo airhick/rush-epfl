@@ -4,7 +4,8 @@ import { env } from '../env';
 import { one, run, transaction } from '../db';
 import { HttpError } from '../http';
 import { record } from './ledger';
-import { createUser, findUserByEmail, getUser, type UserRow } from './users';
+import { epflEnabled, type EpflProfile } from './entra';
+import { createUser, findUserByEmail, getUser, linkedToEpfl, type UserRow } from './users';
 
 export const PASSWORD_MIN = 8;
 const MAX_FAILURES = 8;
@@ -20,12 +21,13 @@ export interface SignedIn {
 const scrypt = promisify(scryptCallback) as (password: string, salt: Buffer, keylen: number) => Promise<Buffer>;
 const sha256 = (s: string) => createHash('sha256').update(s).digest('hex');
 
+const domainOf = (email: string) => /^[a-z0-9._%+-]+@([a-z0-9.-]+)$/.exec(email)?.[1];
+const inAllowedDomain = (domain: string | undefined) =>
+  Boolean(domain && env.allowedDomains.some((d) => domain === d || domain.endsWith(`.${d}`)));
+
 export function normalizeEmail(raw: string): string {
   const email = raw.trim().toLowerCase();
-  const match = /^[a-z0-9._%+-]+@([a-z0-9.-]+)$/.exec(email);
-  const domain = match?.[1];
-  const allowed = domain && (env.allowedDomains.some((d) => domain === d || domain.endsWith(`.${d}`)) || env.adminEmails.includes(email));
-  if (!allowed) {
+  if (!inAllowedDomain(domainOf(email)) && !env.adminEmails.includes(email)) {
     throw new HttpError(422, 'Rush est réservé à la communauté EPFL : utilise ton adresse @epfl.ch.');
   }
   return email;
@@ -66,11 +68,22 @@ function noteFailure(email: string) {
 
 /* ── Connexion ────────────────────────────────────────────────────────── */
 
-/** L'adresse a-t-elle déjà un compte ? L'écran de connexion choisit entre « se connecter » et « créer ». */
-export function accountExists(rawEmail: string): { email: string; exists: boolean } {
+/**
+ * Avec la connexion EPFL active, une adresse EPFL ne crée plus de mot de passe :
+ * l'EPFL prouve que l'adresse est bien à la personne. Les adresses de l'équipe
+ * hors EPFL gardent le mot de passe.
+ */
+export const mustUseEpfl = (email: string) => epflEnabled() && inAllowedDomain(domainOf(email));
+
+/**
+ * L'adresse a-t-elle déjà un compte ? L'écran de connexion choisit entre « se connecter »,
+ * « créer » et la connexion EPFL.
+ */
+export function accountExists(rawEmail: string): { email: string; exists: boolean; epfl: boolean } {
   const email = normalizeEmail(rawEmail);
   const user = findUserByEmail(email);
-  return { email, exists: Boolean(user && passwordOf(user.id)) };
+  const exists = Boolean(user && passwordOf(user.id));
+  return { email, exists, epfl: !exists && (mustUseEpfl(email) || Boolean(user && linkedToEpfl(user.id))) };
 }
 
 export async function login(rawEmail: string, password: string): Promise<SignedIn> {
@@ -98,6 +111,10 @@ export async function register(rawEmail: string, password: string): Promise<Sign
     if (existing && (existing.is_bot || passwordOf(existing.id))) {
       throw new HttpError(409, 'Un compte existe déjà avec cette adresse.');
     }
+    // Même si la connexion EPFL est coupée ensuite, un mot de passe ne doit pas ouvrir un compte EPFL.
+    if ((existing && linkedToEpfl(existing.id)) || mustUseEpfl(email)) {
+      throw new HttpError(403, 'Avec une adresse EPFL, connecte-toi avec « Continuer avec EPFL ».');
+    }
     // Un compte créé avant les mots de passe reçoit simplement le sien.
     const account = existing ?? createAccount(email);
     run('INSERT INTO credentials (user_id, password_hash, updated_at) VALUES (?, ?, ?)', account.id, hash, Date.now());
@@ -106,10 +123,42 @@ export async function register(rawEmail: string, password: string): Promise<Sign
   return { user, token: openSession(user.id) };
 }
 
+/** Connexion EPFL réussie : retrouve le compte relié, relie celui de la même adresse ou en crée un. */
+export function signInWithEpfl(profile: EpflProfile): SignedIn {
+  const email = normalizeEmail(profile.email);
+  const user = transaction(() => {
+    const linked = one<{ user_id: string }>('SELECT user_id FROM identities WHERE provider = ? AND subject = ?', 'epfl', profile.subject);
+    if (linked) return getUser(linked.user_id)!;
+
+    const existing = findUserByEmail(email);
+    if (existing && (existing.is_bot || linkedToEpfl(existing.id))) {
+      throw new HttpError(409, 'Cette adresse est déjà reliée à un autre compte EPFL.');
+    }
+    if (existing) {
+      // L'EPFL prouve à qui est l'adresse : un mot de passe posé avant, peut-être par quelqu'un
+      // d'autre, n'ouvre plus le compte, et les sessions ouvertes avec lui sont fermées.
+      run('DELETE FROM credentials WHERE user_id = ?', existing.id);
+      run('DELETE FROM sessions WHERE user_id = ?', existing.id);
+    }
+    const account =
+      existing ?? createAccount(email, { first: profile.firstName ?? undefined, last: profile.lastName ?? undefined });
+    run(
+      'INSERT INTO identities (provider, subject, user_id, sciper, created_at) VALUES (?, ?, ?, ?, ?)',
+      'epfl',
+      profile.subject,
+      account.id,
+      profile.sciper,
+      Date.now(),
+    );
+    return account;
+  });
+  return { user, token: openSession(user.id) };
+}
+
 /** Nouveau compte, avec le crédit de bienvenue écrit dans la même transaction. */
-function createAccount(email: string): UserRow {
+function createAccount(email: string, names: { first?: string; last?: string } = {}): UserRow {
   return transaction(() => {
-    const user = createUser(email);
+    const user = createUser(email, names);
     if (env.welcomeBonusCents > 0) record(user.id, 'bonus', env.welcomeBonusCents, 'Bienvenue sur Rush');
     return user;
   });

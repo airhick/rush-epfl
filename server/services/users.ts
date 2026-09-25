@@ -134,10 +134,15 @@ export function toMe(user: UserRow): Me {
     heldCents: heldOf(user.id),
     onboarded: user.onboarded === 1,
     isAdmin: isAdmin(user),
+    epfl: linkedToEpfl(user.id),
   };
 }
 
 export const isAdmin = (user: Pick<UserRow, 'email'>) => env.adminEmails.includes(user.email);
+
+/** Compte ouvert avec la connexion EPFL : l'adresse est prouvée par l'annuaire de l'EPFL. */
+export const linkedToEpfl = (userId: string) =>
+  Boolean(one('SELECT 1 AS x FROM identities WHERE user_id = ? AND provider = ?', userId, 'epfl'));
 
 /** Comptes de l'équipe Rush déjà inscrits. */
 export function admins(): UserRow[] {

@@ -1,6 +1,7 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from './api';
 import type {
+  AuthOptions,
   Conversation,
   Me,
   Message,
@@ -38,6 +39,10 @@ export const keys = {
   presence: ['presence'] as const,
   owner: ['owner', 'withdrawals'] as const,
 };
+
+/** Ce que l'écran de connexion propose (connexion EPFL active ou non). */
+export const useAuthOptions = () =>
+  useQuery({ queryKey: ['auth', 'options'], queryFn: () => api<AuthOptions>('/auth/options'), staleTime: Infinity });
 
 export const useMe = () =>
   useQuery({

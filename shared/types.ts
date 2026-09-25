@@ -25,6 +25,13 @@ export interface Me extends PublicUser {
   onboarded: boolean;
   /** Membre de l'équipe Rush : voit et traite les demandes de retrait. */
   isAdmin: boolean;
+  /** Compte ouvert avec la connexion EPFL (adresse prouvée par l'annuaire). */
+  epfl: boolean;
+}
+
+/** Ce que l'écran de connexion propose. */
+export interface AuthOptions {
+  epfl: boolean;
 }
 
 export interface OrderItem {
@@ -130,7 +137,7 @@ export interface TopupStatus {
 
 /** Vue de l'équipe Rush : retraits à envoyer par TWINT et paiements Stripe à rattacher. */
 export interface OwnerWithdrawal extends Withdrawal {
-  user: { id: string; firstName: string; lastName: string; email: string; section: string | null };
+  user: { id: string; firstName: string; lastName: string; email: string; section: string | null; epfl: boolean };
   /** Contexte pour juger la demande : d'où vient l'argent de ce compte. */
   stats: { topupsCents: number; earnedCents: number; balanceCents: number };
 }

@@ -165,7 +165,7 @@ describe('authentification', () => {
   it('crée le compte avec un mot de passe, puis s’y connecte', async () => {
     expect(accountExists('new.person@epfl.ch').exists).toBe(false);
     const { user: created } = await register('New.Person@epfl.ch', 'croissant-42');
-    expect(accountExists('new.person@epfl.ch')).toEqual({ email: 'new.person@epfl.ch', exists: true });
+    expect(accountExists('new.person@epfl.ch')).toEqual({ email: 'new.person@epfl.ch', exists: true, epfl: false });
 
     const { user: again, token } = await login('new.person@epfl.ch', 'croissant-42');
     expect(again.id).toBe(created.id);
@@ -207,7 +207,7 @@ describe('authentification', () => {
     const post = (path: string, body: object, cookie = '') =>
       app.request(`/api${path}`, { method: 'POST', headers: { 'content-type': 'application/json', cookie }, body: JSON.stringify(body) });
 
-    expect(await (await post('/auth/check', { email: 'api.user@epfl.ch' })).json()).toEqual({ email: 'api.user@epfl.ch', exists: false });
+    expect(await (await post('/auth/check', { email: 'api.user@epfl.ch' })).json()).toEqual({ email: 'api.user@epfl.ch', exists: false, epfl: false });
     expect((await post('/auth/check', { email: 'api.user@gmail.com' })).status).toBe(422);
 
     const res = await post('/auth/register', { email: 'api.user@epfl.ch', password: 'rush-rush-rush' });
