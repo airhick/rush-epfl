@@ -34,16 +34,19 @@ export interface Scene {
   dropoff?: (LatLng & { label: string; draggable?: boolean }) | null;
   requests?: RequestPin[];
   courier?: (LatLng & { user: PublicUser }) | null;
-  destination?: (LatLng & { label: string }) | null;
+  /** Étapes du trajet du rusher, numérotées sur la carte. */
+  stops?: (LatLng & { label: string })[] | null;
 }
 
 interface SceneState {
   scene: Scene;
   onDropoffMove: ((p: LatLng) => void) | null;
   onRequestClick: ((id: string) => void) | null;
+  /** Mode « touche la carte pour placer un point ». */
+  onMapClick: ((p: LatLng) => void) | null;
   hoverSpotId: string | null;
   set: (scene: Scene) => void;
-  setHandlers: (h: Partial<Pick<SceneState, 'onDropoffMove' | 'onRequestClick'>>) => void;
+  setHandlers: (h: Partial<Pick<SceneState, 'onDropoffMove' | 'onRequestClick' | 'onMapClick'>>) => void;
   hover: (id: string | null) => void;
 }
 
@@ -51,6 +54,7 @@ export const useScene = create<SceneState>((set) => ({
   scene: { cameraKey: 'overview', camera: { kind: 'overview' } },
   onDropoffMove: null,
   onRequestClick: null,
+  onMapClick: null,
   hoverSpotId: null,
   set: (scene) => set({ scene }),
   setHandlers: (h) => set(h),

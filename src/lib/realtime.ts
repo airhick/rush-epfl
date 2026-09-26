@@ -2,15 +2,23 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { applyOrder, keys } from './queries';
 import { toast, useTyping } from '../state/ui';
+import { useOffers } from '../state/offers';
+import { useGeo } from '../state/location';
 import { SPOT_BY_ID } from '../../shared/catalog';
-import type { ClientEvent, Me, Message, Order, ServerEvent } from '../../shared/types';
+import { haversine, type LatLng } from '../../shared/geo';
+import type { ClientEvent, Me, Message, Order, Presence, ServerEvent } from '../../shared/types';
 
 let socket: WebSocket | null = null;
 const queue: ClientEvent[] = [];
 
 export function sendEvent(event: ClientEvent) {
   if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(event));
-  else if (event.type === 'location') queue.splice(0, queue.length, event);
+  // Hors ligne : on ne garde que la dernière position de chaque sorte, envoyée à la reconnexion.
+  else if (event.type === 'location' || event.type === 'position') {
+    const i = queue.findIndex((e) => e.type === event.type);
+    if (i >= 0) queue.splice(i, 1);
+    queue.push(event);
+  }
 }
 
 /** Écran actuellement ouvert, pour ne pas notifier une conversation déjà visible. */
@@ -64,7 +72,14 @@ export function useRealtime(me: Me | null | undefined) {
           break;
         }
         case 'order.opened':
+          qc.invalidateQueries({ queryKey: keys.openOrders });
+          break;
         case 'order.closed':
+          qc.invalidateQueries({ queryKey: keys.openOrders });
+          useOffers.getState().close(event.orderId);
+          break;
+        case 'offer':
+          useOffers.getState().push(event.offer);
           qc.invalidateQueries({ queryKey: keys.openOrders });
           break;
         case 'activity.updated':
@@ -112,6 +127,8 @@ export function useRealtime(me: Me | null | undefined) {
       ws.onopen = () => {
         retry = 0;
         for (const e of queue.splice(0)) ws.send(JSON.stringify(e));
+        // Le serveur a pu redémarrer : il a oublié où l'on est.
+        beacon.resend();
         // Rattrape ce qui a pu se passer pendant la coupure.
         qc.invalidateQueries();
       };
@@ -130,7 +147,9 @@ export function useRealtime(me: Me | null | undefined) {
     };
 
     connect();
+    const stopBeacon = beacon.start(() => qc.getQueryData<Presence>(keys.presence)?.available !== false);
     return () => {
+      stopBeacon();
       closed = true;
       window.clearTimeout(timer);
       socket?.close();
@@ -138,3 +157,50 @@ export function useRealtime(me: Me | null | undefined) {
     };
   }, [me?.id, qc]); // eslint-disable-line react-hooks/exhaustive-deps
 }
+
+/*
+ * Position de l'appareil vers le serveur, pour recevoir les courses proches.
+ * Seulement la position réelle (GPS sur le campus), et seulement si l'on est
+ * disponible. Au plus un envoi par 15 m parcourus, et un rappel par minute
+ * pour que le serveur sache qu'on est toujours là.
+ */
+const BEACON_MOVE_M = 15;
+const BEACON_EVERY_MS = 60_000;
+
+const beacon = (() => {
+  let last: (LatLng & { at: number }) | null = null;
+  let isAvailable = () => true;
+
+  const send = (p: LatLng, force = false) => {
+    if (!isAvailable()) return;
+    if (!force && last && haversine(last, p) < BEACON_MOVE_M && Date.now() - last.at < BEACON_EVERY_MS) return;
+    last = { ...p, at: Date.now() };
+    sendEvent({ type: 'position', lat: p.lat, lng: p.lng });
+  };
+  const current = () => {
+    const geo = useGeo.getState();
+    return geo.status === 'live' ? geo.position : null;
+  };
+
+  return {
+    start(available: () => boolean) {
+      isAvailable = available;
+      const unsubscribe = useGeo.subscribe((geo) => geo.status === 'live' && send(geo.position));
+      const timer = window.setInterval(() => {
+        const p = current();
+        if (p) send(p, true);
+      }, BEACON_EVERY_MS);
+      const p = current();
+      if (p) send(p, true);
+      return () => {
+        unsubscribe();
+        window.clearInterval(timer);
+        last = null;
+      };
+    },
+    resend() {
+      const p = current();
+      if (p) send(p, true);
+    },
+  };
+})();

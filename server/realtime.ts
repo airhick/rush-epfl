@@ -54,3 +54,8 @@ export function broadcast(event: ServerEvent) {
 export function isOnline(userId: string) {
   return sockets.has(userId);
 }
+
+/** Comptes avec l'app ouverte en ce moment (au moins une WebSocket). */
+export function onlineUsers(): string[] {
+  return [...sockets.keys()];
+}

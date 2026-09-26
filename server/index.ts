@@ -6,6 +6,7 @@ import { createApp } from './app';
 import { handleClientEvents, sendTo, upgrade } from './realtime';
 import { SESSION_COOKIE, purgeExpired, userFromToken } from './services/auth';
 import { orderFor, sweep, updateCourierLocation } from './services/orders';
+import { updatePosition } from './services/dispatch';
 import { startDemo } from './demo/bots';
 
 const app = createApp();
@@ -21,6 +22,8 @@ if (env.production && existsSync('dist/index.html')) {
 handleClientEvents((userId, event) => {
   if (event.type === 'location') {
     updateCourierLocation(event.orderId, userId, event.lat, event.lng);
+  } else if (event.type === 'position') {
+    updatePosition(userId, event.lat, event.lng);
   } else if (event.type === 'typing') {
     try {
       const order = orderFor(event.orderId, userId);

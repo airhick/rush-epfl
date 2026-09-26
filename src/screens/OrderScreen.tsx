@@ -96,7 +96,7 @@ function OrderView({ order }: { order: Order }) {
 
   const idx = stepIndex(order);
   const actualOrEstimate = order.actualItemsCents ?? order.itemsCents;
-  const { courierCents, refundCents } = settle({ holdCents: order.holdCents, tipCents: order.tipCents, actualItemsCents: actualOrEstimate });
+  const { courierCents, refundCents } = settle({ holdCents: order.holdCents, rewardCents: order.rewardCents, actualItemsCents: actualOrEstimate });
 
   return (
     <Screen
@@ -133,7 +133,7 @@ function OrderView({ order }: { order: Order }) {
         )}
       </div>
 
-      {order.status === 'open' && role === 'requester' && <SearchingPulse />}
+      {order.status === 'open' && role === 'requester' && <SearchingPulse offeredTo={order.offeredTo} spot={spot.name} />}
 
       {other && (role !== 'requester' || order.courier) && (
         <div className="person-card">
@@ -208,8 +208,8 @@ function OrderView({ order }: { order: Order }) {
                 <span>{formatCHF(actualOrEstimate)}</span>
               </div>
               <div className="summary__line">
-                <span>Pourboire</span>
-                <span className="text-green">{formatCHF(order.tipCents, { sign: true })}</span>
+                <span>Ta rémunération</span>
+                <span className="text-green">{formatCHF(order.rewardCents, { sign: true })}</span>
               </div>
               <div className="summary__line summary__line--total">
                 <span>{order.status === 'completed' ? 'Crédité sur ton solde' : 'Crédité à la confirmation'}</span>
@@ -229,9 +229,17 @@ function OrderView({ order }: { order: Order }) {
                 </div>
               )}
               <div className="summary__line">
-                <span>Pourboire</span>
-                <span>{formatCHF(order.tipCents)}</span>
+                <span>
+                  Livraison <span className="muted">CHF 0.50 / CHF 5</span>
+                </span>
+                <span>{formatCHF(order.feeCents)}</span>
               </div>
+              {order.bonusCents > 0 && (
+                <div className="summary__line">
+                  <span>Coup de pouce</span>
+                  <span>{formatCHF(order.bonusCents)}</span>
+                </div>
+              )}
               {order.status === 'cancelled' ? (
                 <div className="summary__line summary__line--total">
                   <span>Rendu sur ton solde</span>
@@ -257,13 +265,17 @@ function OrderView({ order }: { order: Order }) {
   );
 }
 
-function SearchingPulse() {
+function SearchingPulse({ offeredTo, spot }: { offeredTo: number | null; spot: string }) {
   return (
     <div className="searching">
       <span className="searching__ring" />
       <span className="searching__ring searching__ring--2" />
       <span className="searching__dot" />
-      <p>Les rushers autour du spot reçoivent ta demande.</p>
+      <p>
+        {offeredTo
+          ? `Envoyée en direct à ${offeredTo === 1 ? '1 rusher' : `${offeredTo} rushers`} près de ${spot} ou sur leur chemin.`
+          : `Dès qu’un rusher passe près de ${spot}, ou que son trajet y passe, il la reçoit en direct.`}
+      </p>
     </div>
   );
 }
@@ -293,7 +305,7 @@ function Actions({
       <>
         {err}
         <Button block loading={busy} onClick={onAccept}>
-          Accepter · +{formatCHF(order.tipCents)}
+          Accepter · +{formatCHF(order.rewardCents)}
         </Button>
       </>
     );

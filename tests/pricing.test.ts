@@ -1,52 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import { computeHold, maxActualItems, settle, suggestTip } from '../shared/pricing';
-import { SPOT_BY_ID, BUILDINGS } from '../shared/catalog';
+import { computeHold, deliveryFee, feeSlices, maxActualItems, settle } from '../shared/pricing';
 
-const spot = SPOT_BY_ID.get('foodlab')!;
-const near = { lat: spot.lat + 0.0005, lng: spot.lng };
-const far = BUILDINGS.find((b) => b.id === 'STCC')!;
-// Jeudi 24 septembre 2026, 10:00 à Zurich : hors heure de pointe.
-const morning = new Date('2026-09-24T08:00:00Z');
-const noon = new Date('2026-09-24T10:30:00Z');
-
-describe('pourboire suggéré', () => {
-  it('est arrondi aux 50 centimes et borné', () => {
-    const s = suggestTip({ spot, dropoff: near, itemCount: 1, date: morning });
-    expect(s.suggestedCents % 50).toBe(0);
-    expect(s.suggestedCents).toBeGreaterThanOrEqual(150);
-    expect(s.suggestedCents).toBeLessThanOrEqual(900);
+describe('tarif de livraison', () => {
+  it('coûte CHF 0.50 par tranche de CHF 5 commencée', () => {
+    expect(deliveryFee(150)).toBe(50);
+    expect(deliveryFee(350)).toBe(50);
+    expect(deliveryFee(500)).toBe(50);
+    expect(deliveryFee(501)).toBe(100);
+    expect(deliveryFee(1000)).toBe(100);
+    expect(deliveryFee(1250)).toBe(150);
+    expect(deliveryFee(2300)).toBe(250);
+    expect(feeSlices(1250)).toBe(3);
   });
 
-  it('augmente avec la distance, le nombre d’articles et l’heure de pointe', () => {
-    const base = suggestTip({ spot, dropoff: near, itemCount: 1, date: morning }).suggestedCents;
-    expect(suggestTip({ spot, dropoff: far, itemCount: 1, date: morning }).suggestedCents).toBeGreaterThan(base);
-    expect(suggestTip({ spot, dropoff: near, itemCount: 5, date: morning }).suggestedCents).toBeGreaterThan(base);
-    const lunch = suggestTip({ spot, dropoff: near, itemCount: 1, date: noon });
-    expect(lunch.factors.map((f) => f.label)).toContain('Heure de pointe');
+  it('réserve les articles et la rémunération du rusher, sans marge', () => {
+    expect(computeHold(1250)).toEqual({ itemsCents: 1250, feeCents: 150, bonusCents: 0, rewardCents: 150, holdCents: 1400 });
+    expect(computeHold(1250, 100)).toMatchObject({ rewardCents: 250, holdCents: 1500 });
   });
 
-  it('propose trois options ordonnées', () => {
-    const s = suggestTip({ spot, dropoff: far, itemCount: 2, date: morning });
-    const [min, suggested, generous] = s.options.map((o) => o.cents);
-    expect(min).toBeLessThanOrEqual(suggested);
-    expect(generous).toBeGreaterThan(suggested);
-  });
-});
-
-describe('réservation et règlement', () => {
-  it('réserve articles + 10 % + pourboire', () => {
-    expect(computeHold(1250, 300)).toEqual({ itemsCents: 1250, marginCents: 130, tipCents: 300, holdCents: 1680 });
-  });
-
-  it('répartit exactement le montant réservé', () => {
-    const hold = computeHold(1110, 300);
-    const order = { holdCents: hold.holdCents, tipCents: 300, actualItemsCents: 1080 };
-    const { courierCents, refundCents } = settle(order);
-    expect(courierCents).toBe(1380);
-    expect(courierCents + refundCents).toBe(hold.holdCents);
-  });
-
-  it('plafonne le ticket au montant réservé hors pourboire', () => {
-    expect(maxActualItems({ holdCents: 1680, tipCents: 300 })).toBe(1380);
+  it('paie le ticket et la rémunération au rusher, et rend le reste', () => {
+    const hold = computeHold(1110, 50);
+    const order = { holdCents: hold.holdCents, rewardCents: hold.rewardCents, actualItemsCents: 1080 };
+    expect(settle(order)).toEqual({ courierCents: 1080 + 200, refundCents: 30 });
+    expect(maxActualItems(order)).toBe(1110);
   });
 });

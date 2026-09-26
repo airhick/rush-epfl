@@ -8,14 +8,18 @@ import type {
   Order,
   OwnerOverview,
   PlaceMedia,
+  PlaceResult,
   Presence,
   SpotActivity,
   SpotMenu,
   TopupStatus,
   WalletView,
   Withdrawal,
+  WalkingRoute,
 } from '../../shared/types';
+import type { LatLng } from '../../shared/geo';
 import type { CreateOrderInput } from './types';
+import { useOffers } from '../state/offers';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -131,11 +135,19 @@ export function useAccept() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (orderId: string) => api<Order>(`/orders/${orderId}/accept`, { method: 'POST' }),
+    // Acceptée depuis la liste ou la carte : l'offre en direct correspondante ne doit pas dire « déjà prise ».
+    onMutate: (orderId) => useOffers.getState().setAccepting(orderId, true),
     onSuccess: (order) => {
       applyOrder(qc, order);
       qc.invalidateQueries({ queryKey: keys.conversations });
+      // Après les rappels de l'écran (navigation), on range l'offre.
+      window.setTimeout(() => useOffers.getState().dismiss(order.id), 0);
     },
-    onError: () => qc.invalidateQueries({ queryKey: keys.openOrders }),
+    onError: (_err, orderId) => {
+      qc.invalidateQueries({ queryKey: keys.openOrders });
+      useOffers.getState().setAccepting(orderId, false);
+      useOffers.getState().close(orderId);
+    },
   });
 }
 
@@ -191,6 +203,19 @@ export function useMarkRead(orderId: string) {
     },
   });
 }
+
+/** Petit moteur de recherche de lieux : spots, bâtiments, adresses autour de l'EPFL. */
+export const usePlaceSearch = (query: string) =>
+  useQuery({
+    queryKey: ['places', query.trim().toLowerCase()],
+    queryFn: () => api<PlaceResult[]>(`/places/search?q=${encodeURIComponent(query.trim())}`),
+    enabled: query.trim().length >= 2,
+    staleTime: 10 * 60_000,
+    placeholderData: (prev) => prev,
+  });
+
+/** Itinéraire à pied passant par ces points (lignes droites si le service ne répond pas). */
+export const walkingRoute = (points: LatLng[]) => api<WalkingRoute>('/places/route', { body: { points } });
 
 export function useSetPresence() {
   const qc = useQueryClient();

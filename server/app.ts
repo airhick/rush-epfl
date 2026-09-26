@@ -7,13 +7,15 @@ import * as auth from './services/auth';
 import * as orders from './services/orders';
 import * as messages from './services/messages';
 import * as presence from './services/presence';
+import * as dispatch from './services/dispatch';
+import * as placeSearch from './services/geocode';
 import * as places from './services/places';
 import * as epflMenus from './services/epflMenus';
 import * as entra from './services/entra';
 import * as stripe from './services/stripe';
 import * as payments from './services/payments';
 import { getUser, isAdmin, publicUser, toMe, updateProfile, type UserRow } from './services/users';
-import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
+import { BONUS_MAX_CENTS } from '../shared/pricing';
 import { CUSTOM_BUDGET_MAX_CENTS, CUSTOM_BUDGET_MIN_CENTS, CUSTOM_TEXT_MAX, SPOT_BY_ID } from '../shared/catalog';
 import type { AuthOptions, Conversation } from '../shared/types';
 
@@ -37,7 +39,7 @@ const schemas = {
       })
       .nullish(),
     dropoff: z.object({ ...latLng, label: z.string().trim().min(1).max(60), note: z.string().trim().max(140) }),
-    tipCents: z.number().int().min(TIP_MIN_CENTS).max(TIP_MAX_CENTS),
+    bonusCents: z.number().int().min(0).max(BONUS_MAX_CENTS).default(0),
   }),
   pickup: z.object({ actualItemsCents: z.number().int().positive() }),
   rate: z.object({ stars: z.number().int().min(1).max(5) }),
@@ -47,9 +49,12 @@ const schemas = {
   reject: z.object({ reason: z.string().trim().min(3, 'Explique le refus en quelques mots.').max(200) }),
   presence: z.object({
     available: z.boolean(),
-    spotId: z.string().nullable(),
-    destination: z.object({ ...latLng, label: z.string().max(60) }).nullable(),
+    stops: z
+      .array(z.object({ ...latLng, label: z.string().max(80), spotId: z.string().max(64).nullable() }))
+      .max(presence.MAX_STOPS, `Pas plus de ${presence.MAX_STOPS} étapes.`),
+    path: z.array(z.object(latLng)).max(5000).nullable(),
   }),
+  route: z.object({ points: z.array(z.object(latLng)).min(2).max(presence.MAX_STOPS + 1) }),
 };
 
 async function body<T extends z.ZodTypeAny>(c: Context, schema: T): Promise<z.infer<T>> {
@@ -213,7 +218,16 @@ export function createApp() {
 
   api.get('/activity', (c) => c.json(presence.activity()));
   api.get('/presence', (c) => c.json(presence.getPresence(me(c).id)));
-  api.put('/presence', async (c) => c.json(presence.setPresence(me(c).id, await body(c, schemas.presence))));
+  api.put('/presence', async (c) => {
+    const updated = presence.setPresence(me(c).id, await body(c, schemas.presence));
+    // Nouveau trajet ou de nouveau disponible : les demandes ouvertes qui tombent sur le chemin.
+    dispatch.recheck(me(c).id);
+    return c.json(updated);
+  });
+
+  /* Petit moteur de recherche de lieux et itinéraire à pied pour le trajet. */
+  api.get('/places/search', async (c) => c.json(await placeSearch.search(c.req.query('q') ?? '')));
+  api.post('/places/route', async (c) => c.json(await placeSearch.walkingRoute((await body(c, schemas.route)).points)));
 
   /* ── Commandes ────────────────────────────────────────────────────── */
 

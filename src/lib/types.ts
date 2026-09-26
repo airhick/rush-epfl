@@ -5,5 +5,6 @@ export interface CreateOrderInput {
   items: { itemId: string; qty: number }[];
   custom?: { text: string; budgetCents: number } | null;
   dropoff: Dropoff;
-  tipCents: number;
+  /** Coup de pouce facultatif ; le tarif est calculé par le serveur. */
+  bonusCents: number;
 }

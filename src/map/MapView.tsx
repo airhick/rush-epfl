@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import maplibregl, { type GeoJSONSource, type StyleSpecification } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import type { FeatureCollection } from 'geojson';
-import { Flag } from 'lucide-react';
 import { SPOTS, type Spot } from '../../shared/catalog';
 import { EPFL_CENTER, type LatLng } from '../../shared/geo';
 import { openStatus } from '../../shared/hours';
@@ -97,6 +96,7 @@ export function MapView() {
   const hoverSpotId = useScene((s) => s.hoverSpotId);
   const onDropoffMove = useScene((s) => s.onDropoffMove);
   const onRequestClick = useScene((s) => s.onRequestClick);
+  const picking = useScene((s) => s.onMapClick !== null);
   const insets = useLayout((s) => s.insets);
   const geo = useGeo();
   const { data: activity } = useActivity();
@@ -119,6 +119,7 @@ export function MapView() {
     });
     m.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right');
     m.touchZoomRotate.disableRotation();
+    m.on('click', (e) => useScene.getState().onMapClick?.({ lat: e.lngLat.lat, lng: e.lngLat.lng }));
 
     let tiles = false;
     m.on('data', (e) => {
@@ -227,7 +228,15 @@ export function MapView() {
   }, [map, scene.focusSpotIds, scene.highlightSpotId, hoverSpotId, activityBySpot]);
 
   return (
-    <div className={cx('map', labels > 0 && 'map--labels', labels > 1 && 'map--labels-all', scene.focusSpotIds && 'map--focus')}>
+    <div
+      className={cx(
+        'map',
+        labels > 0 && 'map--labels',
+        labels > 1 && 'map--labels-all',
+        scene.focusSpotIds && 'map--focus',
+        picking && 'map--picking',
+      )}
+    >
       <div ref={container} className="map__canvas" />
       {map && (
         <>
@@ -258,14 +267,14 @@ export function MapView() {
             </MapMarker>
           ))}
 
-          {scene.destination && (
-            <MapMarker map={map} position={scene.destination} anchor="bottom" zIndex={4}>
+          {scene.stops?.map((stop, i) => (
+            <MapMarker key={`${i}-${stop.lat}-${stop.lng}`} map={map} position={stop} anchor="bottom" zIndex={4}>
               <div className="dest-pin">
-                <Flag size={13} strokeWidth={2.4} />
-                <span>{scene.destination.label}</span>
+                <span className="dest-pin__num">{i + 1}</span>
+                <span>{stop.label}</span>
               </div>
             </MapMarker>
-          )}
+          ))}
 
           {scene.dropoff && (
             <MapMarker

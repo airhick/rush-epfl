@@ -54,9 +54,12 @@ export interface Order {
   spotId: string;
   items: OrderItem[];
   itemsCents: number;
-  marginCents: number;
-  tipCents: number;
-  suggestedTipCents: number;
+  /** Tarif : CHF 0.50 par tranche de CHF 5 d'articles. */
+  feeCents: number;
+  /** Coup de pouce facultatif du demandeur. */
+  bonusCents: number;
+  /** Ce que touche le rusher en plus du remboursement des articles (tarif + coup de pouce). */
+  rewardCents: number;
   holdCents: number;
   actualItemsCents: number | null;
   dropoff: Dropoff;
@@ -72,6 +75,8 @@ export interface Order {
   cancelReason: string | null;
   myRole: Role | null;
   myRating: number | null;
+  /** Demande ouverte, vue par le demandeur : nombre de rushers proches prévenus en direct. */
+  offeredTo: number | null;
 }
 
 export interface Message {
@@ -156,10 +161,54 @@ export interface OwnerOverview {
   unmatchedTopups: UnmatchedTopup[];
 }
 
-export interface Presence {
-  available: boolean;
+/** Une étape du trajet d'un rusher : un spot où il mange, un bâtiment, une adresse ou un point sur la carte. */
+export interface RouteStop extends LatLng {
+  label: string;
   spotId: string | null;
-  destination: (LatLng & { label: string }) | null;
+}
+
+export interface Presence {
+  /** Disponible pour livrer : activé par défaut, tout le monde peut commander et livrer. */
+  available: boolean;
+  /** Mon trajet, dans l'ordre : « je mange ici, puis je vais là ». */
+  stops: RouteStop[];
+  /** Tracé à pied entre les étapes, s'il a pu être calculé (sinon lignes droites). */
+  path: LatLng[] | null;
+}
+
+/** Résultat du petit moteur de recherche de lieux. */
+export interface PlaceResult extends LatLng {
+  id: string;
+  label: string;
+  detail: string;
+  kind: 'spot' | 'building' | 'address';
+  spotId: string | null;
+}
+
+/** Itinéraire à pied du trajet : tracé réel, ou null (lignes droites) si le service n'a pas répondu. */
+export interface WalkingRoute {
+  path: LatLng[] | null;
+  meters: number;
+  minutes: number;
+}
+
+/** Course proposée en direct à un rusher proche, façon Uber. */
+export interface Offer {
+  orderId: string;
+  spotId: string;
+  items: OrderItem[];
+  /** Montant maximum que le rusher avance, remboursé à la livraison. */
+  advanceCents: number;
+  rewardCents: number;
+  /** De la position du rusher au spot. */
+  pickup: { meters: number; minutes: number };
+  /** Du spot au point de livraison. */
+  delivery: { meters: number; minutes: number; label: string } & LatLng;
+  /** Mètres de marche ajoutés à son trajet déclaré (null sans trajet). */
+  detourMeters: number | null;
+  reason: 'nearby' | 'route';
+  requester: PublicUser;
+  createdAt: string;
 }
 
 export type DailyStatus = 'ok' | 'empty' | 'unavailable';
@@ -215,8 +264,11 @@ export type ServerEvent =
   | { type: 'activity.updated' }
   | { type: 'courier.location'; orderId: string; lat: number; lng: number; at: string }
   | { type: 'withdrawals.updated' }
-  | { type: 'toast'; title: string; body?: string; orderId?: string; href?: string };
+  | { type: 'toast'; title: string; body?: string; orderId?: string; href?: string }
+  | { type: 'offer'; offer: Offer };
 
 export type ClientEvent =
   | { type: 'typing'; orderId: string }
-  | { type: 'location'; orderId: string; lat: number; lng: number };
+  | { type: 'location'; orderId: string; lat: number; lng: number }
+  /** Position de l'appareil, pour les courses proches ; jamais montrée aux autres. */
+  | { type: 'position'; lat: number; lng: number };

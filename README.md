@@ -2,7 +2,7 @@
 
 **La graille du campus, ramenée par ceux qui y sont déjà.**
 
-Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as faim ? Quelqu'un qui est déjà au Parmentier — ou qui y passe — prend ta commande sur son chemin et te l'amène. Le paiement passe par un solde intégré, le pourboire est suggéré au juste prix, et tout se suit sur une carte du campus.
+Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as faim ? Quelqu'un qui est déjà au Parmentier — ou qui y passe — prend ta commande sur son chemin et te l'amène. Le paiement passe par un solde intégré, la livraison coûte CHF 0.50 par tranche de CHF 5, et tout se suit sur une carte du campus.
 
 ## Ce que fait l'app
 
@@ -11,10 +11,11 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Carte intégrée** | Tous les spots de graille de l'EPFL et autour (UNIL), avec les rushers présents en direct, les trajets et la position du livreur. Style vectoriel maison inspiré d'Apple Plans, bâtiments en 3D, clair/sombre. |
 | **Fiches spots** | Menu du jour des restaurants EPFL lu en direct sur epfl.ch, avec les prix exacts étudiant, doctorant, campus et visiteur ; horaires officiels ; photos et avis Google Maps crédités à leurs auteurs. |
 | **Commander** | Plats du jour et cartes officielles, ou **demande libre** avec un budget maximum là où aucun prix n'est publié. Point de livraison par GPS, bâtiment ou épingle déplaçable sur la carte, note visible uniquement par le rusher. |
-| **Livrer** | Tu indiques où tu es et où tu vas : les demandes sont triées selon le **détour** qu'elles t'imposent (« Sur ton chemin », « +320 m de détour »). |
+| **Livrer** | Tout le monde commande et livre, disponible par défaut. Une demande publiée s'affiche **en direct, façon Uber**, chez ceux qui sont à moins de 100 m du spot ou dont le trajet y passe : gain, contenu, temps jusqu'au spot, lieu de livraison. |
+| **Mon trajet** | « Je mange au FoodLab, puis je vais au BC » : étapes trouvées avec un petit moteur de recherche (spots, bâtiments, adresses) ou placées sur la carte, itinéraire à pied tracé. Les demandes sur le chemin passent en premier. |
 | **Solde Rush** | **CHF 1.00 offert** à chaque nouveau compte, **recharge par carte via Stripe** (montant libre de CHF 1 à 100) et gains des livraisons. Montant réservé à la commande, règlement du rusher à la livraison, reste rendu automatiquement. |
 | **Retraits TWINT** | Chacun demande un retrait depuis son solde ; l'équipe Rush reçoit une notification, envoie l'argent par TWINT et marque la demande comme envoyée. |
-| **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
+| **Tarif** | CHF 0.50 par tranche de CHF 5 d'articles, tout pour le rusher, plus un coup de pouce facultatif. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
 | **Accès EPFL** | « Créer un compte » ou « Se connecter » avec une adresse `@epfl.ch` et un mot de passe ; la connexion reste mémorisée sur l'appareil. « Continuer avec EPFL » (Microsoft Entra ID) une fois l'application enregistrée à l'EPFL. |
@@ -42,9 +43,9 @@ npm run typecheck
 Tous les montants sont en centimes, et le solde est **toujours la somme d'un registre append-only** (`transactions`) : rien n'est jamais modifié en place.
 
 0. **Entrées** — chaque nouveau compte reçoit CHF 1.00 (`RUSH_WELCOME_BONUS_CENTS`). Le solde se recharge ensuite par carte (Stripe) ou se gagne en livrant.
-1. **Publication** — réservation de `articles + 10 % de marge + pourboire` sur le solde du demandeur. Pour un menu EPFL, l'article compte au prix publié le plus élevé (visiteur), puisque le prix payé dépend du statut du rusher ; une demande libre compte pour son budget.
+1. **Publication** — réservation de `articles + tarif + coup de pouce` sur le solde du demandeur. Pour un menu EPFL, l'article compte au prix publié le plus élevé (visiteur), puisque le prix payé dépend du statut du rusher ; une demande libre compte pour son budget. Pas de marge : le ticket ne peut pas dépasser ce montant.
 2. **Achat** — le rusher paie au comptoir et déclare le montant du ticket (plafonné au montant réservé).
-3. **Confirmation** — le rusher reçoit `ticket + pourboire`, le demandeur récupère le reste.
+3. **Confirmation** — le rusher reçoit `ticket + tarif + coup de pouce`, le demandeur récupère le reste. Rush ne prend aucune commission.
 4. **Annulation / expiration** — tout est rendu. Une demande sans rusher expire après 40 min ; une livraison non confirmée est validée automatiquement après 15 min.
 
 5. **Retrait** — le montant quitte le solde dès la demande (écriture `withdrawal`) ; s'il est annulé ou refusé, il revient (`withdrawal_refund`). Le crédit offert ne se retire pas.
@@ -80,29 +81,44 @@ Dès que ces deux variables existent :
 - Le mot de passe reste pour les adresses de l'équipe hors EPFL (`RUSH_ADMIN_EMAILS`).
 - Le profil affiche « Compte EPFL vérifié », et l'écran Retraits indique pour chaque demande si l'adresse est vérifiée par l'EPFL.
 
-## Pourboire suggéré
+## Tarif de livraison
 
 ```
-CHF 1.50 prise en charge
-+ CHF 1.00 par 300 m de marche entre le spot et toi
-+ CHF 0.30 par article supplémentaire
-+ CHF 0.50 à l'heure de pointe (11h45–13h30)
-→ arrondi aux 50 centimes, entre CHF 1.50 et CHF 9.00
+CHF 0.50 par tranche de CHF 5 d'articles commencée (prix publié le plus élevé, ou budget de la demande libre)
+  CHF 3.50 → 0.50 · CHF 10.00 → 1.00 · CHF 12.50 → 1.50 · CHF 23.00 → 2.50
++ coup de pouce facultatif : 0.50, 1.00 ou 2.00
 ```
 
-Trois options sont proposées (minimum, suggéré, généreux). Côté rusher, chaque tranche de CHF 0.50 au-dessus du suggéré fait remonter la demande comme si elle était 100 m plus proche.
+Calculé par le serveur à la publication (jamais repris du navigateur), et versé en entier au rusher.
+
+## Courses en direct et trajet
+
+Chaque rusher disponible (par défaut, tout le monde) envoie sa position GPS au serveur tant que l'app est ouverte : un envoi tous les 15 m parcourus, et un rappel par minute. Elle reste en mémoire, n'est jamais écrite en base ni montrée à qui que ce soit, et compte pendant 10 minutes. On peut aussi déclarer un trajet : jusqu'à 5 étapes, dans l'ordre (« je mange ici, puis je vais là »).
+
+Pour une demande « spot → livraison » et un rusher, `shared/matching.ts` calcule la marche que la course **ajoute** :
+
+- avec un trajet : on insère le spot puis la livraison à la meilleure place du trajet (insertion la moins chère, le spot toujours avant la livraison) ;
+- sans trajet : la marche jusqu'au spot, puis jusqu'à la livraison.
+
+La course est **proposée en direct** si le rusher est à moins de 100 m du spot, ou si le spot est à moins de 100 m de son trajet et que la course ajoute moins de 400 m. Elle part dès la publication vers tous les rushers connectés concernés, puis vers ceux qui s'approchent ensuite, jamais deux fois à la même personne. Elle est reproposée si le rusher se désiste. Le demandeur voit combien de rushers l'ont reçue.
+
+La liste de l'onglet Livrer est classée par **gain par minute de marche ajoutée** (`rémunération / (marche ajoutée ÷ 80 m/min + 3 min d'achat)`), puis par ancienneté. Une course sur le chemin passe donc avant une course mieux payée mais loin.
+
+La recherche de lieux interroge d'abord le catalogue du campus, puis Photon (OpenStreetMap) autour de l'EPFL. L'itinéraire à pied vient d'OSRM (profil piéton d'OpenStreetMap). Si l'un des deux ne répond pas, on garde le campus seul et des lignes droites.
 
 ## Architecture
 
 ```
 shared/          Code partagé client/serveur
   catalog.ts       Spots, menus, bâtiments (source de vérité des prix)
-  pricing.ts       Pourboire suggéré, réservation, règlement
+  pricing.ts       Tarif de livraison, réservation, règlement
+  matching.ts      Détour par insertion, courses proposées en direct, classement
   geo.ts           Distances, temps de marche, calcul du détour
   hours.ts         Horaires d'ouverture (fuseau Europe/Zurich)
   types.ts         Contrat de l'API et des évènements temps réel
 server/          Hono + SQLite (node:sqlite) + WebSocket (ws)
-  services/        auth, orders, ledger, messages, presence, users,
+  services/        auth, orders, ledger, messages, presence, users, dispatch (courses en direct),
+                   geocode (recherche de lieux, itinéraire à pied),
                    epflMenus (offre du jour EPFL), places (photos et avis Google)
   data/            google-places.json (relevé Google Maps crédité)
   demo/bots.ts     Rushers simulés (mode démo uniquement)

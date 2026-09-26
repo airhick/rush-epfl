@@ -516,3 +516,199 @@
   flex: none;
   display: block;
 }
+
+/* ══ Course proposée en direct ═════════════════════════════════════════ */
+
+.offer-layer {
+  position: fixed;
+  z-index: 210;
+  left: 50%;
+  bottom: calc(96px + var(--safe-bottom));
+  width: min(420px, calc(100% - 24px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.app--desktop .offer-layer {
+  left: calc(16px + var(--panel-w) + (100% - var(--panel-w) - 16px) / 2);
+  bottom: 28px;
+}
+
+.offer-card {
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: 14px;
+  padding: 16px 16px 18px;
+  border-radius: 28px;
+  background: var(--lg-sheen), var(--lg-tint-strong);
+  backdrop-filter: var(--lg-blur);
+  -webkit-backdrop-filter: var(--lg-blur);
+  box-shadow: var(--shadow-3), var(--lg-rim);
+}
+
+.offer-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.offer-card__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--label-2);
+}
+
+.offer-card__live {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--green) 22%, transparent);
+  animation: offer-pulse 1.4s ease-in-out infinite;
+}
+
+.offer-card.is-taken .offer-card__live {
+  background: var(--label-3);
+  box-shadow: none;
+  animation: none;
+}
+
+@keyframes offer-pulse {
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--green) 6%, transparent);
+  }
+}
+
+.offer-card__close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--fill);
+  color: var(--label-2);
+}
+
+.offer-card__reward {
+  display: grid;
+  gap: 2px;
+}
+
+.offer-card__reward strong {
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 780;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.offer-card__reward span {
+  font-size: 14px;
+  color: var(--green-text);
+  font-weight: 600;
+}
+
+.offer-card__route {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Le fil entre le spot et la livraison. */
+.offer-card__route::before {
+  content: '';
+  position: absolute;
+  left: 16.5px;
+  top: 36px;
+  bottom: 36px;
+  border-left: 2px dotted var(--label-3);
+}
+
+.offer-card__route li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.offer-card__route li > span:last-child {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.offer-card__route strong {
+  font-size: 15.5px;
+}
+
+.offer-card__route li > span:last-child > span {
+  font-size: 13px;
+  color: var(--label-2);
+}
+
+.offer-card__pin {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--icon-bg);
+  color: var(--icon-fg);
+}
+
+.offer-card__items {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--fill);
+  font-size: 14px;
+}
+
+.offer-card__items span:last-child {
+  font-size: 12.5px;
+  color: var(--label-2);
+}
+
+.offer-card__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.offer-card__more {
+  margin-left: auto;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--label-2);
+}
+
+.offer-card__actions {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 10px;
+}
+
+.offer-card__timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  background: var(--label);
+  transform-origin: left;
+  transition: transform 0.25s linear;
+}

@@ -16,14 +16,14 @@ import {
 } from '../../shared/catalog';
 import { formatDistance, walkingDistance, walkingMinutes } from '../../shared/geo';
 import { openStatus } from '../../shared/hours';
-import { suggestTip } from '../../shared/pricing';
+import { FEE_PER_SLICE_CENTS } from '../../shared/pricing';
 import { formatCHF } from '../../shared/money';
 import type { SpotMenu } from '../../shared/types';
 import { useActivity, usePlaceMedia, useSpotMenu } from '../lib/queries';
 import { PhotoGallery, PlaceReviews } from '../features/PlaceMedia';
 import { joinNames, plural } from '../lib/format';
 import { useCart, useCartSummary, type CustomRequest } from '../state/cart';
-import { useDropoff, useGeo } from '../state/location';
+import { useGeo } from '../state/location';
 import { useMapScene } from '../state/scene';
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
@@ -186,7 +186,6 @@ export function SpotScreen() {
   const spot = id ? SPOT_BY_ID.get(id) : undefined;
   const navigate = useNavigate();
   const geo = useGeo();
-  const dropoff = useDropoff();
   const cart = useCart();
   const summary = useCartSummary();
   const { data: activity } = useActivity();
@@ -242,7 +241,6 @@ export function SpotScreen() {
 
   const rushers = activity?.find((a) => a.spotId === spot.id)?.rushers ?? [];
   const distance = walkingDistance(geo.position, spot);
-  const tip = suggestTip({ spot, dropoff, itemCount: 1 });
   const inCart = cart.spotId === spot.id;
   const otherSpot = cart.spotId !== null && cart.spotId !== spot.id && summary.count > 0;
 
@@ -307,8 +305,8 @@ export function SpotScreen() {
           <span>{status.label.split('· ')[1] ?? status.label}</span>
         </div>
         <div className="info-strip__cell">
-          <strong>{formatCHF(tip.suggestedCents)}</strong>
-          <span>pourboire suggéré</span>
+          <strong>{formatCHF(FEE_PER_SLICE_CENTS)}</strong>
+          <span>par CHF 5 livrés</span>
         </div>
       </div>
 

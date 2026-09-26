@@ -4,8 +4,6 @@ import { Search, X } from 'lucide-react';
 import { KIND_LABEL, SPOTS, type Spot, type SpotKind } from '../../shared/catalog';
 import { formatDistance, walkingDistance, walkingMinutes } from '../../shared/geo';
 import { openStatus, zurichNow } from '../../shared/hours';
-import { suggestTip } from '../../shared/pricing';
-import { formatCHF } from '../../shared/money';
 import { useActivity, useMe } from '../lib/queries';
 import { joinNames } from '../lib/format';
 import { useMapScene, useScene } from '../state/scene';
@@ -156,7 +154,6 @@ export function Explore() {
           <div className="spot-list">
             {results.map(({ spot, status, distance, matches }) => {
               const rushers = rushersBySpot.get(spot.id) ?? [];
-              const tip = suggestTip({ spot, dropoff, itemCount: 1 }).suggestedCents;
               return (
                 <button
                   key={spot.id}
@@ -180,15 +177,13 @@ export function Explore() {
                     )}
                   </span>
                   <span className="spot-row__side">
-                    {rushers.length > 0 && status.open ? (
+                    <span className="muted small">{walkingMinutes(distance)} min</span>
+                    {rushers.length > 0 && status.open && (
                       <span className="rusher-count">
                         <span className="rusher-count__dot" />
                         {rushers.length}
                       </span>
-                    ) : (
-                      <span className="muted small">{walkingMinutes(distance)} min</span>
                     )}
-                    <span className="spot-row__tip">~{formatCHF(tip, { bare: true })}</span>
                   </span>
                 </button>
               );

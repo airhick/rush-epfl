@@ -92,10 +92,10 @@ function OrderRow({ order, onClick }: { order: Order; onClick: () => void }) {
   const amount =
     order.myRole === 'courier'
       ? order.status === 'completed'
-        ? formatCHF((order.actualItemsCents ?? order.itemsCents) + order.tipCents, { sign: true })
-        : formatCHF(order.tipCents, { sign: true })
+        ? formatCHF((order.actualItemsCents ?? order.itemsCents) + order.rewardCents, { sign: true })
+        : formatCHF(order.rewardCents, { sign: true })
       : order.status === 'completed'
-        ? formatCHF(-((order.actualItemsCents ?? order.itemsCents) + order.tipCents))
+        ? formatCHF(-((order.actualItemsCents ?? order.itemsCents) + order.rewardCents))
         : order.status === 'cancelled'
           ? formatCHF(0)
           : formatCHF(-order.holdCents);

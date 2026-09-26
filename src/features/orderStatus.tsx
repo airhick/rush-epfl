@@ -33,7 +33,7 @@ export function statusLine(order: Order): { title: string; detail: string } {
   switch (order.status) {
     case 'open':
       return mine
-        ? { title: 'On cherche un rusher', detail: `Ta demande est visible par tous ceux qui passent par ${spot}.` }
+        ? { title: 'On cherche un rusher', detail: `Les rushers près de ${spot} ou qui y passent la reçoivent en direct.` }
         : { title: 'Demande ouverte', detail: `${requester} attend quelqu’un à ${spot}.` };
     case 'accepted':
       return mine

@@ -144,7 +144,9 @@ const SCHEMA = /* sql */ `
     dest_lat    REAL,
     dest_lng    REAL,
     dest_label  TEXT,
-    updated_at  TEXT NOT NULL
+    updated_at  TEXT NOT NULL,
+    -- Trajet déclaré : { stops, path } en JSON.
+    route_json  TEXT
   );
 `;
 
@@ -152,6 +154,9 @@ function open(path: string): DatabaseSync {
   if (path !== ':memory:') mkdirSync(dirname(path), { recursive: true });
   const db = new DatabaseSync(path);
   db.exec(SCHEMA);
+  // Bases créées avant le trajet déclaré.
+  const presenceCols = db.prepare('PRAGMA table_info(presence)').all() as { name: string }[];
+  if (!presenceCols.some((c) => c.name === 'route_json')) db.exec('ALTER TABLE presence ADD COLUMN route_json TEXT');
   return db;
 }
 

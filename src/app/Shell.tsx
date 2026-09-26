@@ -12,6 +12,7 @@ import { formatCHF } from '../../shared/money';
 import { ACTIVE_STATUSES } from '../../shared/types';
 import { Avatar, cx } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
+import { OfferLayer } from '../features/OfferLayer';
 
 /** Position par défaut de la feuille mobile selon l'écran. */
 function defaultSnap(path: string): SheetSnap {
@@ -28,6 +29,7 @@ export function Shell({ children, chrome = true }: { children?: ReactNode; chrom
       {desktop ? <DesktopPanel chrome={chrome}>{children}</DesktopPanel> : <MobileSheet chrome={chrome}>{children}</MobileSheet>}
       {chrome && <MapChrome />}
       <Toasts />
+      {chrome && <OfferLayer />}
     </div>
   );
 }

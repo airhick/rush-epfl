@@ -8,7 +8,8 @@ import { systemMessage } from './messages';
 import { getUser, invalidatePublicUser, publicUser } from './users';
 import { CUSTOM_ITEM_ID, SPOT_BY_ID, findItem, isOrderable, type MenuSection } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
-import { computeHold, maxActualItems, settle, suggestTip, TIP_MAX_CENTS, TIP_MIN_CENTS } from '../../shared/pricing';
+import { BONUS_MAX_CENTS, computeHold, maxActualItems, settle } from '../../shared/pricing';
+import { offeredCount } from './offerLog';
 import { formatCHF } from '../../shared/money';
 import { ACTIVE_STATUSES, type Dropoff, type Order, type OrderItem, type OrderStatus } from '../../shared/types';
 
@@ -19,8 +20,11 @@ export interface OrderRow {
   spot_id: string;
   items_json: string;
   items_cents: number;
+  /** Ancienne marge de sécurité, toujours 0 désormais. */
   margin_cents: number;
+  /** Rémunération du rusher : tarif + coup de pouce. */
   tip_cents: number;
+  /** Tarif seul (CHF 0.50 par tranche de CHF 5). */
   suggested_tip_cents: number;
   hold_cents: number;
   actual_items_cents: number | null;
@@ -48,7 +52,7 @@ export const OPEN_TTL_MS = 40 * 60_000;
 /** Sans confirmation du demandeur, une livraison est validée automatiquement. */
 export const DELIVERED_TTL_MS = 15 * 60_000;
 const MAX_ACTIVE_AS_REQUESTER = 3;
-const MAX_ACTIVE_AS_COURIER = 2;
+export const MAX_ACTIVE_AS_COURIER = 2;
 
 const spotName = (row: OrderRow) => SPOT_BY_ID.get(row.spot_id)?.name ?? 'Spot';
 const firstName = (userId: string) => getUser(userId)?.first_name ?? 'Quelqu’un';
@@ -68,9 +72,10 @@ export function toOrder(row: OrderRow, viewerId: string): Order {
     spotId: row.spot_id,
     items: JSON.parse(row.items_json) as OrderItem[],
     itemsCents: row.items_cents,
-    marginCents: row.margin_cents,
-    tipCents: row.tip_cents,
-    suggestedTipCents: row.suggested_tip_cents,
+    // Anciennes commandes (pourboire libre) : jamais de coup de pouce négatif.
+    feeCents: row.tip_cents - Math.max(0, row.tip_cents - row.suggested_tip_cents),
+    bonusCents: Math.max(0, row.tip_cents - row.suggested_tip_cents),
+    rewardCents: row.tip_cents,
     holdCents: row.hold_cents,
     actualItemsCents: row.actual_items_cents,
     dropoff: {
@@ -95,6 +100,7 @@ export function toOrder(row: OrderRow, viewerId: string): Order {
     cancelReason: row.cancel_reason,
     myRole,
     myRating: myRole === 'requester' ? row.rating_for_courier : myRole === 'courier' ? row.rating_for_requester : null,
+    offeredTo: myRole === 'requester' && row.status === 'open' ? offeredCount(row.id) : null,
   };
 }
 
@@ -156,7 +162,8 @@ export interface CreateOrderInput {
   /** Demande libre : texte et budget plafond (bornés par la validation de l'API). */
   custom?: { text: string; budgetCents: number } | null;
   dropoff: Dropoff;
-  tipCents: number;
+  /** Coup de pouce facultatif, en plus du tarif calculé ici. */
+  bonusCents?: number;
 }
 
 /**
@@ -186,14 +193,14 @@ export function createOrder(requesterId: string, input: CreateOrderInput, now = 
   if (itemCount === 0) throw new HttpError(422, 'Ton panier est vide.');
   if (itemCount > 12) throw new HttpError(422, 'Pas plus de 12 articles par demande : pense au rusher !');
 
-  const tipCents = Math.round(input.tipCents);
-  if (tipCents < TIP_MIN_CENTS || tipCents > TIP_MAX_CENTS) {
-    throw new HttpError(422, 'Le pourboire doit être compris entre CHF 1 et CHF 20.');
+  const bonusCents = Math.round(input.bonusCents ?? 0);
+  if (!(bonusCents >= 0 && bonusCents <= BONUS_MAX_CENTS)) {
+    throw new HttpError(422, 'Le coup de pouce doit être compris entre CHF 0 et CHF 10.');
   }
 
+  // Le tarif est toujours calculé ici, jamais repris du navigateur.
   const itemsCents = items.reduce((s, i) => s + i.priceCents * i.qty, 0);
-  const hold = computeHold(itemsCents, tipCents);
-  const suggestion = suggestTip({ spot, dropoff: input.dropoff, itemCount, date: now });
+  const hold = computeHold(itemsCents, bonusCents);
   const id = randomUUID();
 
   const row = transaction(() => {
@@ -209,9 +216,9 @@ export function createOrder(requesterId: string, input: CreateOrderInput, now = 
       spot.id,
       JSON.stringify(items),
       itemsCents,
-      hold.marginCents,
-      tipCents,
-      suggestion.suggestedCents,
+      0,
+      hold.rewardCents,
+      hold.feeCents,
       hold.holdCents,
       input.dropoff.lat,
       input.dropoff.lng,
@@ -268,7 +275,7 @@ export function pickUp(orderId: string, courierId: string, actualItemsCents: num
   const before = getRow(orderId);
   if (before.courier_id !== courierId) throw new HttpError(403, 'Tu ne livres pas cette commande.');
   expectStatus(before, 'accepted');
-  const max = maxActualItems({ holdCents: before.hold_cents, tipCents: before.tip_cents });
+  const max = maxActualItems({ holdCents: before.hold_cents, rewardCents: before.tip_cents });
   if (!Number.isInteger(actualItemsCents) || actualItemsCents <= 0) throw new HttpError(422, 'Montant du ticket invalide.');
   if (actualItemsCents > max) {
     throw new HttpError(422, `Le ticket dépasse le montant réservé (max ${formatCHF(max)}). Écris au demandeur.`);
@@ -301,7 +308,7 @@ export function confirm(orderId: string, requesterId: string, auto = false): Ord
     expectStatus(row, 'delivered');
     const { courierCents, refundCents } = settle({
       holdCents: row.hold_cents,
-      tipCents: row.tip_cents,
+      rewardCents: row.tip_cents,
       actualItemsCents: row.actual_items_cents ?? row.items_cents,
     });
     const spot = spotName(row);

@@ -42,10 +42,12 @@ describe('cycle de vie d’une commande', () => {
         { itemId: 'gin-gelato-1', qty: 1 },
       ],
       dropoff,
-      tipCents: 250,
+      bonusCents: 50,
     }, NOON);
     expect(order.itemsCents).toBe(2100);
-    expect(order.holdCents).toBe(2100 + 210 + 250);
+    // CHF 21 : 5 tranches de CHF 5 commencées → CHF 2.50 de tarif, plus 0.50 de coup de pouce, sans marge.
+    expect(order).toMatchObject({ feeCents: 250, bonusCents: 50, rewardCents: 300 });
+    expect(order.holdCents).toBe(2100 + 300);
     expect(balanceOf(alice.id)).toBe(3000 - order.holdCents);
     expect(heldOf(alice.id)).toBe(order.holdCents);
 
@@ -55,10 +57,10 @@ describe('cycle de vie d’une commande', () => {
     const done = orders.confirm(order.id, alice.id);
 
     expect(done.status).toBe('completed');
-    expect(balanceOf(bob.id)).toBe(2050 + 250);
-    expect(balanceOf(alice.id)).toBe(3000 - 2050 - 250);
+    expect(balanceOf(bob.id)).toBe(2050 + 300);
+    expect(balanceOf(alice.id)).toBe(3000 - 2050 - 300);
     expect(heldOf(alice.id)).toBe(0);
-    expect(wallet(bob.id).earnedThisMonthCents).toBe(2300);
+    expect(wallet(bob.id).earnedThisMonthCents).toBe(2350);
     expect(listMessages(order.id).filter((m) => m.kind === 'system')).toHaveLength(4);
   });
 
@@ -66,7 +68,7 @@ describe('cycle de vie d’une commande', () => {
     const alice = user();
     fund(alice.id, 500);
     const status = code(() =>
-      orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-margherita', qty: 1 }], dropoff, tipCents: 200 }, NOON),
+      orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-margherita', qty: 1 }], dropoff }, NOON),
     );
     expect(status).toBe(402);
     expect(orders.listMine(alice.id)).toHaveLength(0);
@@ -77,7 +79,7 @@ describe('cycle de vie d’une commande', () => {
     const alice = user();
     fund(alice.id, 2000);
     const status = code(() =>
-      orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'e-inconnu', qty: 1 }], dropoff, tipCents: 200 }, NOON),
+      orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'e-inconnu', qty: 1 }], dropoff }, NOON),
     );
     expect(status).toBe(422);
   });
@@ -94,9 +96,9 @@ describe('cycle de vie d’une commande', () => {
         ],
       },
     ];
-    const order = orders.createOrder(alice.id, { spotId: 'piano', items: [{ itemId: 'e-menu', qty: 1 }], dropoff, tipCents: 200 }, NOON, menu);
+    const order = orders.createOrder(alice.id, { spotId: 'piano', items: [{ itemId: 'e-menu', qty: 1 }], dropoff }, NOON, menu);
     expect(order.itemsCents).toBe(1240);
-    expect(code(() => orders.createOrder(alice.id, { spotId: 'piano', items: [{ itemId: 'e-buffet', qty: 1 }], dropoff, tipCents: 200 }, NOON, menu))).toBe(422);
+    expect(code(() => orders.createOrder(alice.id, { spotId: 'piano', items: [{ itemId: 'e-buffet', qty: 1 }], dropoff }, NOON, menu))).toBe(422);
   });
 
   it('accepte une demande libre avec un budget plafond', () => {
@@ -105,23 +107,25 @@ describe('cycle de vie d’une commande', () => {
     fund(alice.id, 3000);
     const order = orders.createOrder(
       alice.id,
-      { spotId: 'holy-cow-epfl', items: [], custom: { text: 'Un Holy Cow! avec frites', budgetCents: 2200 }, dropoff, tipCents: 200 },
+      { spotId: 'holy-cow-epfl', items: [], custom: { text: 'Un Holy Cow! avec frites', budgetCents: 2200 }, dropoff },
       NOON,
     );
     expect(order.items).toEqual([{ id: 'custom', name: 'Un Holy Cow! avec frites', qty: 1, priceCents: 2200, custom: true }]);
-    expect(order.holdCents).toBe(2200 + 220 + 200);
+    // Le budget est déjà un plafond : pas de marge, le ticket ne peut pas le dépasser.
+    expect(order.holdCents).toBe(2200 + 250);
     orders.accept(order.id, bob.id);
+    expect(code(() => orders.pickUp(order.id, bob.id, 2210))).toBe(422);
     orders.pickUp(order.id, bob.id, 2090);
     orders.markDelivered(order.id, bob.id);
     orders.confirm(order.id, alice.id);
-    expect(balanceOf(alice.id)).toBe(3000 - 2090 - 200);
+    expect(balanceOf(alice.id)).toBe(3000 - 2090 - 250);
   });
 
   it('empêche de livrer sa propre demande et de dépasser le montant réservé', () => {
     const alice = user();
     const bob = user();
     fund(alice.id, 2000);
-    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff, tipCents: 200 }, NOON);
+    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff }, NOON);
     expect(code(() => orders.accept(order.id, alice.id))).toBe(403);
     orders.accept(order.id, bob.id);
     expect(code(() => orders.accept(order.id, user().id))).toBe(409);
@@ -131,11 +135,11 @@ describe('cycle de vie d’une commande', () => {
   it('rembourse intégralement une annulation et une expiration', () => {
     const alice = user();
     fund(alice.id, 2000);
-    const a = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff, tipCents: 150 }, NOON);
+    const a = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff }, NOON);
     orders.cancel(a.id, alice.id);
     expect(balanceOf(alice.id)).toBe(2000);
 
-    const b = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff, tipCents: 150 }, NOON);
+    const b = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff }, NOON);
     orders.sweep(Date.now() + orders.OPEN_TTL_MS + 1000);
     expect(orders.orderFor(b.id, alice.id).status).toBe('cancelled');
     expect(balanceOf(alice.id)).toBe(2000);
@@ -145,7 +149,7 @@ describe('cycle de vie d’une commande', () => {
     const alice = user();
     const bob = user();
     fund(alice.id, 2000);
-    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff, tipCents: 150 }, NOON);
+    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff }, NOON);
     orders.accept(order.id, bob.id);
     orders.release(order.id, bob.id);
     expect(orders.listOpen(bob.id).map((o) => o.id)).toContain(order.id);
@@ -155,7 +159,7 @@ describe('cycle de vie d’une commande', () => {
     const alice = user();
     const carol = user();
     fund(alice.id, 2000);
-    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff, tipCents: 150 }, NOON);
+    const order = orders.createOrder(alice.id, { spotId: SPOT, items: [{ itemId: 'gin-gelato-1', qty: 1 }], dropoff }, NOON);
     expect(orders.orderFor(order.id, carol.id).dropoff.note).toBe('');
     expect(orders.orderFor(order.id, alice.id).dropoff.note).toBe('Hall');
   });

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { AnimatePresence, motion } from 'motion/react';
-import { Bike, ChevronDown, Info, MapPin, Minus, Plus, ShoppingBag, Wallet } from 'lucide-react';
+import { Bike, ChevronDown, MapPin, Plus, ShoppingBag, Wallet } from 'lucide-react';
 import { nearestBuilding } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
-import { computeHold, describeTip, suggestTip, TIP_MAX_CENTS, TIP_MIN_CENTS, TIP_STEP_CENTS } from '../../shared/pricing';
+import { walkingDistance, walkingMinutes } from '../../shared/geo';
+import { BONUS_OPTIONS_CENTS, computeHold, FEE_PER_SLICE_CENTS, FEE_SLICE_CENTS, feeSlices } from '../../shared/pricing';
 import { clamp, formatCHF } from '../../shared/money';
 import { TOPUP_MAX_CENTS, TOPUP_MIN_CENTS } from '../../shared/payments';
 import { useCreateOrder, useMe, useWallet } from '../lib/queries';
@@ -15,7 +15,7 @@ import { arc, useMapScene, useScene } from '../state/scene';
 import { DropoffSheet } from '../features/DropoffPicker';
 import { TopupSheet } from '../features/Money';
 import { Screen } from '../ui/Screen';
-import { Button, cx, Empty, Group, SpotBadge, Stepper } from '../ui/primitives';
+import { Button, Chip, cx, Empty, Group, SpotBadge, Stepper } from '../ui/primitives';
 
 export function Checkout() {
   const navigate = useNavigate();
@@ -25,16 +25,15 @@ export function Checkout() {
   const dropoff = useDropoff();
   const create = useCreateOrder();
   const [dropoffOpen, setDropoffOpen] = useState(false);
-  const [why, setWhy] = useState(false);
   const [topup, setTopup] = useState(false);
   const { data: wallet } = useWallet();
 
-  const suggestion = useMemo(
-    () => (spot ? suggestTip({ spot, dropoff, itemCount: count }) : null),
-    [spot, dropoff.lat, dropoff.lng, count], // eslint-disable-line react-hooks/exhaustive-deps
+  const minutes = useMemo(
+    () => (spot ? walkingMinutes(walkingDistance(spot, dropoff)) : 0),
+    [spot, dropoff.lat, dropoff.lng], // eslint-disable-line react-hooks/exhaustive-deps
   );
-  const tipCents = cart.tipCents ?? suggestion?.suggestedCents ?? 0;
-  const hold = computeHold(subtotalCents, tipCents);
+  // Même calcul que le serveur, qui refait le sien à la publication.
+  const hold = computeHold(subtotalCents, cart.bonusCents);
   const balance = me?.balanceCents ?? 0;
   const missing = Math.max(0, hold.holdCents - balance);
   // Recharge proposée : ce qui manque, arrondi au franc, dans les limites de Stripe.
@@ -81,8 +80,6 @@ export function Checkout() {
     );
   }
 
-  const setTip = (cents: number) => cart.setTip(Math.min(TIP_MAX_CENTS, Math.max(TIP_MIN_CENTS, cents)));
-
   const submit = () =>
     create.mutate(
       {
@@ -90,7 +87,7 @@ export function Checkout() {
         items: items.filter((i) => !i.custom).map((i) => ({ itemId: i.itemId, qty: i.qty })),
         custom: cart.custom,
         dropoff: { lat: dropoff.lat, lng: dropoff.lng, label: dropoff.label, note: dropoff.note },
-        tipCents,
+        bonusCents: cart.bonusCents,
       },
       {
         onSuccess: (order) => {
@@ -138,7 +135,7 @@ export function Checkout() {
             <span>
               {dropoff.source === 'pin' ? 'Épingle placée sur la carte' : dropoff.source === 'auto' ? 'Ta position' : 'Entrée du bâtiment'}
               {' · '}
-              {suggestion && `${suggestion.minutes} min à pied depuis ${spot.name}`}
+              {`${minutes} min à pied depuis ${spot.name}`}
             </span>
           </span>
           <ChevronDown size={18} className="muted" />
@@ -180,67 +177,35 @@ export function Checkout() {
         </button>
       </Group>
 
-      {suggestion && (
-        <Group header="Pourboire du rusher">
-          <div className="tip-options">
-            {suggestion.options.map((o) => (
-              <button key={o.id} className={cx('tip-option', tipCents === o.cents && 'is-active')} onClick={() => cart.setTip(o.cents)}>
-                <span className="tip-option__amount">{formatCHF(o.cents, { bare: true })}</span>
-                <span className="tip-option__label">{o.label}</span>
-                {o.id === 'suggested' && <span className="tip-option__badge">Recommandé</span>}
-              </button>
+      <Group header="Rémunération du rusher" footer="Tout va au rusher : Rush ne prend aucune commission.">
+        <div className="fee-line">
+          <span>
+            <strong>Livraison</strong>
+            <span>
+              {formatCHF(FEE_PER_SLICE_CENTS)} par tranche de CHF {FEE_SLICE_CENTS / 100} ·{' '}
+              {plural(feeSlices(subtotalCents), 'tranche', 'tranches')}
+            </span>
+          </span>
+          <strong>{formatCHF(hold.feeCents)}</strong>
+        </div>
+        <div className="bonus-picker">
+          <span>
+            <strong>Coup de pouce</strong>
+            <span>Facultatif, pour que ta demande parte plus vite.</span>
+          </span>
+          <div className="chip-wrap">
+            {BONUS_OPTIONS_CENTS.map((c) => (
+              <Chip key={c} active={cart.bonusCents === c} onClick={() => cart.setBonus(c)}>
+                {c === 0 ? 'Aucun' : `+${formatCHF(c, { bare: true })}`}
+              </Chip>
             ))}
           </div>
-          <div className="tip-custom">
-            <span>Autre montant</span>
-            <div className="tip-custom__ctrl">
-              <button onClick={() => setTip(tipCents - TIP_STEP_CENTS)} disabled={tipCents <= TIP_MIN_CENTS} aria-label="Moins">
-                <Minus size={16} strokeWidth={2.6} />
-              </button>
-              <strong>{formatCHF(tipCents)}</strong>
-              <button onClick={() => setTip(tipCents + TIP_STEP_CENTS)} disabled={tipCents >= TIP_MAX_CENTS} aria-label="Plus">
-                <Plus size={16} strokeWidth={2.6} />
-              </button>
-            </div>
-          </div>
-          <button className="tip-why" onClick={() => setWhy(!why)}>
-            <Info size={15} />
-            <span>{describeTip(tipCents, suggestion)}</span>
-            <ChevronDown size={15} className={cx('tip-why__chevron', why && 'is-open')} />
-          </button>
-          <AnimatePresence initial={false}>
-            {why && (
-              <motion.div
-                className="tip-factors"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-              >
-                {suggestion.factors.map((f) => (
-                  <div key={f.label} className="tip-factor">
-                    <span>
-                      <strong>{f.label}</strong>
-                      <span>{f.detail}</span>
-                    </span>
-                    <span>{formatCHF(f.cents, { sign: true })}</span>
-                  </div>
-                ))}
-                <div className="tip-factor tip-factor--total">
-                  <span>
-                    <strong>Suggéré</strong>
-                    <span>Arrondi aux 50 centimes</span>
-                  </span>
-                  <span>{formatCHF(suggestion.suggestedCents)}</span>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Group>
-      )}
+        </div>
+      </Group>
 
       <Group
         header="Paiement"
-        footer="Rush réserve le prix publié le plus élevé (tarif visiteur pour les menus EPFL) et le budget de ta demande libre. Ton rusher avance l’achat et déclare le ticket exact : ce qui n’est pas dépensé t’est rendu à la livraison."
+        footer="Rush réserve le prix publié le plus élevé (tarif visiteur pour les menus EPFL) et le budget de ta demande libre, plus la livraison. Ton rusher avance l’achat et déclare le ticket exact : ce qui n’est pas dépensé t’est rendu à la livraison."
       >
         <div className="summary">
           <div className="summary__line">
@@ -248,15 +213,15 @@ export function Checkout() {
             <span>{formatCHF(hold.itemsCents)}</span>
           </div>
           <div className="summary__line">
-            <span>
-              Marge de sécurité <span className="muted">+10 %</span>
-            </span>
-            <span>{formatCHF(hold.marginCents)}</span>
+            <span>Livraison</span>
+            <span>{formatCHF(hold.feeCents)}</span>
           </div>
-          <div className="summary__line">
-            <span>Pourboire</span>
-            <span>{formatCHF(hold.tipCents)}</span>
-          </div>
+          {hold.bonusCents > 0 && (
+            <div className="summary__line">
+              <span>Coup de pouce</span>
+              <span>{formatCHF(hold.bonusCents)}</span>
+            </div>
+          )}
           <div className="summary__line summary__line--total">
             <span>Réservé maintenant</span>
             <span>{formatCHF(hold.holdCents)}</span>

@@ -20,7 +20,7 @@ import { balanceOf, bots, createUser, getUser, invalidatePublicUser, type UserRo
 import { BUILDINGS, CUSTOM_ITEM_ID, SPOTS, SPOT_BY_ID, spotOf, type Spot, type SpotKind } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { haversine, lerp, type LatLng } from '../../shared/geo';
-import { computeHold, suggestTip } from '../../shared/pricing';
+import { BONUS_OPTIONS_CENTS, computeHold } from '../../shared/pricing';
 import { roundTo } from '../../shared/money';
 
 const PEOPLE = [
@@ -104,8 +104,7 @@ function seedHistory(people: UserRow[]) {
       const request = botRequest(spot);
       const menuItem = { id: CUSTOM_ITEM_ID, name: request.text, qty: 1, priceCents: request.budgetCents, custom: true };
       const dest = pick(BUILDINGS);
-      const tip = suggestTip({ spot, dropoff: dest, itemCount: 1 }).suggestedCents;
-      const hold = computeHold(menuItem.priceCents, tip);
+      const hold = computeHold(menuItem.priceCents);
       const at = new Date(Date.now() - rand(1, 30) * 86_400_000).toISOString();
       run(
         `INSERT INTO orders (id, requester_id, courier_id, spot_id, items_json, items_cents, margin_cents, tip_cents,
@@ -118,9 +117,9 @@ function seedHistory(people: UserRow[]) {
         spot.id,
         JSON.stringify([menuItem]),
         menuItem.priceCents,
-        hold.marginCents,
-        tip,
-        tip,
+        0,
+        hold.rewardCents,
+        hold.feeCents,
         hold.holdCents,
         menuItem.priceCents,
         dest.lat,
@@ -152,10 +151,17 @@ function shufflePresence(people: UserRow[]) {
     const busy = orders.countActive(b.id, 'courier') > 0;
     const available = !busy && spots.length > 0 && Math.random() < 0.7;
     const dest = pick(BUILDINGS);
+    const spot = pick(spots);
+    // Trajet type : « je mange à ce spot, puis je vais à ce bâtiment ».
     setPresence(b.id, {
       available,
-      spotId: available ? pick(spots).id : null,
-      destination: available ? { lat: dest.lat, lng: dest.lng, label: dest.name } : null,
+      stops: available
+        ? [
+            { lat: spot.lat, lng: spot.lng, label: spot.name, spotId: spot.id },
+            { lat: dest.lat, lng: dest.lng, label: dest.name, spotId: null },
+          ]
+        : [],
+      path: null,
     });
   }
 }
@@ -171,8 +177,6 @@ function postBotRequest(people: UserRow[]) {
     return d > 120 && d < 900;
   });
   const dest = pick(candidates.length ? candidates : BUILDINGS);
-  const suggestion = suggestTip({ spot, dropoff: dest, itemCount: 1 });
-  const tipCents = Math.max(100, suggestion.suggestedCents + pick([-50, 0, 0, 50, 100]));
   // Légère dispersion autour du bâtiment pour que les épingles ne se superposent pas.
   const jitter = { lat: dest.lat + rand(-0.00012, 0.00012), lng: dest.lng + rand(-0.00018, 0.00018) };
   orders.createOrder(requester.id, {
@@ -180,7 +184,7 @@ function postBotRequest(people: UserRow[]) {
     items: [],
     custom: botRequest(spot),
     dropoff: { ...jitter, label: dest.name, note: pick(NOTES) },
-    tipCents,
+    bonusCents: pick([...BONUS_OPTIONS_CENTS, 0, 0]),
   });
 }
 
@@ -223,7 +227,7 @@ function botDeliversForHuman(orderId: string, people: UserRow[]) {
     const spot = spotOf(row.spot_id);
     const presence = one<{ spot_id: string | null }>('SELECT spot_id FROM presence WHERE user_id = ?', bot.id);
     const alreadyThere = presence?.spot_id === spot.id;
-    setPresence(bot.id, { available: false, spotId: spot.id, destination: null });
+    setPresence(bot.id, { available: false, stops: [{ lat: spot.lat, lng: spot.lng, label: spot.name, spotId: spot.id }], path: null });
 
     say(orderId, bot.id, alreadyThere ? `Hello ! Je suis déjà à ${spot.name}, je m’en occupe 👌` : `Hello ! Je passe par ${spot.name}, je m’en occupe.`, 1500);
 
