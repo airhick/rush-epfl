@@ -57,6 +57,15 @@ Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) e
 
 **Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS` voient l'écran **Retraits** (Profil → Équipe Rush) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
 
+## Rester connecté
+
+Deux cookies HttpOnly, rien d'autre (ni pistage, ni publicité) :
+
+- `rush_session` : la session, 30 jours.
+- `rush_account` : une copie du compte (identité, profil, empreinte scrypt du mot de passe), chiffrée et authentifiée par le serveur (AES-256-GCM, clé `RUSH_COOKIE_SECRET`), 1 an. Si la session est perdue, le serveur rouvre le compte avec ce cookie. Si la base a été vidée (veille ou déploiement sur l'offre gratuite de Render), il recrée le compte avec le même identifiant et le même mot de passe : pas de réinscription, et les autres appareils se reconnectent avec le mot de passe.
+
+Le cookie ne contient jamais le solde : un vieux cookie rejoué ne doit rien valoir. Il ne rouvre rien si l'adresse a été prise entre-temps par un nouveau compte, ni si le mot de passe du compte a changé ou a été retiré. Se déconnecter supprime les deux cookies.
+
 ## Connexion EPFL (Microsoft Entra ID)
 
 L'EPFL authentifie avec Microsoft Entra ID (qui remplace Tequila). Rush utilise OpenID Connect : code d'autorisation avec PKCE, puis jeton d'identité vérifié côté serveur (signature RS256 avec les clés publiées par Microsoft, émetteur, audience, nonce, et annuaire EPFL `f6c2556a-c4fb-4ab1-a2c7-9e220df11c43`). Un compte d'un autre annuaire est refusé.
@@ -131,6 +140,7 @@ docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 | `RUSH_DB` | Fichier SQLite | `data/rush.db` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
+| `RUSH_COOKIE_SECRET` | Clé du cookie de compte ; doit rester la même d'un démarrage à l'autre | cookie de compte désactivé en production |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
 | `STRIPE_TOPUP_URL` | Lien de paiement Stripe « montant libre » des recharges | recharges désactivées |
 | `STRIPE_WEBHOOK_SECRET` | Secret `whsec_…` du webhook Stripe vers `/api/stripe/webhook` | recharges désactivées |
@@ -156,7 +166,7 @@ Les restaurants de l'EPFL publient chaque jour leurs menus et leurs prix sur la 
 - **Catalogue** (`shared/catalog.ts`) : tous les points de restauration du campus de Lausanne listés par l'EPFL, plus les commerces des Arcades. Horaires officiels (page Horaires de l'EPFL ou site du commerce), aucun prix estimé. Les positions viennent des fiches Google Maps quand elles sont précises, sinon du plan du campus.
 - **Prix hors EPFL** : Holy Cow!, Migros, Denner et Le Négoce ne publient pas leurs prix en magasin (ceux d'Uber Eats sont majorés, donc faux au comptoir) : on y passe par une demande libre avec budget. La carte de Gina vient de son site officiel.
 - **Photos et avis** : relevé Google Maps crédité, plus quelques photos des pages EPFL. Rien n'est repris d'Uber Eats ou de Tripadvisor.
-- **Argent réel et disque non persistant** : sur l'offre gratuite de Render, la base repart de zéro à chaque veille ou déploiement, soldes rechargés compris. Avant d'ouvrir les recharges à d'autres personnes, monter un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
+- **Argent réel et disque non persistant** : sur l'offre gratuite de Render, la base repart de zéro à chaque veille (15 min sans visite) ou déploiement. Le cookie de compte recrée les comptes, mais les soldes rechargés, commandes, messages et retraits en attente sont perdus. Avant d'ouvrir les recharges à d'autres personnes, monter un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
 - **Frais Stripe** : prélevés sur chaque recharge et payés par l'équipe (le solde est crédité du montant payé). Le compte Stripe encaisse en EUR : les paiements en CHF sont convertis. TWINT n'est pas activé sur ce compte Stripe ; les recharges passent par carte, Apple Pay ou Google Pay.
 - **Authentification** : avec la connexion EPFL configurée, les adresses EPFL sont prouvées par l'annuaire de l'EPFL. Sans elle, et pour l'équipe hors EPFL, c'est une adresse + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours) : aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** et il n'y a pas de réinitialisation du mot de passe. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
 - **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).

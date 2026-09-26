@@ -1,3 +1,5 @@
+import { randomBytes } from 'node:crypto';
+
 const production = process.env.NODE_ENV === 'production';
 
 const list = (raw: string) =>
@@ -12,6 +14,12 @@ export const env = {
   dbPath: process.env.RUSH_DB ?? 'data/rush.db',
   /** Rushers simulés qui acceptent, livrent et répondent : pratique pour tester seul. */
   demo: process.env.RUSH_DEMO === '1',
+  /**
+   * Clé du cookie de compte (chiffré) qui garde la connexion et permet de recréer le compte
+   * si la base a été vidée. Doit rester la même d'un démarrage à l'autre : sans elle en
+   * production, ce cookie est désactivé.
+   */
+  cookieSecret: process.env.RUSH_COOKIE_SECRET ?? (production ? '' : randomBytes(32).toString('hex')),
   /** Crédit offert à chaque nouveau compte, en centimes (CHF 1.00 par défaut). */
   welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
   /** Domaines autorisés à se connecter. */

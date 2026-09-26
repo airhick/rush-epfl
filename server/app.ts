@@ -12,7 +12,7 @@ import * as epflMenus from './services/epflMenus';
 import * as entra from './services/entra';
 import * as stripe from './services/stripe';
 import * as payments from './services/payments';
-import { getUser, isAdmin, publicUser, toMe, updateProfile } from './services/users';
+import { getUser, isAdmin, publicUser, toMe, updateProfile, type UserRow } from './services/users';
 import { TIP_MAX_CENTS, TIP_MIN_CENTS } from '../shared/pricing';
 import { CUSTOM_BUDGET_MAX_CENTS, CUSTOM_BUDGET_MIN_CENTS, CUSTOM_TEXT_MAX, SPOT_BY_ID } from '../shared/catalog';
 import type { AuthOptions, Conversation } from '../shared/types';
@@ -76,14 +76,17 @@ export function createApp() {
 
   /* ── Authentification ─────────────────────────────────────────────── */
 
+  /* Deux cookies HttpOnly : la session (30 jours) et la copie chiffrée du compte (1 an). */
+  const cookieOptions = { httpOnly: true, sameSite: 'Lax', secure: env.production, path: '/' } as const;
+
+  const rememberAccount = (c: Context, user: UserRow) => {
+    const sealed = auth.sealAccount(user);
+    if (sealed) setCookie(c, auth.ACCOUNT_COOKIE, sealed, { ...cookieOptions, maxAge: auth.ACCOUNT_TTL_MS / 1000 });
+  };
+
   const signIn = (c: Context, { user, token }: auth.SignedIn) => {
-    setCookie(c, auth.SESSION_COOKIE, token, {
-      httpOnly: true,
-      sameSite: 'Lax',
-      secure: env.production,
-      path: '/',
-      maxAge: auth.SESSION_TTL_MS / 1000,
-    });
+    setCookie(c, auth.SESSION_COOKIE, token, { ...cookieOptions, maxAge: auth.SESSION_TTL_MS / 1000 });
+    rememberAccount(c, user);
     return toMe(user);
   };
 
@@ -146,6 +149,8 @@ export function createApp() {
   api.post('/auth/logout', (c) => {
     auth.destroySession(getCookie(c, auth.SESSION_COOKIE));
     deleteCookie(c, auth.SESSION_COOKIE, { path: '/' });
+    // Se déconnecter, c'est aussi ne plus être reconnu par cet appareil.
+    deleteCookie(c, auth.ACCOUNT_COOKIE, { path: '/' });
     return c.json({ ok: true });
   });
 
@@ -168,7 +173,17 @@ export function createApp() {
 
   /* Tout ce qui suit exige une session. */
   api.use('*', async (c, next) => {
-    const user = auth.userFromToken(getCookie(c, auth.SESSION_COOKIE));
+    let user = auth.userFromToken(getCookie(c, auth.SESSION_COOKIE));
+    if (!user && getCookie(c, auth.ACCOUNT_COOKIE)) {
+      // Session perdue : le cookie de compte reconnecte (et recrée le compte si la base a été vidée).
+      const restored = auth.restoreAccount(getCookie(c, auth.ACCOUNT_COOKIE));
+      if (restored) {
+        signIn(c, restored);
+        user = restored.user;
+      } else {
+        deleteCookie(c, auth.ACCOUNT_COOKIE, { path: '/' });
+      }
+    }
     if (!user) throw new HttpError(401, 'Connecte-toi pour continuer.');
     c.set('user', user);
     await next();
@@ -178,12 +193,18 @@ export function createApp() {
 
   /* ── Profil ───────────────────────────────────────────────────────── */
 
-  api.get('/me', (c) => c.json(toMe(me(c))));
+  api.get('/me', (c) => {
+    // À chaque ouverture de l'app : copie du compte à jour dans le cookie.
+    rememberAccount(c, me(c));
+    return c.json(toMe(me(c)));
+  });
 
   api.patch('/me', async (c) => {
     const patch = await body(c, schemas.profile);
     updateProfile(me(c).id, patch);
-    return c.json(toMe(getUser(me(c).id)!));
+    const user = getUser(me(c).id)!;
+    rememberAccount(c, user);
+    return c.json(toMe(user));
   });
 
   api.get('/users/:id', (c) => c.json(publicUser(c.req.param('id'))));

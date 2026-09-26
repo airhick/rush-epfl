@@ -210,7 +210,9 @@ export function Login() {
                     Revenir à la connexion EPFL
                   </button>
                 ) : (
-                  <p className="auth__fine">Rush est réservé aux étudiant·e·s et au personnel de l’EPFL.</p>
+                  <p className="auth__fine">
+                    Rush est réservé aux étudiant·e·s et au personnel de l’EPFL. Un cookie garde ta connexion sur cet appareil.
+                  </p>
                 )}
               </form>
             )}

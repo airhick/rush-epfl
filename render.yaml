@@ -14,6 +14,9 @@ services:
       # Recharges : lien de paiement Stripe « montant libre » (public).
       - key: STRIPE_TOPUP_URL
         value: https://buy.stripe.com/eVq5kCgT14NF03HgbOe7m00
+      # Clé du cookie de compte : générée une fois, stable d'un démarrage à l'autre.
+      - key: RUSH_COOKIE_SECRET
+        generateValue: true
       # Secrets et réglages de l'équipe, à saisir dans le tableau de bord Render.
       - key: STRIPE_WEBHOOK_SECRET
         sync: false

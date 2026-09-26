@@ -1,7 +1,7 @@
-import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
 import { env } from '../env';
-import { one, run, transaction } from '../db';
+import { nowIso, one, run, transaction } from '../db';
 import { HttpError } from '../http';
 import { record } from './ledger';
 import { epflEnabled, type EpflProfile } from './entra';
@@ -12,6 +12,8 @@ const MAX_FAILURES = 8;
 const LOCK_MS = 15 * 60_000;
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60_000;
 export const SESSION_COOKIE = 'rush_session';
+export const ACCOUNT_COOKIE = 'rush_account';
+export const ACCOUNT_TTL_MS = 365 * 24 * 60 * 60_000;
 
 export interface SignedIn {
   user: UserRow;
@@ -190,6 +192,105 @@ export function userFromToken(token: string | undefined): UserRow | null {
 
 export function destroySession(token: string | undefined) {
   if (token) run('DELETE FROM sessions WHERE token_hash = ?', sha256(token));
+}
+
+/* ── Cookie de compte ─────────────────────────────────────────────────────
+ * Sur l'offre gratuite de Render, la base repart de zéro à chaque veille ou
+ * déploiement. Le navigateur garde donc une copie du compte (identité, profil,
+ * empreinte du mot de passe), chiffrée et authentifiée par le serveur
+ * (AES-256-GCM) : illisible et infalsifiable sans RUSH_COOKIE_SECRET.
+ * Jamais le solde : un vieux cookie rejoué ne doit rien valoir.
+ */
+
+interface AccountCopy {
+  v: 1;
+  id: string;
+  email: string;
+  first: string;
+  last: string;
+  section: string | null;
+  hue: number;
+  onboarded: boolean;
+  createdAt: string;
+  password: string;
+  sealedAt: number;
+}
+
+const accountKey = () => createHash('sha256').update(`rush-account:${env.cookieSecret}`).digest();
+
+/** Copie chiffrée du compte pour le cookie ; null pour un compte sans mot de passe ou sans clé configurée. */
+export function sealAccount(user: UserRow): string | null {
+  const password = passwordOf(user.id);
+  if (!env.cookieSecret || !password || user.is_bot) return null;
+  const copy: AccountCopy = {
+    v: 1,
+    id: user.id,
+    email: user.email,
+    first: user.first_name,
+    last: user.last_name,
+    section: user.section,
+    hue: user.hue,
+    onboarded: user.onboarded === 1,
+    createdAt: user.created_at,
+    password,
+    sealedAt: Date.now(),
+  };
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', accountKey(), iv);
+  const body = Buffer.concat([cipher.update(JSON.stringify(copy), 'utf8'), cipher.final()]);
+  return Buffer.concat([iv, cipher.getAuthTag(), body]).toString('base64url');
+}
+
+function openAccount(sealed: string | undefined): AccountCopy | null {
+  if (!sealed || !env.cookieSecret) return null;
+  try {
+    const raw = Buffer.from(sealed, 'base64url');
+    const decipher = createDecipheriv('aes-256-gcm', accountKey(), raw.subarray(0, 12));
+    decipher.setAuthTag(raw.subarray(12, 28));
+    const copy = JSON.parse(Buffer.concat([decipher.update(raw.subarray(28)), decipher.final()]).toString('utf8')) as AccountCopy;
+    return copy.v === 1 && copy.sealedAt + ACCOUNT_TTL_MS > Date.now() ? copy : null;
+  } catch {
+    // Cookie modifié, tronqué ou chiffré avec une autre clé.
+    return null;
+  }
+}
+
+/**
+ * Session perdue (base vidée, ou session de 30 jours expirée) : le cookie de compte
+ * rouvre le compte sans repasser par l'inscription.
+ */
+export function restoreAccount(sealed: string | undefined): SignedIn | null {
+  const copy = openAccount(sealed);
+  if (!copy) return null;
+  const user = transaction(() => {
+    const existing = getUser(copy.id);
+    // Même compte et même mot de passe : on rouvre. Mot de passe retiré (connexion EPFL) : non.
+    if (existing) return passwordOf(existing.id) === copy.password ? existing : null;
+
+    let email: string;
+    try {
+      email = normalizeEmail(copy.email);
+    } catch {
+      return null;
+    }
+    // L'adresse a été reprise par un nouveau compte depuis : celui-ci l'emporte.
+    if (findUserByEmail(email)) return null;
+    run(
+      `INSERT INTO users (id, email, first_name, last_name, section, hue, onboarded, is_bot, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)`,
+      copy.id,
+      email,
+      copy.first,
+      copy.last,
+      copy.section,
+      copy.hue,
+      copy.onboarded ? 1 : 0,
+      copy.createdAt || nowIso(),
+    );
+    run('INSERT INTO credentials (user_id, password_hash, updated_at) VALUES (?, ?, ?)', copy.id, copy.password, Date.now());
+    return getUser(copy.id)!;
+  });
+  return user ? { user, token: openSession(user.id) } : null;
 }
 
 export function purgeExpired() {
