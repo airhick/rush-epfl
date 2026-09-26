@@ -1,0 +1,30 @@
+# Blueprint Render : https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: rush-epfl
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RUSH_WELCOME_BONUS_CENTS
+        value: "100"
+      # Recharges : lien de paiement Stripe « montant libre » (public).
+      - key: STRIPE_TOPUP_URL
+        value: https://buy.stripe.com/eVq5kCgT14NF03HgbOe7m00
+      # Clé du cookie de compte : générée une fois, stable d'un démarrage à l'autre.
+      - key: RUSH_COOKIE_SECRET
+        generateValue: true
+      # Secrets et réglages de l'équipe, à saisir dans le tableau de bord Render.
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: RUSH_ADMIN_EMAILS
+        sync: false
+      - key: RUSH_NTFY_TOPIC
+        sync: false
+      - key: ENTRA_CLIENT_ID
+        sync: false
+      - key: ENTRA_CLIENT_SECRET
+        sync: false

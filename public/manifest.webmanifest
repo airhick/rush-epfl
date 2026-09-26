@@ -1,0 +1,11 @@
+{
+  "name": "Rush · EPFL",
+  "short_name": "Rush",
+  "description": "La graille du campus, ramenée par ceux qui y sont déjà.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "lang": "fr",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
