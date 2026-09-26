@@ -174,7 +174,7 @@ describe('connexion EPFL', () => {
       body: JSON.stringify({ email: 'lea.muller@epfl.ch', password: 'motdepasse1' }),
       headers: { 'content-type': 'application/json' },
     });
-    expect(retry.status).toBe(422);
+    expect(retry.status).toBe(403);
   });
 
   it('réserve le mot de passe aux adresses hors EPFL de l’équipe', async () => {

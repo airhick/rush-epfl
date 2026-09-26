@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type FormEvent, type PointerEvent, type Re
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { ArrowRight, Bike, Eye, EyeOff, Gift, MessageCircle, Wallet } from 'lucide-react';
+import { ArrowRight, Bike, ChevronLeft, Eye, EyeOff, Gift, MessageCircle, Wallet } from 'lucide-react';
 import { api, ApiError } from '../lib/api';
 import { keys, useAuthOptions, useUpdateProfile } from '../lib/queries';
 import { useMapScene } from '../state/scene';
@@ -50,6 +50,8 @@ const toEmail = (raw: string) => {
   return v.includes('@') ? v : `${v}${DOMAIN}`;
 };
 
+type View = 'start' | 'login' | 'register';
+
 export function Login() {
   const qc = useQueryClient();
   const { data: options, isError: noOptions } = useAuthOptions();
@@ -59,9 +61,8 @@ export function Login() {
     return Object.hasOwn(EPFL_ERRORS, code) ? EPFL_ERRORS[code] : null;
   });
   const [leaving, setLeaving] = useState(false);
-  const [step, setStep] = useState<'start' | 'email' | 'password'>('start');
+  const [view, setView] = useState<View>('start');
   const [local, setLocal] = useState('');
-  const [exists, setExists] = useState(false);
   const [password, setPassword] = useState('');
   const [reveal, setReveal] = useState(false);
   const emailInput = useRef<HTMLInputElement>(null);
@@ -69,6 +70,8 @@ export function Login() {
   // Focus automatique seulement avec une souris : sur mobile il bloque le clavier.
   const finePointer = useMedia('(pointer: fine)');
   const email = toEmail(local);
+  const epflOn = options?.epfl === true;
+  const registering = view === 'register';
 
   useMapScene(() => ({ cameraKey: 'login', camera: { kind: 'overview' } }), []);
 
@@ -85,41 +88,30 @@ export function Login() {
     window.location.assign(epflLoginUrl(loginHint));
   };
 
-  const check = useMutation({
-    mutationFn: () => api<{ email: string; exists: boolean; epfl: boolean }>('/auth/check', { body: { email } }),
-    onSuccess: (res) => {
-      // Adresse EPFL sans mot de passe : c'est l'EPFL qui confirme l'identité.
-      if (res.epfl) return goEpfl(res.email);
-      setExists(res.exists);
-      setPassword('');
-      setStep('password');
-    },
+  const signIn = useMutation({
+    mutationFn: () => api<Me>(registering ? '/auth/register' : '/auth/login', { body: { email, password } }),
+    onSuccess: (me) => qc.setQueryData(keys.me, me),
+    // Adresse EPFL qui passe par la connexion EPFL : on y va directement.
+    onError: (err) => err instanceof ApiError && err.status === 403 && epflOn && goEpfl(email),
   });
 
-  const signIn = useMutation({
-    mutationFn: () => api<Me>(exists ? '/auth/login' : '/auth/register', { body: { email, password } }),
-    onSuccess: (me) => qc.setQueryData(keys.me, me),
-  });
+  const open = (next: View) => {
+    signIn.reset();
+    setView(next);
+  };
 
   useEffect(() => {
-    if (step === 'password' && finePointer) passwordInput.current?.focus();
-  }, [step]);
+    if (view === 'start' || !finePointer) return;
+    (local.trim() ? passwordInput : emailInput).current?.focus();
+  }, [view]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const submitEmail = (e: FormEvent) => {
+  const tooShort = registering && password.length < PASSWORD_MIN;
+  const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (local.trim()) check.mutate();
+    if (local.trim() && password && !tooShort) signIn.mutate();
   };
 
-  const tooShort = !exists && password.length < PASSWORD_MIN;
-  const submitPassword = (e: FormEvent) => {
-    e.preventDefault();
-    if (password && !tooShort) signIn.mutate();
-  };
-
-  const error = (step === 'password' ? signIn.error : check.error) as ApiError | null;
-  const epflOn = options?.epfl === true;
-  // Sans connexion EPFL (ou tant qu'on ne sait pas), l'écran d'accueil demande l'adresse.
-  const view = step === 'start' && !epflOn ? (options || noOptions ? 'email' : 'loading') : step;
+  const error = signIn.error as ApiError | null;
 
   return (
     <div className="auth">
@@ -129,9 +121,9 @@ export function Login() {
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
-        {view !== 'password' ? (
+        {view === 'start' ? (
           <motion.div
-            key="intro"
+            key="start"
             initial={{ opacity: 0, x: -12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -12 }}
@@ -165,84 +157,77 @@ export function Login() {
               </li>
             </ul>
 
-            {view === 'loading' && <Skeleton h={52} r={16} />}
-
-            {view === 'start' && (
+            {!options && !noOptions ? (
+              <Skeleton h={116} r={16} />
+            ) : epflOn ? (
               <div className="auth__form">
                 {epflError && <p className="form-error">{epflError}</p>}
                 <Button block loading={leaving} icon={<ArrowRight size={18} />} onClick={() => goEpfl()}>
                   Continuer avec EPFL
                 </Button>
                 <p className="auth__fine">Avec ton compte EPFL habituel, celui de ta messagerie. Rush ne voit jamais ton mot de passe.</p>
-                <button type="button" className="link auth__alt" onClick={() => setStep('email')}>
+                <button type="button" className="link auth__alt" onClick={() => open('login')}>
                   Se connecter avec un mot de passe
                 </button>
               </div>
-            )}
-
-            {view === 'email' && (
-              <form onSubmit={submitEmail} className="auth__form">
-                <label className="field field--suffix">
-                  <span className="field__label">Adresse EPFL</span>
-                  <span className="field__control" onPointerDown={focusOnTap(emailInput)}>
-                    <input
-                      ref={emailInput}
-                      autoFocus={finePointer}
-                      type="text"
-                      inputMode="email"
-                      autoComplete="username"
-                      autoCapitalize="none"
-                      spellCheck={false}
-                      placeholder="prenom.nom"
-                      value={local}
-                      onChange={(e) => setLocal(e.target.value)}
-                    />
-                    {!local.includes('@') && <span className="field__suffix">{DOMAIN}</span>}
-                  </span>
-                </label>
-                {/* Message EPFL ici seulement si la connexion EPFL n'est pas proposée. */}
-                {(error || (!epflOn && epflError)) && <p className="form-error">{error?.message ?? epflError}</p>}
-                <Button block loading={check.isPending || leaving} disabled={!local.trim()} icon={<ArrowRight size={18} />}>
-                  Continuer
+            ) : (
+              <div className="auth__form">
+                {epflError && <p className="form-error">{epflError}</p>}
+                <Button block onClick={() => open('register')}>
+                  Créer un compte
                 </Button>
-                {epflOn ? (
-                  <button type="button" className="link auth__alt" onClick={() => setStep('start')}>
-                    Revenir à la connexion EPFL
-                  </button>
-                ) : (
-                  <p className="auth__fine">
-                    Rush est réservé aux étudiant·e·s et au personnel de l’EPFL. Un cookie garde ta connexion sur cet appareil.
-                  </p>
-                )}
-              </form>
+                <Button block variant="secondary" onClick={() => open('login')}>
+                  Se connecter
+                </Button>
+                <p className="auth__fine">
+                  Rush est réservé aux étudiant·e·s et au personnel de l’EPFL. Un cookie garde ta connexion sur cet appareil.
+                </p>
+              </div>
             )}
           </motion.div>
         ) : (
           <motion.div
-            key="password"
+            key="form"
             initial={{ opacity: 0, x: 12 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 12 }}
             transition={{ duration: 0.22 }}
           >
-            <h1 className="auth__title">{exists ? 'Content de te revoir' : 'Crée ton mot de passe'}</h1>
+            <button type="button" className="link auth__back" onClick={() => open('start')}>
+              <ChevronLeft size={18} strokeWidth={2.4} /> Retour
+            </button>
+            <h1 className="auth__title">{registering ? 'Crée ton compte' : 'Content de te revoir'}</h1>
             <p className="auth__lead">
-              {exists ? 'Connexion avec' : 'Nouveau compte pour'} <strong>{email}</strong>.{' '}
-              <button type="button" className="link" onClick={() => setStep('email')}>
-                Modifier
-              </button>
+              {registering
+                ? 'Ton adresse EPFL et un mot de passe. Ton prénom et ta section juste après.'
+                : 'Connecte-toi avec ton adresse EPFL et ton mot de passe.'}
             </p>
 
-            <form onSubmit={submitPassword} className="auth__form">
-              {/* Pour que le gestionnaire de mots de passe associe le mot de passe à l'adresse. */}
-              <input type="email" autoComplete="username" value={email} readOnly hidden />
+            <form onSubmit={submit} className="auth__form">
+              <label className="field field--suffix">
+                <span className="field__label">Adresse EPFL</span>
+                <span className="field__control" onPointerDown={focusOnTap(emailInput)}>
+                  <input
+                    ref={emailInput}
+                    type="text"
+                    inputMode="email"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    placeholder="prenom.nom"
+                    value={local}
+                    onChange={(e) => setLocal(e.target.value)}
+                  />
+                  {!local.includes('@') && <span className="field__suffix">{DOMAIN}</span>}
+                </span>
+              </label>
               <label className="field">
                 <span className="field__label">Mot de passe</span>
                 <span className="field__control" onPointerDown={focusOnTap(passwordInput)}>
                   <input
                     ref={passwordInput}
                     type={reveal ? 'text' : 'password'}
-                    autoComplete={exists ? 'current-password' : 'new-password'}
+                    autoComplete={registering ? 'new-password' : 'current-password'}
                     autoCapitalize="none"
                     spellCheck={false}
                     value={password}
@@ -258,13 +243,19 @@ export function Login() {
                   </button>
                 </span>
               </label>
-              {!exists && (
+              {registering && (
                 <p className="auth__hint">{PASSWORD_MIN} caractères minimum. Garde-le bien : il n’y a pas encore de réinitialisation.</p>
               )}
               {error && <p className="form-error">{error.message}</p>}
-              <Button block loading={signIn.isPending} disabled={!password || tooShort} icon={<ArrowRight size={18} />}>
-                {exists ? 'Se connecter' : 'Créer mon compte'}
+              <Button block loading={signIn.isPending || leaving} disabled={!local.trim() || !password || tooShort} icon={<ArrowRight size={18} />}>
+                {registering ? 'Créer mon compte' : 'Se connecter'}
               </Button>
+              <p className="auth__switch">
+                {registering ? 'Déjà un compte ?' : 'Pas encore de compte ?'}{' '}
+                <button type="button" className="link" onClick={() => open(registering ? 'login' : 'register')}>
+                  {registering ? 'Se connecter' : 'Créer un compte'}
+                </button>
+              </p>
             </form>
           </motion.div>
         )}

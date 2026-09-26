@@ -175,7 +175,7 @@ export function createApp() {
   api.use('*', async (c, next) => {
     let user = auth.userFromToken(getCookie(c, auth.SESSION_COOKIE));
     if (!user && getCookie(c, auth.ACCOUNT_COOKIE)) {
-      // Session perdue : le cookie de compte reconnecte (et recrée le compte si la base a été vidée).
+      // Base vidée depuis la dernière visite : le cookie de compte recrée le compte et reconnecte.
       const restored = auth.restoreAccount(getCookie(c, auth.ACCOUNT_COOKIE));
       if (restored) {
         signIn(c, restored);

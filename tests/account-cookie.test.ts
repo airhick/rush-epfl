@@ -65,17 +65,24 @@ describe('cookie de compte', () => {
     expect((await laptop.call('/auth/login', { body: { email: 'lea.muller@epfl.ch', password: 'motdepasse1' } })).status).toBe(200);
   });
 
-  it('rouvre une session expirée tant que le mot de passe est le même', async () => {
+  it('ne rouvre pas une session fermée tant que le compte existe', async () => {
     const phone = new Browser();
     await signUp(phone);
-    run('DELETE FROM sessions');
-    expect((await phone.call('/me')).status).toBe(200);
+    const before = new Map(phone.jar);
 
-    // Mot de passe retiré (compte repris par la connexion EPFL) : le cookie ne suffit plus.
+    // Requête partie juste avant la déconnexion, arrivée juste après : elle ne reconnecte pas.
+    await phone.call('/auth/logout', { method: 'POST', body: {} });
+    const late = new Browser();
+    late.jar = before;
+    expect((await late.call('/me')).status).toBe(401);
+    expect(late.jar.has(SESSION_COOKIE)).toBe(true); // l'ancienne, fermée
+    expect((await late.call('/me')).status).toBe(401);
+
+    // Session expirée : on repasse par le mot de passe.
+    const laptop = new Browser();
+    await laptop.call('/auth/login', { body: { email: 'lea.muller@epfl.ch', password: 'motdepasse1' } });
     run('DELETE FROM sessions');
-    run('DELETE FROM credentials');
-    expect((await phone.call('/me')).status).toBe(401);
-    expect(phone.jar.has(ACCOUNT_COOKIE)).toBe(false);
+    expect((await laptop.call('/me')).status).toBe(401);
   });
 
   it('refuse un cookie modifié ou chiffré avec une autre clé', async () => {

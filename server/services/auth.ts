@@ -93,7 +93,14 @@ export async function login(rawEmail: string, password: string): Promise<SignedI
   assertNotLocked(email);
   const user = findUserByEmail(email);
   const stored = user ? passwordOf(user.id) : null;
-  if (!user || !stored || !(await checkPassword(password, stored))) {
+  if (!user || !stored) {
+    // L'écran « Se connecter » propose alors de créer le compte (ou la connexion EPFL).
+    if ((user && linkedToEpfl(user.id)) || (!user && mustUseEpfl(email))) {
+      throw new HttpError(403, 'Ce compte se connecte avec « Continuer avec EPFL ».');
+    }
+    throw new HttpError(404, 'Aucun compte avec cette adresse. Crée-le en quelques secondes.');
+  }
+  if (!(await checkPassword(password, stored))) {
     noteFailure(email);
     throw new HttpError(422, 'Mot de passe incorrect.');
   }
@@ -256,16 +263,17 @@ function openAccount(sealed: string | undefined): AccountCopy | null {
 }
 
 /**
- * Session perdue (base vidée, ou session de 30 jours expirée) : le cookie de compte
- * rouvre le compte sans repasser par l'inscription.
+ * Compte disparu parce que la base a été vidée : le cookie de compte le recrée à
+ * l'identique et rouvre une session, sans repasser par l'inscription.
  */
 export function restoreAccount(sealed: string | undefined): SignedIn | null {
   const copy = openAccount(sealed);
   if (!copy) return null;
   const user = transaction(() => {
-    const existing = getUser(copy.id);
-    // Même compte et même mot de passe : on rouvre. Mot de passe retiré (connexion EPFL) : non.
-    if (existing) return passwordOf(existing.id) === copy.password ? existing : null;
+    // Le compte existe : sa session a été fermée exprès (déconnexion, reprise par la
+    // connexion EPFL) ou a expiré. Une requête encore en route après une déconnexion
+    // ne doit pas la rouvrir.
+    if (getUser(copy.id)) return null;
 
     let email: string;
     try {

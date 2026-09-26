@@ -180,7 +180,7 @@ describe('authentification', () => {
   it('refuse un mauvais mot de passe, un doublon et un mot de passe trop court', async () => {
     await register('ada.lovelace@epfl.ch', 'machine-analytique');
     await expect(login('ada.lovelace@epfl.ch', 'mauvais')).rejects.toMatchObject({ status: 422 });
-    await expect(login('inconnu@epfl.ch', 'peu-importe')).rejects.toMatchObject({ status: 422 });
+    await expect(login('inconnu@epfl.ch', 'peu-importe')).rejects.toMatchObject({ status: 404 });
     await expect(register('ada.lovelace@epfl.ch', 'autre-mot-de-passe')).rejects.toMatchObject({ status: 409 });
     await expect(register('court@epfl.ch', '1234567')).rejects.toMatchObject({ status: 422 });
     expect(accountExists('court@epfl.ch').exists).toBe(false);

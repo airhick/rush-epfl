@@ -99,6 +99,21 @@
   font-size: 14px;
 }
 
+.auth__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin: -14px 0 14px -6px;
+  padding: 6px;
+  font-size: 15px;
+}
+
+.auth__switch {
+  text-align: center;
+  font-size: 14px;
+  color: var(--label-2);
+}
+
 .welcome-gift {
   display: flex;
   align-items: center;

@@ -17,7 +17,7 @@ Rush est une web app communautaire réservée à l'EPFL. Tu es à l'INF et tu as
 | **Pourboire suggéré** | Calculé à partir de la distance à pied, du nombre d'articles et de l'heure de pointe, avec le détail affiché ligne par ligne. |
 | **Messagerie** | Une conversation par commande, en temps réel (WebSocket), indicateur de saisie, réponses rapides contextuelles, messages système. |
 | **Suivi** | Barre de progression façon Uber (publiée → acceptée → achetée → livrée), ETA, position live du rusher, notation mutuelle. |
-| **Accès EPFL** | « Continuer avec EPFL » : connexion avec le compte EPFL (Microsoft Entra ID), adresse et nom fournis par l'annuaire. Sans configuration Entra, compte `@epfl.ch` + mot de passe. |
+| **Accès EPFL** | « Créer un compte » ou « Se connecter » avec une adresse `@epfl.ch` et un mot de passe ; la connexion reste mémorisée sur l'appareil. « Continuer avec EPFL » (Microsoft Entra ID) une fois l'application enregistrée à l'EPFL. |
 
 ## Démarrer
 
@@ -62,9 +62,9 @@ Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) e
 Deux cookies HttpOnly, rien d'autre (ni pistage, ni publicité) :
 
 - `rush_session` : la session, 30 jours.
-- `rush_account` : une copie du compte (identité, profil, empreinte scrypt du mot de passe), chiffrée et authentifiée par le serveur (AES-256-GCM, clé `RUSH_COOKIE_SECRET`), 1 an. Si la session est perdue, le serveur rouvre le compte avec ce cookie. Si la base a été vidée (veille ou déploiement sur l'offre gratuite de Render), il recrée le compte avec le même identifiant et le même mot de passe : pas de réinscription, et les autres appareils se reconnectent avec le mot de passe.
+- `rush_account` : une copie du compte (identité, profil, empreinte scrypt du mot de passe), chiffrée et authentifiée par le serveur (AES-256-GCM, clé `RUSH_COOKIE_SECRET`), 1 an. Si la base a été vidée (veille ou déploiement sur l'offre gratuite de Render), le serveur recrée le compte avec le même identifiant et le même mot de passe et rouvre la session : pas de réinscription, et les autres appareils se reconnectent avec le mot de passe. Tant que le compte existe, le cookie ne rouvre jamais une session fermée (déconnexion, expiration).
 
-Le cookie ne contient jamais le solde : un vieux cookie rejoué ne doit rien valoir. Il ne rouvre rien si l'adresse a été prise entre-temps par un nouveau compte, ni si le mot de passe du compte a changé ou a été retiré. Se déconnecter supprime les deux cookies.
+Le cookie ne contient jamais le solde : un vieux cookie rejoué ne doit rien valoir. Il ne recrée rien si l'adresse a été prise entre-temps par un nouveau compte. Se déconnecter supprime les deux cookies.
 
 ## Connexion EPFL (Microsoft Entra ID)
 

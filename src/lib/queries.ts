@@ -218,8 +218,11 @@ export function useLogout() {
   return useMutation({
     mutationFn: () => api('/auth/logout', { method: 'POST' }),
     onSuccess: () => {
-      qc.clear();
+      // D'abord « personne n'est connecté », pour que l'app passe à l'écran de connexion.
+      // Un qc.clear() avant laissait l'app accrochée à l'ancien compte.
       qc.setQueryData(keys.me, null);
+      // Puis on oublie les données du compte (les écrans qui les lisaient se démontent).
+      qc.removeQueries({ predicate: (q) => q.queryKey[0] !== 'me' && q.queryKey[0] !== 'auth' });
     },
   });
 }
