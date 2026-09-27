@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { motion } from 'motion/react';
-import { ArrowUpRight, Bike, Check, CreditCard, Gift, Lock, Plus, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
+import { ArrowUpRight, Bike, Check, CreditCard, FlaskConical, Gift, Lock, Plus, RotateCcw, ShoppingBag, Undo2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatCHF } from '../../shared/money';
 import type { TxKind } from '../../shared/types';
-import { keys, useMe, useTopupStatus, useWallet } from '../lib/queries';
+import { keys, useMe, useTestTool, useTopupStatus, useWallet } from '../lib/queries';
 import { clock, groupByDay } from '../lib/format';
 import { useCartSummary } from '../state/cart';
 import { useMapScene } from '../state/scene';
 import { TopupSheet, WithdrawalList, WithdrawSheet } from '../features/Money';
+import { STRIPE_TEST_CARD } from '../features/TestMode';
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
 import { Button, cx, Empty, Skeleton, Spinner } from '../ui/primitives';
@@ -79,6 +80,8 @@ export function Wallet() {
           </Button>
         </div>
 
+        {me?.test && <TestWalletNote stripe={me.test.stripe} />}
+
         {wallet && (
           <div className="stat-tiles">
             <div className="stat-tile">
@@ -146,6 +149,25 @@ export function Wallet() {
 }
 
 /** Retour de la page Stripe (/wallet?recharge=cs_…) : on attend le crédit envoyé par le webhook. */
+/** Mode test : d'où vient l'argent fictif. */
+function TestWalletNote({ stripe }: { stripe: boolean }) {
+  const credit = useTestTool();
+  return (
+    <div className="test-note">
+      <FlaskConical size={16} />
+      <span>
+        <strong>Solde de test.</strong>{' '}
+        {stripe ? `« Recharger » passe par l’environnement de test Stripe. ${STRIPE_TEST_CARD}` : 'Stripe test pas encore branché.'} Ou
+        directement :{' '}
+        <button className="link" disabled={credit.isPending} onClick={() => credit.mutate({ kind: 'credit' })}>
+          + CHF 20 fictifs
+        </button>
+        {credit.error && <span className="form-error"> {(credit.error as Error).message}</span>}
+      </span>
+    </div>
+  );
+}
+
 function TopupReturn() {
   const [params, setParams] = useSearchParams();
   const sessionId = params.get('recharge');

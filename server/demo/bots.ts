@@ -16,7 +16,7 @@ import { record } from '../services/ledger';
 import { addMessage } from '../services/messages';
 import * as orders from '../services/orders';
 import { setPresence } from '../services/presence';
-import { balanceOf, bots, createUser, getUser, invalidatePublicUser, type UserRow } from '../services/users';
+import { balanceOf, bots, createUser, getUser, invalidatePublicUser, isTestUser, type UserRow } from '../services/users';
 import { BUILDINGS, CUSTOM_ITEM_ID, SPOTS, SPOT_BY_ID, spotOf, type Spot, type SpotKind } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { haversine, lerp, type LatLng } from '../../shared/geo';
@@ -139,7 +139,7 @@ function seedHistory(people: UserRow[]) {
 }
 
 /** Les rushers simulés ont besoin de solde pour publier leurs demandes. */
-function fundBots(people: UserRow[]) {
+export function fundBots(people: UserRow[]) {
   for (const b of people) if (balanceOf(b.id) < 10_000) record(b.id, 'bonus', 20_000, 'Crédit démo');
 }
 
@@ -166,11 +166,11 @@ function shufflePresence(people: UserRow[]) {
   }
 }
 
-function postBotRequest(people: UserRow[]) {
+export function postBotRequest(people: UserRow[]) {
   const spots = openSpots();
-  if (spots.length === 0) return;
+  if (spots.length === 0) return null;
   const requester = pick(people.filter((p) => orders.countActive(p.id, 'requester') < 2));
-  if (!requester) return;
+  if (!requester) return null;
   const spot = pick(spots);
   const candidates = BUILDINGS.filter((b) => {
     const d = haversine(spot, b);
@@ -179,7 +179,7 @@ function postBotRequest(people: UserRow[]) {
   const dest = pick(candidates.length ? candidates : BUILDINGS);
   // Légère dispersion autour du bâtiment pour que les épingles ne se superposent pas.
   const jitter = { lat: dest.lat + rand(-0.00012, 0.00012), lng: dest.lng + rand(-0.00018, 0.00018) };
-  orders.createOrder(requester.id, {
+  return orders.createOrder(requester.id, {
     spotId: spot.id,
     items: [],
     custom: botRequest(spot),
@@ -216,7 +216,7 @@ function walk(orderId: string, botId: string, path: LatLng[], stepMs: number, do
   later(path.length * stepMs, done);
 }
 
-function botDeliversForHuman(orderId: string, people: UserRow[]) {
+export function botDeliversForHuman(orderId: string, people: UserRow[]) {
   later(rand(6000, 10000), () => {
     const row = orders.getRow(orderId);
     if (row.status !== 'open') return;
@@ -259,6 +259,8 @@ export function startDemo() {
   const people = ensureBots();
   const botIds = new Set(people.map((p) => p.id));
   fundBots(people);
+  // Les rushers de démo livrent toutes les vraies demandes (jamais celles du mode test).
+  animateBots(people, (row) => !botIds.has(row.requester_id) && !isTestUser(row.requester_id));
   shufflePresence(people);
 
   const keepFeedAlive = () => {
@@ -274,10 +276,21 @@ export function startDemo() {
     keepFeedAlive();
   }, 45_000);
   setInterval(() => shufflePresence(people), 5 * 60_000);
+}
+
+/**
+ * Comportement des rushers simulés : livrer les demandes choisies par
+ * `shouldDeliver`, remercier, confirmer la réception de leurs propres
+ * demandes, noter, et répondre dans la messagerie.
+ */
+export function animateBots(crew: UserRow[] | (() => UserRow[]), shouldDeliver: (row: orders.OrderRow) => boolean) {
+  // La liste est relue à chaque évènement : des rushers simulés peuvent avoir été recréés entre-temps.
+  const people = () => (typeof crew === 'function' ? crew() : crew);
+  const botIds = { has: (id: string | null) => Boolean(id) && people().some((p) => p.id === id) };
 
   bus.on('order.created', (orderId) => {
     const row = orders.getRow(orderId);
-    if (!botIds.has(row.requester_id)) botDeliversForHuman(orderId, people);
+    if (shouldDeliver(row)) botDeliversForHuman(orderId, people());
   });
 
   bus.on('order.accepted', (orderId) => {

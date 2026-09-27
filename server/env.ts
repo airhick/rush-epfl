@@ -24,6 +24,11 @@ export const env = {
   welcomeBonusCents: Math.max(0, Math.round(Number(process.env.RUSH_WELCOME_BONUS_CENTS ?? 100)) || 0),
   /** Domaines autorisés à se connecter. */
   allowedDomains: list(process.env.RUSH_ALLOWED_DOMAINS ?? 'epfl.ch'),
+  /** Code secret de /admin : un compte qui le saisit rejoint l'équipe Rush. Sans code, seules les adresses ci-dessous. */
+  adminCode: process.env.RUSH_ADMIN_CODE ?? '',
+  /** Mode test : lien de paiement et secret du webhook de l'environnement de test Stripe (carte 4242…). */
+  stripeTestTopupUrl: process.env.STRIPE_TEST_TOPUP_URL ?? '',
+  stripeTestWebhookSecret: process.env.STRIPE_TEST_WEBHOOK_SECRET ?? '',
   /** Adresses de l'équipe Rush : elles traitent les retraits (et peuvent se connecter hors @epfl.ch). */
   adminEmails: list(process.env.RUSH_ADMIN_EMAILS ?? ''),
   /** Lien de paiement Stripe « montant libre » (https://buy.stripe.com/…) pour recharger le solde. */

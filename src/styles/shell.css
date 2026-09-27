@@ -712,3 +712,50 @@
   transform-origin: left;
   transition: transform 0.25s linear;
 }
+
+/* ── Mode test ───────────────────────────────────────────────────────── */
+
+/* Bande de chantier en haut de l'écran : on ne peut pas oublier qu'on est en test. */
+.app--test::before {
+  content: '';
+  position: fixed;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: calc(4px + var(--safe-top));
+  background: repeating-linear-gradient(-45deg, var(--test) 0 10px, #16130d 10px 20px);
+  pointer-events: none;
+}
+
+.chrome--test {
+  top: calc(12px + var(--safe-top));
+  left: 12px;
+}
+
+.test-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  background: var(--test);
+  color: #16130d;
+  box-shadow: var(--lg-shadow);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  transition: transform 0.15s;
+}
+
+.test-pill:active {
+  transform: scale(0.95);
+}
+
+.test-pill__role {
+  padding-left: 7px;
+  border-left: 1.5px solid rgb(22 19 13 / 0.3);
+  font-weight: 650;
+  letter-spacing: 0;
+}

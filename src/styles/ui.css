@@ -916,3 +916,10 @@
 .sheet-note--top {
   padding-bottom: 14px;
 }
+
+.pill--test {
+  background: var(--test);
+  color: #16130d;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+}

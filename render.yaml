@@ -28,6 +28,14 @@ services:
         sync: false
       - key: RUSH_ADMIN_EMAILS
         sync: false
+      # Code secret de /admin : ouvre l'écran équipe (retraits, mode test).
+      - key: RUSH_ADMIN_CODE
+        sync: false
+      # Mode test : lien de paiement et secret du webhook de l'environnement de test Stripe.
+      - key: STRIPE_TEST_TOPUP_URL
+        sync: false
+      - key: STRIPE_TEST_WEBHOOK_SECRET
+        sync: false
       - key: RUSH_NTFY_TOPIC
         sync: false
       - key: ENTRA_CLIENT_ID

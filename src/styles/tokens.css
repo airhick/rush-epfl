@@ -70,6 +70,8 @@
   --green-soft: rgba(52, 199, 89, 0.14);
   --orange: #ff9500;
   --orange-soft: rgba(255, 149, 0, 0.14);
+  /* Mode test : jaune chantier, lisible sur fond clair comme sombre. */
+  --test: #ffc83d;
   --red: #ff3b30;
   --red-soft: rgba(255, 59, 48, 0.1);
   --yellow: #ffcc00;

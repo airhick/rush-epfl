@@ -5,7 +5,7 @@ import { broadcast, sendTo } from '../realtime';
 import { bus } from './bus';
 import { debit, record } from './ledger';
 import { systemMessage } from './messages';
-import { getUser, invalidatePublicUser, publicUser } from './users';
+import { getUser, invalidatePublicUser, isTestUser, publicUser } from './users';
 import { CUSTOM_ITEM_ID, SPOT_BY_ID, findItem, isOrderable, type MenuSection } from '../../shared/catalog';
 import { openStatus } from '../../shared/hours';
 import { BONUS_MAX_CENTS, computeHold, maxActualItems, settle } from '../../shared/pricing';
@@ -104,9 +104,13 @@ export function toOrder(row: OrderRow, viewerId: string): Order {
   };
 }
 
+/** Une commande de test n'existe que pour les comptes de test, et une vraie que pour les vrais comptes. */
+export const sameWorld = (row: Pick<OrderRow, 'requester_id'>, userId: string) => isTestUser(row.requester_id) === isTestUser(userId);
+
 export function orderFor(id: string, viewerId: string): Order {
   const row = getRow(id);
   const participant = row.requester_id === viewerId || row.courier_id === viewerId;
+  if (!participant && !sameWorld(row, viewerId)) throw new HttpError(404, 'Commande introuvable.');
   if (!participant && row.status !== 'open') throw new HttpError(403, 'Cette commande ne te concerne pas.');
   return toOrder(row, viewerId);
 }
@@ -121,9 +125,12 @@ export function listMine(userId: string): Order[] {
 }
 
 export function listOpen(viewerId: string): Order[] {
-  return all<OrderRow>("SELECT * FROM orders WHERE status = 'open' AND requester_id != ? ORDER BY created_at DESC", viewerId).map(
-    (r) => toOrder(r, viewerId),
-  );
+  return all<OrderRow>(
+    `SELECT o.* FROM orders o JOIN users u ON u.id = o.requester_id
+     WHERE o.status = 'open' AND o.requester_id != ? AND u.is_test = ? ORDER BY o.created_at DESC`,
+    viewerId,
+    isTestUser(viewerId) ? 1 : 0,
+  ).map((r) => toOrder(r, viewerId));
 }
 
 export function countActive(userId: string, role: 'requester' | 'courier'): number {
@@ -240,6 +247,7 @@ export function accept(orderId: string, courierId: string): Order {
   const row = transaction(() => {
     const row = getRow(orderId);
     if (row.requester_id === courierId) throw new HttpError(403, 'Tu ne peux pas livrer ta propre demande.');
+    if (!sameWorld(row, courierId)) throw new HttpError(404, 'Commande introuvable.');
     expectStatus(row, 'open');
     if (countActive(courierId, 'courier') >= MAX_ACTIVE_AS_COURIER) {
       throw new HttpError(429, 'Termine tes livraisons en cours avant d’en prendre une autre.');

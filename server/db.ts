@@ -28,6 +28,21 @@ const SCHEMA = /* sql */ `
   -- Ancienne connexion par code e-mail.
   DROP TABLE IF EXISTS login_codes;
 
+  -- Équipe Rush entrée par le code secret de /admin (en plus de RUSH_ADMIN_EMAILS).
+  CREATE TABLE IF NOT EXISTS admin_grants (
+    user_id     TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    granted_at  INTEGER NOT NULL
+  );
+
+  -- Mode test : comptes de test d'un membre de l'équipe (demandeur, rusher) et réglages.
+  CREATE TABLE IF NOT EXISTS test_accounts (
+    owner_id      TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    role          TEXT NOT NULL,
+    user_id       TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    auto_rusher   INTEGER NOT NULL DEFAULT 1,
+    PRIMARY KEY (owner_id, role)
+  );
+
   -- Appareils abonnés aux notifications push (un navigateur = un endpoint).
   CREATE TABLE IF NOT EXISTS push_subscriptions (
     endpoint    TEXT PRIMARY KEY,
@@ -167,6 +182,9 @@ function open(path: string): DatabaseSync {
   // Bases créées avant le trajet déclaré.
   const presenceCols = db.prepare('PRAGMA table_info(presence)').all() as { name: string }[];
   if (!presenceCols.some((c) => c.name === 'route_json')) db.exec('ALTER TABLE presence ADD COLUMN route_json TEXT');
+  // Comptes du mode test : un monde à part, argent fictif, jamais mélangé aux vrais comptes.
+  const userCols = db.prepare('PRAGMA table_info(users)').all() as { name: string }[];
+  if (!userCols.some((c) => c.name === 'is_test')) db.exec('ALTER TABLE users ADD COLUMN is_test INTEGER NOT NULL DEFAULT 0');
   return db;
 }
 

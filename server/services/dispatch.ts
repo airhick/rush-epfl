@@ -1,7 +1,7 @@
 import { all, one } from '../db';
 import { onlineUsers, sendTo } from '../realtime';
 import { bus } from './bus';
-import { countActive, MAX_ACTIVE_AS_COURIER, toOrder, type OrderRow } from './orders';
+import { countActive, MAX_ACTIVE_AS_COURIER, sameWorld, toOrder, type OrderRow } from './orders';
 import { forgetOffers, markOffered, wasOffered } from './offerLog';
 import { getPresence } from './presence';
 import { publicUser } from './users';
@@ -44,7 +44,7 @@ export function courierState(userId: string, now = Date.now()): CourierState | n
 
 /** L'offre telle que ce rusher la voit (distances depuis sa position), ou null si elle ne le concerne pas. */
 export function offerFor(row: OrderRow, userId: string): Offer | null {
-  if (row.status !== 'open' || row.requester_id === userId) return null;
+  if (row.status !== 'open' || row.requester_id === userId || !sameWorld(row, userId)) return null;
   const spot = SPOT_BY_ID.get(row.spot_id);
   const courier = courierState(userId);
   if (!spot || !courier) return null;

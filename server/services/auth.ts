@@ -175,7 +175,7 @@ function createAccount(email: string, names: { first?: string; last?: string } =
 
 /* ── Sessions ─────────────────────────────────────────────────────────── */
 
-function openSession(userId: string): string {
+export function openSession(userId: string): string {
   const token = randomBytes(32).toString('base64url');
   run(
     'INSERT INTO sessions (token_hash, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)',
@@ -199,6 +199,28 @@ export function userFromToken(token: string | undefined): UserRow | null {
 
 export function destroySession(token: string | undefined) {
   if (token) run('DELETE FROM sessions WHERE token_hash = ?', sha256(token));
+}
+
+/* ── Code secret de /admin ────────────────────────────────────────────── */
+
+const adminAttempts = new Map<string, { count: number; since: number }>();
+
+/** Rejoindre l'équipe Rush avec le code secret (RUSH_ADMIN_CODE). 5 essais par quart d'heure. */
+export function unlockAdmin(userId: string, code: string) {
+  if (!env.adminCode) throw new HttpError(503, 'L’accès équipe n’est pas configuré.');
+  const user = getUser(userId);
+  if (!user || user.is_test) throw new HttpError(403, 'Quitte le mode test d’abord.');
+  const a = adminAttempts.get(userId);
+  if (a && Date.now() - a.since < LOCK_MS && a.count >= 5) throw new HttpError(429, 'Trop d’essais. Réessaie dans un quart d’heure.');
+  const given = createHash('sha256').update(code.trim()).digest();
+  const expected = createHash('sha256').update(env.adminCode).digest();
+  if (!timingSafeEqual(given, expected)) {
+    const fresh = !a || Date.now() - a.since >= LOCK_MS;
+    adminAttempts.set(userId, { count: fresh ? 1 : a!.count + 1, since: fresh ? Date.now() : a!.since });
+    throw new HttpError(422, 'Code incorrect.');
+  }
+  adminAttempts.delete(userId);
+  run('INSERT OR IGNORE INTO admin_grants (user_id, granted_at) VALUES (?, ?)', userId, Date.now());
 }
 
 /* ── Cookie de compte ─────────────────────────────────────────────────────

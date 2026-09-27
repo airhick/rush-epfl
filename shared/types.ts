@@ -27,6 +27,17 @@ export interface Me extends PublicUser {
   isAdmin: boolean;
   /** Compte ouvert avec la connexion EPFL (adresse prouvée par l'annuaire). */
   epfl: boolean;
+  /** Mode test : compte de test d'un membre de l'équipe (sinon null). */
+  test: TestInfo | null;
+}
+
+export interface TestInfo {
+  role: 'buyer' | 'rusher';
+  /** Un rusher de test accepte et livre tout seul les demandes de test. */
+  autoRusher: boolean;
+  /** Recharges par l'environnement de test Stripe (carte 4242…) configurées. */
+  stripe: boolean;
+  ownerFirstName: string;
 }
 
 /** Ce que l'écran de connexion propose. */
@@ -142,7 +153,7 @@ export interface TopupStatus {
 
 /** Vue de l'équipe Rush : retraits à envoyer par TWINT et paiements Stripe à rattacher. */
 export interface OwnerWithdrawal extends Withdrawal {
-  user: { id: string; firstName: string; lastName: string; email: string; section: string | null; epfl: boolean };
+  user: { id: string; firstName: string; lastName: string; email: string; section: string | null; epfl: boolean; test: boolean };
   /** Contexte pour juger la demande : d'où vient l'argent de ce compte. */
   stats: { topupsCents: number; earnedCents: number; balanceCents: number };
 }

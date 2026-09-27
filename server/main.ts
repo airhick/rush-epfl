@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { env } from './env';
-import { db } from './db';
+import { db, one } from './db';
 import { boot, Snapshotter } from './snapshot';
 import { createApp } from './app';
 import { handleClientEvents, sendTo, upgrade } from './realtime';
@@ -10,6 +10,7 @@ import { SESSION_COOKIE, purgeExpired, userFromToken } from './services/auth';
 import { orderFor, sweep, updateCourierLocation } from './services/orders';
 import { updatePosition } from './services/dispatch';
 import { startDemo } from './demo/bots';
+import { startTestRushers } from './services/testMode';
 
 const app = createApp();
 
@@ -72,6 +73,8 @@ setInterval(() => {
 }, 30_000);
 
 if (env.demo) startDemo();
+// Rushers de test simulés, si quelqu'un de l'équipe a déjà utilisé le mode test.
+if (one('SELECT 1 AS x FROM test_accounts')) startTestRushers();
 
 /* Copie de la base dans le Key Value, et une dernière à l'arrêt (veille, déploiement). */
 const snapshots = boot.store ? new Snapshotter(db, boot.store, { restored: boot.restored }).start() : null;

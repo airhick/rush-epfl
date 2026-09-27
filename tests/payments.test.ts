@@ -182,7 +182,7 @@ describe('API', () => {
     expect(balanceOf(alice.id)).toBe(0);
     const res = await post(signPayload(payload, SECRET));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ received: true, outcome: 'credited' });
+    expect(await res.json()).toEqual({ received: true, test: false, outcome: 'credited' });
     expect(balanceOf(alice.id)).toBe(700);
   });
 

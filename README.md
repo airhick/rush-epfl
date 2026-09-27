@@ -54,9 +54,22 @@ Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) e
 
 ## Recharges Stripe et retraits TWINT
 
-**Recharge.** Un seul [lien de paiement Stripe](https://docs.stripe.com/payment-links) « montant libre » (CHF 1 à 100, métadonnée `rush=topup`). L'app choisit le montant et ouvre le lien avec `client_reference_id` (le compte), `prefilled_amount` et `locked_prefilled_email`. Après le paiement, Stripe renvoie sur `/wallet?recharge={CHECKOUT_SESSION_ID}` et envoie un webhook `checkout.session.completed` à `/api/stripe/webhook`. Le serveur vérifie la signature (HMAC avec `STRIPE_WEBHOOK_SECRET`, sans SDK ni clé secrète), puis crédite le montant réellement payé, une seule fois par session (table `topups`). Un paiement sans compte correspondant, ou dans une autre devise que le CHF, n'est pas crédité : il apparaît dans l'écran de l'équipe pour être remboursé depuis Stripe.
+**Recharge.** Un seul [lien de paiement Stripe](https://docs.stripe.com/payment-links) « montant libre » (CHF 1 à 100, métadonnée `rush=topup`). L'app choisit le montant et ouvre le lien avec `client_reference_id` (le compte), `prefilled_amount` et `locked_prefilled_email` (sauf pour les comptes de test). Après le paiement, Stripe renvoie sur `/wallet?recharge={CHECKOUT_SESSION_ID}` et envoie un webhook `checkout.session.completed` à `/api/stripe/webhook`. Le serveur vérifie la signature (HMAC avec `STRIPE_WEBHOOK_SECRET`, sans SDK ni clé secrète), puis crédite le montant réellement payé, une seule fois par session (table `topups`). Un paiement sans compte correspondant, ou dans une autre devise que le CHF, n'est pas crédité : il apparaît dans l'écran de l'équipe pour être remboursé depuis Stripe.
 
-**Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS` voient l'écran **Retraits** (Profil → Équipe Rush) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
+**Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS`, et les comptes qui ont saisi le code de `/admin`, voient l'écran **Équipe Rush** (Profil → Équipe Rush, ou `/admin`) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
+
+## Équipe Rush et mode test
+
+**/admin.** Le lien n'apparaît nulle part dans l'app. Un compte connecté qui ouvre `/admin` voit un champ de code : le bon code (`RUSH_ADMIN_CODE`) l'ajoute à l'équipe pour de bon (table `admin_grants`), en plus des adresses de `RUSH_ADMIN_EMAILS`. Cinq essais ratés bloquent le compte un quart d'heure.
+
+**Mode test.** Depuis `/admin`, « Tester comme demandeur » ou « Tester comme rusher » ouvre un compte de test lié au membre de l'équipe (un par rôle, créé au premier passage). Le vrai compte reste de côté dans un cookie (`rush_real`) : « Quitter le mode test » y revient sans se reconnecter. Tant qu'on est en test, une bande jaune et noire barre le haut de l'écran et la pastille **TEST** ouvre les outils :
+
+- **Solde fictif** : « + CHF 20 fictifs » directement, ou « Recharger » par l'environnement de test Stripe (carte `4242 4242 4242 4242`, date future, CVC au choix ; `4000 0000 0000 0002` simule un refus). Le webhook de test arrive à la même adresse : le serveur essaie les deux secrets et vérifie que `livemode` correspond. Un paiement de test ne crédite qu'un compte de test, un vrai paiement jamais un compte de test.
+- **Rushers simulés** : Tessa, Théo et Zoé (comptes de test) acceptent et livrent les demandes de test en quelques secondes, avec position en direct et messages. Réglage « Rusher automatique » à couper pour livrer soi-même depuis le compte Rusher.
+- **Demande à livrer** : un demandeur simulé publie une demande dans un spot ouvert, pour tester le côté rusher seul (offre en direct, acceptation, achat, livraison, confirmation).
+- **Tout remettre à zéro** : efface commandes, messages, soldes, recharges et retraits de test.
+
+Les deux mondes ne se croisent jamais : un compte de test ne voit que les commandes de test (liste, offres en direct, notifications), un vrai compte ne les voit pas. Un retrait demandé en test apparaît dans `/admin` avec la mention **TEST · argent fictif**, sans notification ntfy.
 
 ## Base conservée entre les redémarrages
 
@@ -190,6 +203,9 @@ docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 | `STRIPE_TOPUP_URL` | Lien de paiement Stripe « montant libre » des recharges | recharges désactivées |
 | `STRIPE_WEBHOOK_SECRET` | Secret `whsec_…` du webhook Stripe vers `/api/stripe/webhook` | recharges désactivées |
 | `RUSH_ADMIN_EMAILS` | Adresses de l'équipe Rush (traitent les retraits, peuvent se connecter hors `@epfl.ch`) | aucune |
+| `RUSH_ADMIN_CODE` | Code secret de `/admin` : qui le saisit rejoint l'équipe (retraits, mode test) | accès par code désactivé |
+| `STRIPE_TEST_TOPUP_URL` | Lien de paiement de l'environnement de test Stripe (mode test) | recharges de test par Stripe désactivées |
+| `STRIPE_TEST_WEBHOOK_SECRET` | Secret `whsec_…` du webhook de test Stripe, même adresse `/api/stripe/webhook` | recharges de test par Stripe désactivées |
 | `RUSH_NTFY_TOPIC` | Sujet ntfy.sh pour être prévenu des retraits sur téléphone | désactivé |
 | `ENTRA_CLIENT_ID` | Identifiant de l'application enregistrée sur app-portal.epfl.ch | connexion EPFL désactivée |
 | `ENTRA_CLIENT_SECRET` | Secret de cette application | connexion EPFL désactivée |

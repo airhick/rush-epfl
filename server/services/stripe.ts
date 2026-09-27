@@ -11,19 +11,25 @@ import { TOPUP_MAX_CENTS, TOPUP_MIN_CENTS } from '../../shared/payments';
  * terminaison peuvent créditer un solde.
  */
 
-export const topupsEnabled = () => Boolean(env.stripeTopupUrl && env.stripeWebhookSecret);
+/** Recharges ouvertes : lien réel pour les vrais comptes, lien de l'environnement de test Stripe pour le mode test. */
+export const topupsEnabled = (test = false) =>
+  test ? Boolean(env.stripeTestTopupUrl && env.stripeTestWebhookSecret) : Boolean(env.stripeTopupUrl && env.stripeWebhookSecret);
 
 /** Lien de paiement personnalisé : compte, adresse et montant préremplis. */
-export function topupUrl(user: Pick<UserRow, 'id' | 'email'>, amountCents: number): string {
-  if (!topupsEnabled()) throw new HttpError(503, 'Les recharges ne sont pas encore ouvertes.');
+export function topupUrl(user: Pick<UserRow, 'id' | 'email' | 'is_test'>, amountCents: number): string {
+  const test = user.is_test === 1;
+  if (!topupsEnabled(test)) {
+    throw new HttpError(503, test ? 'Le paiement de test Stripe n’est pas encore configuré : utilise « + CHF 20 fictifs ».' : 'Les recharges ne sont pas encore ouvertes.');
+  }
   if (!Number.isInteger(amountCents) || amountCents < TOPUP_MIN_CENTS || amountCents > TOPUP_MAX_CENTS) {
     throw new HttpError(422, 'Choisis un montant entre CHF 1 et CHF 100.');
   }
-  const url = new URL(env.stripeTopupUrl);
+  const url = new URL(test ? env.stripeTestTopupUrl : env.stripeTopupUrl);
   // Stripe relie le paiement au compte grâce à client_reference_id (lettres, chiffres, tirets).
   url.searchParams.set('client_reference_id', user.id);
   url.searchParams.set('prefilled_amount', String(amountCents));
-  url.searchParams.set('locked_prefilled_email', user.email);
+  // Les comptes de test ont une adresse en .invalid, que Stripe refuserait : le testeur tape la sienne.
+  if (!test) url.searchParams.set('locked_prefilled_email', user.email);
   url.searchParams.set('locale', 'fr');
   return url.toString();
 }
@@ -31,6 +37,7 @@ export function topupUrl(user: Pick<UserRow, 'id' | 'email'>, amountCents: numbe
 export interface StripeEvent {
   id: string;
   type: string;
+  livemode?: boolean;
   data: { object: Record<string, unknown> };
 }
 
@@ -67,6 +74,30 @@ export function verifyWebhook(payload: string, header: string | undefined, secre
   } catch {
     throw new HttpError(400, 'Évènement Stripe illisible.');
   }
+}
+
+/**
+ * Webhook réel ou de test : chaque environnement Stripe signe avec son propre
+ * secret. Un évènement signé par le secret de test doit être un évènement de
+ * test (livemode false), et inversement.
+ */
+export function verifyAnyWebhook(payload: string, header: string | undefined): { event: StripeEvent; test: boolean } {
+  const attempts: [string, boolean][] = [
+    [env.stripeWebhookSecret, false],
+    [env.stripeTestWebhookSecret, true],
+  ];
+  let lastError: unknown = new HttpError(503, 'Webhook Stripe non configuré.');
+  for (const [secret, test] of attempts) {
+    if (!secret) continue;
+    try {
+      const event = verifyWebhook(payload, header, secret);
+      if (event.livemode !== undefined && event.livemode === test) throw new HttpError(400, 'Environnement Stripe incohérent.');
+      return { event, test };
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  throw lastError;
 }
 
 /** Signe un évènement comme Stripe (tests et essais en local). */

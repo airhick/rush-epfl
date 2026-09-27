@@ -12,6 +12,7 @@ import type {
   Presence,
   SpotActivity,
   SpotMenu,
+  TestInfo,
   TopupStatus,
   WalletView,
   Withdrawal,
@@ -239,6 +240,9 @@ export function useUpdateProfile() {
   });
 }
 
+/** Les données du compte affiché : à oublier (et recharger) quand on change de compte. */
+const accountData = (q: { queryKey: readonly unknown[] }) => q.queryKey[0] !== 'me' && q.queryKey[0] !== 'auth';
+
 export function useLogout() {
   const qc = useQueryClient();
   return useMutation({
@@ -252,7 +256,7 @@ export function useLogout() {
       // Un qc.clear() avant laissait l'app accrochée à l'ancien compte.
       qc.setQueryData(keys.me, null);
       // Puis on oublie les données du compte (les écrans qui les lisaient se démontent).
-      qc.removeQueries({ predicate: (q) => q.queryKey[0] !== 'me' && q.queryKey[0] !== 'auth' });
+      qc.removeQueries({ predicate: accountData });
     },
   });
 }
@@ -306,5 +310,69 @@ export function useOwnerAction() {
       api<Withdrawal>(`/admin/withdrawals/${a.id}/${a.action}`, a.action === 'reject' ? { body: { reason: a.reason } } : { method: 'POST' }),
     onSuccess: () => qc.invalidateQueries({ queryKey: keys.owner }),
     onError: () => qc.invalidateQueries({ queryKey: keys.owner }),
+  });
+}
+
+/** Code secret de /admin : rejoint l'équipe Rush. */
+export function useUnlockAdmin() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) => api<Me>('/admin/unlock', { body: { code } }),
+    onSuccess: (me) => qc.setQueryData(keys.me, me),
+  });
+}
+
+/* ── Mode test ───────────────────────────────────────────────────────── */
+
+export type TestRole = TestInfo['role'];
+
+/**
+ * Entre en mode test sur le compte demandeur ou rusher, passe de l'un à
+ * l'autre, ou revient au vrai compte ('real'). Les données affichées sont
+ * celles d'un autre compte : on les recharge toutes.
+ */
+export function useTestSwitch() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (to: TestRole | 'real') => {
+      if (to === 'real') return api<Me | null>('/test/exit', { method: 'POST' });
+      const inTest = Boolean(qc.getQueryData<Me | null>(keys.me)?.test);
+      return api<Me>(inTest ? '/test/switch' : '/admin/test/enter', { body: { role: to } });
+    },
+    onSuccess: (me) => {
+      useOffers.setState({ offers: [] });
+      qc.setQueryData(keys.me, me);
+      if (me) qc.resetQueries({ predicate: accountData });
+      else qc.removeQueries({ predicate: accountData });
+    },
+  });
+}
+
+type TestTool = { kind: 'credit' } | { kind: 'reset' } | { kind: 'auto-rusher'; on: boolean };
+
+/** Outils du mode test : solde fictif, rusher automatique, remise à zéro. */
+export function useTestTool() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (t: TestTool) => api<Me>(`/test/${t.kind}`, { body: t.kind === 'auto-rusher' ? { on: t.on } : {} }),
+    onSuccess: (me, t) => {
+      qc.setQueryData(keys.me, me);
+      if (t.kind === 'reset') {
+        useOffers.setState({ offers: [] });
+        qc.resetQueries({ predicate: accountData });
+      } else qc.invalidateQueries({ queryKey: keys.wallet });
+    },
+  });
+}
+
+/** Un rusher de test simulé publie une demande : de quoi tester la livraison seul. */
+export function useSampleOrder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api<Order>('/test/sample-order', { method: 'POST' }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: keys.orders });
+      qc.invalidateQueries({ queryKey: keys.activity });
+    },
   });
 }

@@ -13,6 +13,7 @@ import { ACTIVE_STATUSES } from '../../shared/types';
 import { Avatar, cx } from '../ui/primitives';
 import { Logo } from '../ui/Logo';
 import { OfferLayer } from '../features/OfferLayer';
+import { TestBadge } from '../features/TestMode';
 
 /** Position par défaut de la feuille mobile selon l'écran. */
 function defaultSnap(path: string): SheetSnap {
@@ -23,8 +24,9 @@ function defaultSnap(path: string): SheetSnap {
 
 export function Shell({ children, chrome = true }: { children?: ReactNode; chrome?: boolean }) {
   const desktop = useIsDesktop();
+  const { data: me } = useMe();
   return (
-    <div className={cx('app', desktop ? 'app--desktop' : 'app--mobile')}>
+    <div className={cx('app', desktop ? 'app--desktop' : 'app--mobile', chrome && me?.test && 'app--test')}>
       <MapView />
       {desktop ? <DesktopPanel chrome={chrome}>{children}</DesktopPanel> : <MobileSheet chrome={chrome}>{children}</MobileSheet>}
       {chrome && <MapChrome />}
@@ -201,12 +203,18 @@ function MapChrome() {
   if (!me) return null;
   return (
     <>
-      {!desktop && (
-        <div className="chrome chrome--brand">
-          <Logo size={20} />
-        </div>
-      )}
+      {!desktop &&
+        (me.test ? (
+          <div className="chrome chrome--test">
+            <TestBadge me={{ ...me, test: me.test }} />
+          </div>
+        ) : (
+          <div className="chrome chrome--brand">
+            <Logo size={20} />
+          </div>
+        ))}
       <div className="chrome chrome--account">
+        {desktop && me.test && <TestBadge me={{ ...me, test: me.test }} />}
         <button className="balance-pill" onClick={() => navigate('/wallet')}>
           <WalletIcon size={15} strokeWidth={2.2} />
           {formatCHF(me.balanceCents)}

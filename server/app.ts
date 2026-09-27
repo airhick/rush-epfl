@@ -9,6 +9,7 @@ import * as messages from './services/messages';
 import * as presence from './services/presence';
 import * as dispatch from './services/dispatch';
 import * as push from './services/push';
+import * as testMode from './services/testMode';
 import './services/notifications';
 import * as placeSearch from './services/geocode';
 import * as places from './services/places';
@@ -48,6 +49,9 @@ const schemas = {
   message: z.object({ body: z.string().trim().min(1).max(500) }),
   topup: z.object({ amountCents: z.number().int() }),
   withdrawal: z.object({ amountCents: z.number().int().positive(), phone: z.string().max(40) }),
+  adminCode: z.object({ code: z.string().min(1).max(200) }),
+  testRole: z.object({ role: z.enum(['buyer', 'rusher']) }),
+  toggle: z.object({ on: z.boolean() }),
   reject: z.object({ reason: z.string().trim().min(3, 'Explique le refus en quelques mots.').max(200) }),
   presence: z.object({
     available: z.boolean(),
@@ -179,8 +183,8 @@ export function createApp() {
 
   /* Webhook Stripe : authentifié par sa signature, pas par une session. */
   api.post('/stripe/webhook', async (c) => {
-    const event = stripe.verifyWebhook(await c.req.text(), c.req.header('stripe-signature'));
-    return c.json({ received: true, outcome: payments.handleStripeEvent(event) });
+    const { event, test } = stripe.verifyAnyWebhook(await c.req.text(), c.req.header('stripe-signature'));
+    return c.json({ received: true, test, outcome: payments.handleStripeEvent(event, test) });
   });
 
   /* Tout ce qui suit exige une session. */
@@ -223,13 +227,70 @@ export function createApp() {
 
   /* ── Activité des spots et présence des rushers ───────────────────── */
 
-  api.get('/activity', (c) => c.json(presence.activity()));
+  api.get('/activity', (c) => c.json(presence.activity(me(c).is_test === 1)));
   api.get('/presence', (c) => c.json(presence.getPresence(me(c).id)));
   api.put('/presence', async (c) => {
     const updated = presence.setPresence(me(c).id, await body(c, schemas.presence));
     // Nouveau trajet ou de nouveau disponible : les demandes ouvertes qui tombent sur le chemin.
     dispatch.recheck(me(c).id);
     return c.json(updated);
+  });
+
+  /* ── Équipe Rush : code secret de /admin et mode test ─────────────── */
+
+  api.post('/admin/unlock', async (c) => {
+    auth.unlockAdmin(me(c).id, (await body(c, schemas.adminCode)).code);
+    return c.json(toMe(getUser(me(c).id)!));
+  });
+
+  /** Le compte réel reste dans un cookie à part : « Quitter le mode test » y revient. */
+  const REAL_COOKIE = 'rush_real';
+  /** Ouvre une session sur `user`. La session courante est fermée, sauf celle du compte réel qu'on garde de côté. */
+  const switchTo = (c: Context<AppEnv>, user: UserRow, keepCurrent: boolean) => {
+    if (!keepCurrent) auth.destroySession(getCookie(c, auth.SESSION_COOKIE));
+    testMode.startTestRushers();
+    return c.json(signIn(c, { user, token: auth.openSession(user.id) }));
+  };
+
+  api.post('/admin/test/enter', async (c) => {
+    const { role } = await body(c, schemas.testRole);
+    const testUser = testMode.testAccount(me(c).id, role);
+    setCookie(c, REAL_COOKIE, getCookie(c, auth.SESSION_COOKIE) ?? '', { ...cookieOptions, maxAge: auth.SESSION_TTL_MS / 1000 });
+    return switchTo(c, testUser, true);
+  });
+
+  api.post('/test/switch', async (c) => {
+    const owner = testMode.ownerOf(me(c).id);
+    if (!owner) throw new HttpError(403, 'Seulement en mode test.');
+    return switchTo(c, testMode.testAccount(owner, (await body(c, schemas.testRole)).role), false);
+  });
+
+  api.post('/test/exit', (c) => {
+    if (!testMode.ownerOf(me(c).id)) throw new HttpError(403, 'Seulement en mode test.');
+    const realToken = getCookie(c, REAL_COOKIE);
+    const real = auth.userFromToken(realToken);
+    auth.destroySession(getCookie(c, auth.SESSION_COOKIE));
+    deleteCookie(c, REAL_COOKIE, { path: '/' });
+    if (!real || real.is_test) {
+      deleteCookie(c, auth.SESSION_COOKIE, { path: '/' });
+      return c.json(null);
+    }
+    setCookie(c, auth.SESSION_COOKIE, realToken!, { ...cookieOptions, maxAge: auth.SESSION_TTL_MS / 1000 });
+    return c.json(toMe(real));
+  });
+
+  api.post('/test/credit', (c) => {
+    testMode.creditTest(me(c).id);
+    return c.json(toMe(getUser(me(c).id)!));
+  });
+  api.post('/test/auto-rusher', async (c) => {
+    testMode.setAutoRusher(me(c).id, (await body(c, schemas.toggle)).on);
+    return c.json(toMe(getUser(me(c).id)!));
+  });
+  api.post('/test/sample-order', (c) => c.json(testMode.sampleOrder(me(c).id), 201));
+  api.post('/test/reset', (c) => {
+    testMode.resetTest(me(c).id);
+    return c.json(toMe(getUser(me(c).id)!));
   });
 
   /* Notifications push : clé publique VAPID, abonnement de cet appareil. */

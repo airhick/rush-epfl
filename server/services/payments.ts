@@ -4,7 +4,7 @@ import { all, nowIso, one, run, transaction } from '../db';
 import { HttpError } from '../http';
 import { sendTo } from '../realtime';
 import { record, wallet } from './ledger';
-import { admins, balanceOf, findUserByEmail, getUser, linkedToEpfl } from './users';
+import { admins, balanceOf, findUserByEmail, getUser, isTestUser, linkedToEpfl } from './users';
 import { topupsEnabled, type StripeEvent } from './stripe';
 import { notify } from './push';
 import { formatCHF } from '../../shared/money';
@@ -21,8 +21,13 @@ const refreshOwners = () => {
  * Prévient l'équipe : toast dans l'app si elle est connectée, et notification
  * sur téléphone via ntfy. Le texte envoyé à ntfy ne contient ni nom ni numéro.
  */
-function notifyOwners(title: string, body: string, push = body) {
+function notifyOwners(title: string, body: string, push = body, test = false) {
   refreshOwners();
+  // Mode test : l'équipe le voit dans l'app, sans alerte ntfy ni notification sur le téléphone.
+  if (test) {
+    for (const admin of admins()) sendTo(admin.id, { type: 'toast', title: `[Test] ${title}`, body, href: '/admin' });
+    return;
+  }
   for (const admin of admins()) {
     sendTo(admin.id, { type: 'toast', title, body, href: '/admin' });
     void notify(admin.id, { title, body: push, url: '/admin', tag: 'owners', kind: 'owner' });
@@ -74,20 +79,23 @@ export type TopupOutcome = 'credited' | 'duplicate' | 'unmatched' | 'waiting' | 
  * recharge (metadata rush=topup) payées comptent ; un paiement différé
  * (virement…) est crédité à l'évènement async_payment_succeeded.
  */
-export function handleStripeEvent(event: StripeEvent): TopupOutcome {
+export function handleStripeEvent(event: StripeEvent, test = false): TopupOutcome {
   if (event.type !== 'checkout.session.completed' && event.type !== 'checkout.session.async_payment_succeeded') return 'ignored';
   const session = event.data.object as unknown as CheckoutSession;
   if (session.metadata?.rush !== 'topup' || session.mode !== 'payment') return 'ignored';
   if (session.payment_status !== 'paid') return 'waiting';
-  return creditTopup(session);
+  return creditTopup(session, test);
 }
 
-function creditTopup(session: CheckoutSession): TopupOutcome {
+/** Paiement de l'environnement de test Stripe : il ne crédite qu'un compte de test, jamais un vrai. */
+function creditTopup(session: CheckoutSession, test: boolean): TopupOutcome {
   const amount = session.amount_total ?? 0;
   const currency = (session.currency ?? '').toLowerCase();
   const email = (session.customer_details?.email ?? session.customer_email ?? '').trim().toLowerCase() || null;
   const byRef = session.client_reference_id ? getUser(session.client_reference_id) : undefined;
-  const user = byRef ?? (email ? findUserByEmail(email) : undefined);
+  const found = byRef ?? (email ? findUserByEmail(email) : undefined);
+  // Argent de test pour un compte de test, argent réel pour un vrai compte : sinon, rien n'est crédité.
+  const user = found && (found.is_test === 1) === test ? found : undefined;
   // Un montant hors CHF ne peut pas être crédité tel quel : l'équipe le traite à la main.
   const creditable = Boolean(user) && currency === 'chf' && Number.isInteger(amount) && amount > 0;
 
@@ -106,13 +114,15 @@ function creditTopup(session: CheckoutSession): TopupOutcome {
       nowIso(),
     );
     if (!creditable) return 'unmatched';
-    record(user!.id, 'topup', amount, 'Recharge · Paiement Stripe');
+    record(user!.id, 'topup', amount, test ? 'Recharge · Paiement Stripe de test' : 'Recharge · Paiement Stripe');
     return 'credited';
   });
 
   if (outcome === 'credited') {
     walletChanged(user!.id);
     tell(user!.id, 'Solde rechargé', `${formatCHF(amount)} ajoutés à ton solde.`);
+  } else if (outcome === 'unmatched' && test) {
+    console.warn(`[stripe] paiement de test sans compte de test : ${session.id}`);
   } else if (outcome === 'unmatched') {
     console.error(`[stripe] recharge non attribuée : ${session.id}`);
     notifyOwners('Paiement Stripe à rattacher', `${formatCHF(amount)} (${currency.toUpperCase()}) sans compte Rush correspondant.`);
@@ -165,7 +175,7 @@ export function walletView(userId: string): WalletView {
   return {
     ...wallet(userId),
     withdrawableCents: withdrawable(userId),
-    topupsEnabled: topupsEnabled(),
+    topupsEnabled: topupsEnabled(isTestUser(userId)),
     withdrawals: all<WithdrawalRow>('SELECT * FROM withdrawals WHERE user_id = ? ORDER BY created_at DESC LIMIT 20', userId).map(toWithdrawal),
   };
 }
@@ -204,6 +214,7 @@ export function requestWithdrawal(userId: string, amountCents: number, rawPhone:
     'Retrait demandé',
     `${formatCHF(amountCents)} à envoyer par TWINT à ${user.first_name} ${user.last_name}.`.replace(' .', '.'),
     `${formatCHF(amountCents)} à envoyer par TWINT. Le numéro est dans Rush.`,
+    user.is_test === 1,
   );
   return toWithdrawal(row);
 }
@@ -258,16 +269,25 @@ interface OwnerRow extends WithdrawalRow {
   last_name: string;
   email: string;
   section: string | null;
+  is_test: number;
 }
 
 const toOwnerWithdrawal = (r: OwnerRow): OwnerWithdrawal => ({
   ...toWithdrawal(r),
-  user: { id: r.user_id, firstName: r.first_name, lastName: r.last_name, email: r.email, section: r.section, epfl: linkedToEpfl(r.user_id) },
+  user: {
+    id: r.user_id,
+    firstName: r.first_name,
+    lastName: r.last_name,
+    email: r.email,
+    section: r.section,
+    epfl: linkedToEpfl(r.user_id),
+    test: r.is_test === 1,
+  },
   stats: { topupsCents: sumOf(r.user_id, 'topup'), earnedCents: sumOf(r.user_id, 'payout'), balanceCents: balanceOf(r.user_id) },
 });
 
 export function ownerOverview(): OwnerOverview {
-  const select = `SELECT w.*, u.first_name, u.last_name, u.email, u.section FROM withdrawals w JOIN users u ON u.id = w.user_id`;
+  const select = `SELECT w.*, u.first_name, u.last_name, u.email, u.section, u.is_test FROM withdrawals w JOIN users u ON u.id = w.user_id`;
   return {
     // Les plus anciennes d'abord : premier arrivé, premier payé.
     pending: all<OwnerRow>(`${select} WHERE w.status = 'pending' ORDER BY w.created_at ASC`).map(toOwnerWithdrawal),

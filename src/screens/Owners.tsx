@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router';
-import { Check, Copy, CreditCard, Inbox } from 'lucide-react';
+import { Check, Copy, CreditCard, Inbox, KeyRound } from 'lucide-react';
 import { formatCHF } from '../../shared/money';
 import { formatPhone } from '../../shared/payments';
 import type { OwnerWithdrawal } from '../../shared/types';
-import { useMe, useOwnerAction, useOwnerOverview } from '../lib/queries';
+import { useMe, useOwnerAction, useOwnerOverview, useTestSwitch, useUnlockAdmin } from '../lib/queries';
 import { shortDate, timeAgo } from '../lib/format';
 import { useMapScene } from '../state/scene';
 import { WITHDRAWAL_STATUS } from '../features/Money';
+import { TestModeCard } from '../features/TestMode';
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
 import { Button, cx, Empty, Skeleton } from '../ui/primitives';
 
-/** Écran de l'équipe Rush : retraits à envoyer par TWINT, puis à marquer comme envoyés. */
+/**
+ * /admin, lien connu de l'équipe seulement : le code secret ouvre l'accès.
+ * Ensuite : mode test, et retraits à envoyer par TWINT.
+ */
 export function Owners() {
   const { data: me } = useMe();
   const { data, isLoading } = useOwnerOverview(Boolean(me?.isAdmin));
@@ -21,12 +24,23 @@ export function Owners() {
   const [rejecting, setRejecting] = useState<OwnerWithdrawal | null>(null);
 
   useMapScene(() => ({ cameraKey: 'overview', camera: { kind: 'overview' } }), []);
-  if (me && !me.isAdmin) return <Navigate to="/" replace />;
+  if (me?.test) return <InTest />;
+  if (me && !me.isAdmin) return <Unlock />;
 
   const total = data?.pending.reduce((s, w) => s + w.amountCents, 0) ?? 0;
 
   return (
-    <Screen back="/profile" title="Retraits" navTitle="Retraits" subtitle={data && data.pending.length > 0 ? `${formatCHF(total)} à envoyer par TWINT` : 'Équipe Rush'}>
+    <Screen
+      back="/profile"
+      title="Équipe Rush"
+      navTitle="Équipe Rush"
+      subtitle={data && data.pending.length > 0 ? `${formatCHF(total)} à envoyer par TWINT` : 'Mode test et retraits'}
+    >
+      <TestModeCard />
+
+      <div className="section__head pad-x">
+        <h2 className="section__small">Retraits à envoyer</h2>
+      </div>
       {isLoading && (
         <div className="pad-x">
           <Skeleton h={150} r={18} />
@@ -50,9 +64,13 @@ export function Owners() {
                     {w.user.email}
                     {w.user.section && ` · ${w.user.section}`}
                   </span>
-                  <span className={cx('pill', w.user.epfl ? 'pill--green' : 'pill--orange')}>
-                    {w.user.epfl ? 'Vérifié par l’EPFL' : 'Adresse non vérifiée'}
-                  </span>
+                  {w.user.test ? (
+                    <span className="pill pill--test">TEST · argent fictif</span>
+                  ) : (
+                    <span className={cx('pill', w.user.epfl ? 'pill--green' : 'pill--orange')}>
+                      {w.user.epfl ? 'Vérifié par l’EPFL' : 'Adresse non vérifiée'}
+                    </span>
+                  )}
                 </span>
                 <span className="owner-card__amount">{formatCHF(w.amountCents)}</span>
               </header>
@@ -86,7 +104,9 @@ export function Owners() {
                   <CreditCard size={18} strokeWidth={2.2} />
                 </span>
                 <span className="tx__text">
-                  <strong>{t.email ?? 'Adresse inconnue'}</strong>
+                  <strong>
+                    {t.sessionId.startsWith('cs_test_') && <span className="pill pill--test">TEST</span>} {t.email ?? 'Adresse inconnue'}
+                  </strong>
                   <span>
                     {shortDate(t.createdAt)} · {t.sessionId}
                   </span>
@@ -113,7 +133,8 @@ export function Owners() {
                 <div key={w.id} className="withdrawal">
                   <span className="withdrawal__text">
                     <strong>
-                      {formatCHF(w.amountCents)} · {w.user.firstName} {w.user.lastName}
+                      {w.user.test && <span className="pill pill--test">TEST</span>} {formatCHF(w.amountCents)} · {w.user.firstName}{' '}
+                      {w.user.lastName}
                     </strong>
                     <span>
                       {formatPhone(w.phone)} · {shortDate(w.processedAt ?? w.createdAt)}
@@ -166,6 +187,61 @@ export function Owners() {
         }
         loading={action.isPending}
       />
+    </Screen>
+  );
+}
+
+/** Sur un compte de test, l'accès équipe est celui du vrai compte. */
+function InTest() {
+  const exit = useTestSwitch();
+  return (
+    <Screen back="/profile" title="Équipe Rush" navTitle="Équipe Rush" subtitle="Tu es en mode test">
+      <div className="form-stack">
+        <p className="unlock__text">Tu utilises un compte de test. Reviens à ton vrai compte pour gérer les retraits.</p>
+        <Button block loading={exit.isPending} onClick={() => exit.mutate('real')}>
+          Quitter le mode test
+        </Button>
+        {exit.error && <p className="form-error">{(exit.error as Error).message}</p>}
+      </div>
+    </Screen>
+  );
+}
+
+/** Code secret de l'équipe : donné de vive voix, jamais affiché dans l'app. */
+function Unlock() {
+  const unlock = useUnlockAdmin();
+  const [code, setCode] = useState('');
+  const submit = () => code.trim() && unlock.mutate(code.trim());
+  return (
+    <Screen back="/profile" title="Équipe Rush" navTitle="Équipe Rush" subtitle="Accès réservé">
+      <form
+        className="form-stack"
+        onSubmit={(e) => {
+          e.preventDefault();
+          submit();
+        }}
+      >
+        <p className="unlock__text">Entre le code de l’équipe pour accéder au mode test et aux retraits.</p>
+        <label className="field">
+          <span className="field__label">Code de l’équipe</span>
+          <span className="field__control unlock__control">
+            <KeyRound size={17} />
+            <input
+              type="password"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
+              autoFocus
+            />
+          </span>
+        </label>
+        {unlock.error && <p className="form-error">{(unlock.error as Error).message}</p>}
+        <Button block type="submit" disabled={!code.trim()} loading={unlock.isPending}>
+          Déverrouiller
+        </Button>
+      </form>
     </Screen>
   );
 }

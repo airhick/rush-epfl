@@ -79,14 +79,20 @@ export function setPresence(userId: string, p: Presence): Presence {
   return getPresence(userId);
 }
 
-export function activity(): SpotActivity[] {
+/** Rushers et demandes par spot, dans le monde du visiteur (réel ou test). */
+export function activity(test = false): SpotActivity[] {
   const since = new Date(Date.now() - PRESENCE_TTL_MS).toISOString();
+  const world = test ? 1 : 0;
   const present = all<{ user_id: string; spot_id: string }>(
-    'SELECT user_id, spot_id FROM presence WHERE available = 1 AND spot_id IS NOT NULL AND updated_at > ? ORDER BY updated_at DESC',
+    `SELECT p.user_id, p.spot_id FROM presence p JOIN users u ON u.id = p.user_id
+     WHERE p.available = 1 AND p.spot_id IS NOT NULL AND p.updated_at > ? AND u.is_test = ? ORDER BY p.updated_at DESC`,
     since,
+    world,
   );
   const open = all<{ spot_id: string; n: number }>(
-    "SELECT spot_id, COUNT(*) AS n FROM orders WHERE status = 'open' GROUP BY spot_id",
+    `SELECT o.spot_id, COUNT(*) AS n FROM orders o JOIN users u ON u.id = o.requester_id
+     WHERE o.status = 'open' AND u.is_test = ? GROUP BY o.spot_id`,
+    world,
   );
 
   const bySpot = new Map<string, SpotActivity>();

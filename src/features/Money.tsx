@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Lock } from 'lucide-react';
+import { FlaskConical, Lock } from 'lucide-react';
 import { formatCHF } from '../../shared/money';
 import {
   formatPhone,
@@ -10,10 +10,11 @@ import {
   WITHDRAW_MIN_CENTS,
 } from '../../shared/payments';
 import type { WalletView, Withdrawal, WithdrawalStatus } from '../../shared/types';
-import { useCancelWithdrawal, useRequestWithdrawal, useStartTopup } from '../lib/queries';
+import { useCancelWithdrawal, useMe, useRequestWithdrawal, useStartTopup } from '../lib/queries';
 import { shortDate } from '../lib/format';
 import { Sheet } from '../ui/Sheet';
 import { Button, Chip, cx } from '../ui/primitives';
+import { STRIPE_TEST_CARD } from './TestMode';
 
 /** « 12 », « 12.5 » ou « 12,50 » → centimes ; null si illisible. */
 export function parseCHF(text: string): number | null {
@@ -28,6 +29,7 @@ const francs = (cents: number) => (cents % 100 === 0 ? String(cents / 100) : (ce
 
 export function TopupSheet({ open, onClose, initialCents = 2000 }: { open: boolean; onClose: () => void; initialCents?: number }) {
   const start = useStartTopup();
+  const test = Boolean(useMe().data?.test);
   const [text, setText] = useState(francs(initialCents));
 
   useEffect(() => {
@@ -73,10 +75,19 @@ export function TopupSheet({ open, onClose, initialCents = 2000 }: { open: boole
           </Chip>
         ))}
       </div>
-      <p className="sheet-note">
-        <Lock size={12} strokeWidth={2.4} /> Paiement par carte, Apple Pay ou Google Pay sur la page sécurisée de Stripe. Ton solde est
-        crédité dès que Stripe confirme le paiement, en général en quelques secondes.
-      </p>
+      {test ? (
+        <p className="test-note">
+          <FlaskConical size={16} />
+          <span>
+            <strong>Paiement Stripe de test</strong>, rien n’est débité. {STRIPE_TEST_CARD} La carte 4000 0000 0000 0002 simule un refus.
+          </span>
+        </p>
+      ) : (
+        <p className="sheet-note">
+          <Lock size={12} strokeWidth={2.4} /> Paiement par carte, Apple Pay ou Google Pay sur la page sécurisée de Stripe. Ton solde est
+          crédité dès que Stripe confirme le paiement, en général en quelques secondes.
+        </p>
+      )}
     </Sheet>
   );
 }

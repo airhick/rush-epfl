@@ -13,6 +13,8 @@ export interface UserRow {
   hue: number;
   onboarded: number;
   is_bot: number;
+  /** Compte du mode test : argent fictif, visible des seuls comptes de test. */
+  is_test: number;
   created_at: string;
 }
 
@@ -42,20 +44,21 @@ export function getUser(id: string) {
   return one<UserRow>('SELECT * FROM users WHERE id = ?', id);
 }
 
-export function createUser(email: string, opts: { first?: string; last?: string; bot?: boolean; section?: string } = {}) {
+export function createUser(email: string, opts: { first?: string; last?: string; bot?: boolean; section?: string; test?: boolean } = {}) {
   const names = namesFromEmail(email);
   const id = randomUUID();
   run(
-    `INSERT INTO users (id, email, first_name, last_name, section, hue, onboarded, is_bot, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (id, email, first_name, last_name, section, hue, onboarded, is_bot, is_test, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
     email,
     opts.first ?? names.first,
     opts.last ?? names.last,
     opts.section ?? null,
     hueFor(email),
+    opts.bot || opts.test ? 1 : 0,
     opts.bot ? 1 : 0,
-    opts.bot ? 1 : 0,
+    opts.test ? 1 : 0,
     nowIso(),
   );
   return getUser(id)!;
@@ -135,10 +138,32 @@ export function toMe(user: UserRow): Me {
     onboarded: user.onboarded === 1,
     isAdmin: isAdmin(user),
     epfl: linkedToEpfl(user.id),
+    test: testInfo(user),
   };
 }
 
-export const isAdmin = (user: Pick<UserRow, 'email'>) => env.adminEmails.includes(user.email);
+/** Monde du compte : les comptes de test ne voient que des commandes de test, et inversement. */
+export const isTestUser = (userId: string | null) => Boolean(userId && getUser(userId)?.is_test);
+
+/** Équipe Rush : adresse listée dans RUSH_ADMIN_EMAILS, ou code secret de /admin saisi. */
+export const isAdmin = (user: Pick<UserRow, 'id' | 'email'>) =>
+  env.adminEmails.includes(user.email) || Boolean(one('SELECT 1 AS x FROM admin_grants WHERE user_id = ?', user.id));
+
+/** Compte de test : de quel membre de l'équipe, dans quel rôle, avec quels réglages. */
+function testInfo(user: UserRow): Me['test'] {
+  if (!user.is_test || user.is_bot) return null;
+  const link = one<{ role: 'buyer' | 'rusher'; auto_rusher: number; owner_id: string }>(
+    'SELECT role, auto_rusher, owner_id FROM test_accounts WHERE user_id = ?',
+    user.id,
+  );
+  if (!link) return null;
+  return {
+    role: link.role,
+    autoRusher: link.auto_rusher === 1,
+    stripe: Boolean(env.stripeTestTopupUrl && env.stripeTestWebhookSecret),
+    ownerFirstName: getUser(link.owner_id)?.first_name ?? '',
+  };
+}
 
 /** Compte ouvert avec la connexion EPFL : l'adresse est prouvée par l'annuaire de l'EPFL. */
 export const linkedToEpfl = (userId: string) =>
@@ -146,8 +171,8 @@ export const linkedToEpfl = (userId: string) =>
 
 /** Comptes de l'équipe Rush déjà inscrits. */
 export function admins(): UserRow[] {
-  if (!env.adminEmails.length) return [];
-  return all<UserRow>(`SELECT * FROM users WHERE email IN (${env.adminEmails.map(() => '?').join(',')})`, ...env.adminEmails);
+  const byEmail = env.adminEmails.length ? `email IN (${env.adminEmails.map(() => '?').join(',')}) OR ` : '';
+  return all<UserRow>(`SELECT * FROM users WHERE ${byEmail}id IN (SELECT user_id FROM admin_grants)`, ...env.adminEmails);
 }
 
 export function updateProfile(userId: string, patch: { firstName: string; lastName: string; section: string | null }) {
@@ -161,6 +186,7 @@ export function updateProfile(userId: string, patch: { firstName: string; lastNa
   invalidatePublicUser(userId);
 }
 
+/** Rushers simulés du mode démo (ceux du mode test sont à part). */
 export function bots(): UserRow[] {
-  return all<UserRow>('SELECT * FROM users WHERE is_bot = 1');
+  return all<UserRow>('SELECT * FROM users WHERE is_bot = 1 AND is_test = 0');
 }
