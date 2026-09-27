@@ -5,8 +5,10 @@ import { countActive, MAX_ACTIVE_AS_COURIER, toOrder, type OrderRow } from './or
 import { forgetOffers, markOffered, wasOffered } from './offerLog';
 import { getPresence } from './presence';
 import { publicUser } from './users';
+import { notify, usersWithPush } from './push';
+import { formatCHF } from '../../shared/money';
 import { SPOT_BY_ID } from '../../shared/catalog';
-import { haversine, walkingMinutes, type LatLng } from '../../shared/geo';
+import { formatDistance, haversine, walkingMinutes, type LatLng } from '../../shared/geo';
 import { evaluate, type CourierState } from '../../shared/matching';
 import type { Offer, OrderItem, ServerEvent } from '../../shared/types';
 
@@ -70,7 +72,23 @@ function offer(row: OrderRow, userId: string): boolean {
   const o = offerFor(row, userId);
   if (!o) return false;
   markOffered(row.id, userId);
+  // Dans l'app si elle est ouverte ; en notification push si elle est fermée ou en arrière-plan.
   transport.send(userId, { type: 'offer', offer: o });
+  const spot = SPOT_BY_ID.get(o.spotId)?.name ?? 'Spot';
+  const where = o.reason === 'nearby' ? `à ${formatDistance(o.pickup.meters)} de toi` : 'sur ton trajet';
+  const what = o.items.map((i) => (i.custom ? i.name : `${i.qty}× ${i.name}`)).join(', ');
+  void notify(
+    userId,
+    {
+      title: `Nouvelle course · +${formatCHF(o.rewardCents)}`,
+      body: `${spot} → ${o.delivery.label} · ${where}\n${what}`.slice(0, 180),
+      url: `/orders/${o.orderId}`,
+      tag: `offer-${o.orderId}`,
+      kind: 'offer',
+    },
+    // Une course non prise vite ne vaut plus grand-chose : la notification expire.
+    { ttlSeconds: 600 },
+  );
   return true;
 }
 
@@ -84,7 +102,8 @@ export function dispatchOrder(orderId: string): number {
   const row = one<OrderRow>('SELECT * FROM orders WHERE id = ?', orderId);
   if (!row || row.status !== 'open') return 0;
   let sent = 0;
-  for (const userId of transport.online()) if (offer(row, userId)) sent++;
+  // Connectés, et joignables par notification push même app fermée.
+  for (const userId of new Set([...transport.online(), ...usersWithPush()])) if (offer(row, userId)) sent++;
   if (sent) tellRequester(row);
   return sent;
 }

@@ -12,6 +12,9 @@ import './styles/map.css';
 import './styles/screens.css';
 import { queryClient } from './lib/queries';
 import { App } from './app/App';
+import { registerServiceWorker } from './lib/push';
+
+registerServiceWorker();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

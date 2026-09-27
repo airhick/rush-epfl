@@ -28,6 +28,16 @@ const SCHEMA = /* sql */ `
   -- Ancienne connexion par code e-mail.
   DROP TABLE IF EXISTS login_codes;
 
+  -- Appareils abonnés aux notifications push (un navigateur = un endpoint).
+  CREATE TABLE IF NOT EXISTS push_subscriptions (
+    endpoint    TEXT PRIMARY KEY,
+    user_id     TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    p256dh      TEXT NOT NULL,
+    auth        TEXT NOT NULL,
+    created_at  INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS push_user ON push_subscriptions(user_id);
+
   -- Comptes reliés à une connexion externe (EPFL / Entra ID), par identifiant immuable.
   CREATE TABLE IF NOT EXISTS identities (
     provider    TEXT NOT NULL,

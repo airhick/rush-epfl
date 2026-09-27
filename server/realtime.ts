@@ -4,6 +4,8 @@ import { WebSocketServer, type WebSocket } from 'ws';
 import type { ClientEvent, ServerEvent } from '../shared/types';
 
 const sockets = new Map<string, Set<WebSocket>>();
+/** Onglets ouverts mais cachés (arrière-plan, écran verrouillé) : on préfère alors une notification push. */
+const hidden = new WeakSet<WebSocket>();
 const wss = new WebSocketServer({ noServer: true });
 
 type ClientHandler = (userId: string, event: ClientEvent) => void;
@@ -25,7 +27,10 @@ export function upgrade(req: IncomingMessage, socket: Duplex, head: Buffer, user
     ws.on('message', (raw) => {
       try {
         const event = JSON.parse(String(raw)) as ClientEvent;
-        if (event && typeof event.type === 'string') onClientEvent(userId, event);
+        if (event?.type === 'visibility') {
+          if (event.visible) hidden.delete(ws);
+          else hidden.add(ws);
+        } else if (event && typeof event.type === 'string') onClientEvent(userId, event);
       } catch {
         // Message mal formé : ignoré.
       }
@@ -53,6 +58,12 @@ export function broadcast(event: ServerEvent) {
 
 export function isOnline(userId: string) {
   return sockets.has(userId);
+}
+
+/** L'app est à l'écran sur au moins un appareil : pas besoin de notification push. */
+export function isActive(userId: string) {
+  const set = sockets.get(userId);
+  return Boolean(set && [...set].some((ws) => !hidden.has(ws)));
 }
 
 /** Comptes avec l'app ouverte en ce moment (au moins une WebSocket). */

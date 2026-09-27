@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { Bell, Bike, ChevronRight, LocateFixed, Route, Wallet } from 'lucide-react';
+import { Bike, ChevronRight, LocateFixed, Route, Wallet } from 'lucide-react';
 import { nearestBuilding, spotOf } from '../../shared/catalog';
 import { formatDistance, walkingMinutes, type LatLng } from '../../shared/geo';
 import { formatCHF } from '../../shared/money';
@@ -15,6 +15,7 @@ import { useLayout } from '../state/ui';
 import { arc, useMapScene, useScene, type RouteLine } from '../state/scene';
 import { ActiveOrders } from '../features/ActiveOrders';
 import { RoutePlanner } from '../features/RoutePlanner';
+import { PushCallout } from '../features/PushPrompt';
 import { Screen } from '../ui/Screen';
 import { Avatar, Button, cx, Empty, Rating, SpotBadge, Switch } from '../ui/primitives';
 
@@ -33,7 +34,6 @@ export function Deliver() {
   const [picking, setPicking] = useState(false);
   const [draft, setDraft] = useState<RouteStop[]>([]);
   const [saving, setSaving] = useState(false);
-  const [alerts, setAlerts] = useState(() => (typeof Notification === 'undefined' ? 'unsupported' : Notification.permission));
 
   const p = presence ?? DEFAULT_PRESENCE;
   const live = geo.status === 'live';
@@ -135,11 +135,6 @@ export function Deliver() {
     }
   };
 
-  const askAlerts = async () => {
-    if (typeof Notification === 'undefined') return;
-    setAlerts(await Notification.requestPermission());
-  };
-
   return (
     <Screen title="Livrer" subtitle="Rends service sur ton chemin et gagne quelques francs." navTitle="Livrer">
       <ActiveOrders role="courier" />
@@ -173,16 +168,9 @@ export function Deliver() {
             <strong>{p.stops.length ? p.stops.map((s) => s.label).join(' → ') : 'Indiquer où je vais'}</strong>
             <ChevronRight size={16} className="muted" />
           </button>
-          {alerts === 'default' && (
-            <button className="availability__row" onClick={askAlerts}>
-              <Bell size={16} />
-              <span>Alertes hors de l’app</span>
-              <strong>Activer</strong>
-              <ChevronRight size={16} className="muted" />
-            </button>
-          )}
         </div>
       </div>
+      {p.available && <PushCallout text="Reçois les courses proches en notification" />}
       {!live && p.available && p.stops.length === 0 && (
         <p className="group-hint">
           Sans ta position ni ton trajet, Rush ne peut pas te proposer les courses proches : autorise la localisation ou indique ton trajet.

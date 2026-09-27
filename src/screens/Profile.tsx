@@ -8,6 +8,7 @@ import { usePrefs, type ThemePref } from '../state/ui';
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
 import { Avatar, Button, Group, IconTile, Rating, Row, Segmented } from '../ui/primitives';
+import { PushRow } from '../features/PushPrompt';
 
 export function Profile() {
   const { data: me } = useMe();
@@ -101,6 +102,7 @@ export function Profile() {
             />
           }
         />
+        <PushRow />
       </Group>
 
       <Group>

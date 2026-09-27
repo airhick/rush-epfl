@@ -16,6 +16,7 @@ import { ProgressBar, STEP_LABELS, stepIndex, statusLine } from '../features/ord
 import { Screen } from '../ui/Screen';
 import { Sheet } from '../ui/Sheet';
 import { Avatar, Button, cx, Empty, Group, Rating, SpotBadge, Spinner, StarsInput } from '../ui/primitives';
+import { PushCallout } from '../features/PushPrompt';
 
 export function OrderScreen() {
   const { id } = useParams();
@@ -134,6 +135,9 @@ function OrderView({ order }: { order: Order }) {
       </div>
 
       {order.status === 'open' && role === 'requester' && <SearchingPulse offeredTo={order.offeredTo} spot={spot.name} />}
+      {role === 'requester' && ['open', 'accepted', 'picked_up'].includes(order.status) && (
+        <PushCallout text="Sois prévenu·e quand ton rusher accepte et arrive" />
+      )}
 
       {other && (role !== 'requester' || order.courier) && (
         <div className="person-card">

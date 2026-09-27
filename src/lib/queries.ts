@@ -20,6 +20,7 @@ import type {
 import type { LatLng } from '../../shared/geo';
 import type { CreateOrderInput } from './types';
 import { useOffers } from '../state/offers';
+import { forgetPushForAccount } from './push';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -241,7 +242,11 @@ export function useUpdateProfile() {
 export function useLogout() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: () => api('/auth/logout', { method: 'POST' }),
+    mutationFn: async () => {
+      // Cet appareil ne doit plus recevoir les notifications de ce compte.
+      await forgetPushForAccount();
+      return api('/auth/logout', { method: 'POST' });
+    },
     onSuccess: () => {
       // D'abord « personne n'est connecté », pour que l'app passe à l'écran de connexion.
       // Un qc.clear() avant laissait l'app accrochée à l'ancien compte.

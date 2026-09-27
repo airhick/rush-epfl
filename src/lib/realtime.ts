@@ -127,6 +127,8 @@ export function useRealtime(me: Me | null | undefined) {
       ws.onopen = () => {
         retry = 0;
         for (const e of queue.splice(0)) ws.send(JSON.stringify(e));
+        // App à l'écran ou non : le serveur choisit entre toast dans l'app et notification push.
+        ws.send(JSON.stringify({ type: 'visibility', visible: !document.hidden } satisfies ClientEvent));
         // Le serveur a pu redémarrer : il a oublié où l'on est.
         beacon.resend();
         // Rattrape ce qui a pu se passer pendant la coupure.
@@ -147,8 +149,11 @@ export function useRealtime(me: Me | null | undefined) {
     };
 
     connect();
+    const onVisibility = () => sendEvent({ type: 'visibility', visible: !document.hidden });
+    document.addEventListener('visibilitychange', onVisibility);
     const stopBeacon = beacon.start(() => qc.getQueryData<Presence>(keys.presence)?.available !== false);
     return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
       stopBeacon();
       closed = true;
       window.clearTimeout(timer);

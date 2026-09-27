@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router';
+import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import { motion } from 'motion/react';
 import { useMe } from '../lib/queries';
 import { useRealtime } from '../lib/realtime';
+import { syncPush } from '../lib/push';
 import { useApplyTheme } from '../lib/theme';
 import { useGeo } from '../state/location';
 import { Shell } from './Shell';
@@ -27,7 +28,22 @@ export function App() {
 
   useEffect(() => {
     if (me) useGeo.getState().start();
+    // Le serveur a pu oublier cet appareil (ou il appartenait à un autre compte).
+    if (me) void syncPush();
   }, [me?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Toucher une notification alors que l'app est ouverte : on change de page sans recharger.
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return;
+    const onMessage = (e: MessageEvent) => {
+      if (e.data?.type !== 'navigate') return;
+      const url = new URL(e.data.url, location.origin);
+      if (url.origin === location.origin) navigate(url.pathname + url.search);
+    };
+    navigator.serviceWorker.addEventListener('message', onMessage);
+    return () => navigator.serviceWorker.removeEventListener('message', onMessage);
+  }, [navigate]);
 
   if (isLoading) {
     return (

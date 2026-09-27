@@ -40,6 +40,14 @@ export const env = {
   entraClientSecret: process.env.ENTRA_CLIENT_SECRET ?? '',
   /** Annuaire EPFL : seuls ses comptes peuvent se connecter. */
   entraTenantId: process.env.ENTRA_TENANT_ID ?? 'f6c2556a-c4fb-4ab1-a2c7-9e220df11c43',
+  /**
+   * Key Value Render (Redis) où garder une copie de la base : sans elle, l'offre gratuite
+   * repart d'une base vide à chaque veille ou déploiement.
+   */
+  snapshotUrl: process.env.RUSH_SNAPSHOT_URL ?? '',
+  /** Clés VAPID des notifications push (npx web-push generate-vapid-keys). */
+  vapidPublicKey: process.env.VAPID_PUBLIC_KEY ?? '',
+  vapidPrivateKey: process.env.VAPID_PRIVATE_KEY ?? '',
   /** Adresse publique de l'app (fournie par Render), pour les liens des notifications. */
   publicUrl: (process.env.RUSH_PUBLIC_URL ?? process.env.RENDER_EXTERNAL_URL ?? '').replace(/\/$/, ''),
 };

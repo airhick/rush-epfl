@@ -6,6 +6,7 @@ import { sendTo } from '../realtime';
 import { record, wallet } from './ledger';
 import { admins, balanceOf, findUserByEmail, getUser, linkedToEpfl } from './users';
 import { topupsEnabled, type StripeEvent } from './stripe';
+import { notify } from './push';
 import { formatCHF } from '../../shared/money';
 import { formatPhone, normalizeTwintPhone, WITHDRAW_MIN_CENTS } from '../../shared/payments';
 import type { OwnerOverview, OwnerWithdrawal, TopupStatus, UnmatchedTopup, WalletView, Withdrawal, WithdrawalStatus } from '../../shared/types';
@@ -22,7 +23,10 @@ const refreshOwners = () => {
  */
 function notifyOwners(title: string, body: string, push = body) {
   refreshOwners();
-  for (const admin of admins()) sendTo(admin.id, { type: 'toast', title, body, href: '/admin' });
+  for (const admin of admins()) {
+    sendTo(admin.id, { type: 'toast', title, body, href: '/admin' });
+    void notify(admin.id, { title, body: push, url: '/admin', tag: 'owners', kind: 'owner' });
+  }
   if (!env.ntfyTopic || process.env.NODE_ENV === 'test') return;
   fetch('https://ntfy.sh/', {
     method: 'POST',
@@ -40,6 +44,12 @@ function notifyOwners(title: string, body: string, push = body) {
 
 function walletChanged(userId: string) {
   sendTo(userId, { type: 'wallet.updated' });
+}
+
+/** Toast dans l'app, et notification push si l'app n'est pas à l'écran. */
+function tell(userId: string, title: string, body: string) {
+  sendTo(userId, { type: 'toast', title, body, href: '/wallet' });
+  void notify(userId, { title, body, url: '/wallet', tag: `money-${title}`, kind: 'money' });
 }
 
 /* ── Recharges Stripe ─────────────────────────────────────────────────── */
@@ -102,7 +112,7 @@ function creditTopup(session: CheckoutSession): TopupOutcome {
 
   if (outcome === 'credited') {
     walletChanged(user!.id);
-    sendTo(user!.id, { type: 'toast', title: 'Solde rechargé', body: `${formatCHF(amount)} ajoutés à ton solde.`, href: '/wallet' });
+    tell(user!.id, 'Solde rechargé', `${formatCHF(amount)} ajoutés à ton solde.`);
   } else if (outcome === 'unmatched') {
     console.error(`[stripe] recharge non attribuée : ${session.id}`);
     notifyOwners('Paiement Stripe à rattacher', `${formatCHF(amount)} (${currency.toUpperCase()}) sans compte Rush correspondant.`);
@@ -230,12 +240,7 @@ export function markPaid(adminId: string, id: string): Withdrawal {
     return one<WithdrawalRow>('SELECT * FROM withdrawals WHERE id = ?', id)!;
   });
   walletChanged(row.user_id);
-  sendTo(row.user_id, {
-    type: 'toast',
-    title: 'Retrait envoyé',
-    body: `${formatCHF(row.amount_cents)} envoyés par TWINT au ${formatPhone(row.twint_phone)}.`,
-    href: '/wallet',
-  });
+  tell(row.user_id, 'Retrait envoyé', `${formatCHF(row.amount_cents)} envoyés par TWINT au ${formatPhone(row.twint_phone)}.`);
   refreshOwners();
   return toWithdrawal(row);
 }
@@ -243,12 +248,7 @@ export function markPaid(adminId: string, id: string): Withdrawal {
 export function reject(adminId: string, id: string, reason: string): Withdrawal {
   const row = closeWithRefund(id, 'rejected', adminId, reason, 'Retrait refusé');
   walletChanged(row.user_id);
-  sendTo(row.user_id, {
-    type: 'toast',
-    title: 'Retrait refusé',
-    body: `${formatCHF(row.amount_cents)} sont revenus sur ton solde. ${reason}`,
-    href: '/wallet',
-  });
+  tell(row.user_id, 'Retrait refusé', `${formatCHF(row.amount_cents)} sont revenus sur ton solde. ${reason}`);
   refreshOwners();
   return toWithdrawal(row);
 }

@@ -91,7 +91,7 @@ export function RoutePlanner({
       }
     >
       <p className="sheet-note sheet-note--top">
-        Où tu manges, puis où tu vas : tu reçois en direct les demandes qui tombent sur ton chemin, même avant d’y être.
+        Où tu manges, puis où tu vas : tu reçois en direct les demandes qui tombent sur ton chemin, même avant d’y être. Ton trajet est gardé 4 heures.
       </p>
 
       <div className="route-planner">

@@ -8,6 +8,8 @@ import * as orders from './services/orders';
 import * as messages from './services/messages';
 import * as presence from './services/presence';
 import * as dispatch from './services/dispatch';
+import * as push from './services/push';
+import './services/notifications';
 import * as placeSearch from './services/geocode';
 import * as places from './services/places';
 import * as epflMenus from './services/epflMenus';
@@ -54,6 +56,11 @@ const schemas = {
       .max(presence.MAX_STOPS, `Pas plus de ${presence.MAX_STOPS} étapes.`),
     path: z.array(z.object(latLng)).max(5000).nullable(),
   }),
+  pushSubscription: z.object({
+    endpoint: z.string().url().max(1000),
+    keys: z.object({ p256dh: z.string().min(10).max(200), auth: z.string().min(8).max(100) }),
+  }),
+  pushEndpoint: z.object({ endpoint: z.string().max(1000) }),
   route: z.object({ points: z.array(z.object(latLng)).min(2).max(presence.MAX_STOPS + 1) }),
 };
 
@@ -223,6 +230,17 @@ export function createApp() {
     // Nouveau trajet ou de nouveau disponible : les demandes ouvertes qui tombent sur le chemin.
     dispatch.recheck(me(c).id);
     return c.json(updated);
+  });
+
+  /* Notifications push : clé publique VAPID, abonnement de cet appareil. */
+  api.get('/push/key', (c) => c.json({ publicKey: push.pushEnabled() ? env.vapidPublicKey : null }));
+  api.post('/push/subscribe', async (c) => {
+    push.subscribe(me(c).id, await body(c, schemas.pushSubscription));
+    return c.json({ ok: true });
+  });
+  api.post('/push/unsubscribe', async (c) => {
+    push.unsubscribe(me(c).id, (await body(c, schemas.pushEndpoint)).endpoint);
+    return c.json({ ok: true });
   });
 
   /* Petit moteur de recherche de lieux et itinéraire à pied pour le trajet. */

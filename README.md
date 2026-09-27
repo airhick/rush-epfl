@@ -58,6 +58,31 @@ Le serveur recalcule toujours les prix (menu du jour EPFL ou carte officielle) e
 
 **Retrait.** Dans Solde → Retirer, la personne indique un montant et son numéro de mobile suisse relié à TWINT. Une seule demande à la fois ; elle peut l'annuler tant qu'elle n'est pas envoyée. Les adresses de `RUSH_ADMIN_EMAILS` voient l'écran **Retraits** (Profil → Équipe Rush) : numéro à copier, montant, et d'où vient l'argent du compte (recharges, gains). Après l'envoi TWINT, « Envoyé » prévient la personne ; « Refuser » lui rend le montant avec un message. L'équipe est prévenue de chaque demande dans l'app et, si `RUSH_NTFY_TOPIC` est défini, sur son téléphone via [ntfy](https://ntfy.sh) (app gratuite, s'abonner au même sujet ; la notification ne contient ni nom ni numéro).
 
+## Base conservée entre les redémarrages
+
+Sur l'offre gratuite de Render, le disque du serveur repart de zéro à chaque veille (15 min sans visite) et à chaque déploiement. Toute la base SQLite (comptes, sessions, soldes, commandes, messages, trajets, abonnements aux notifications…) est donc copiée dans un **Key Value Render** (Redis, gratuit, `RUSH_SNAPSHOT_URL`) :
+
+- copie compressée (`VACUUM INTO` puis gzip) quelques secondes après chaque écriture, et une dernière à l'arrêt du serveur (SIGTERM) ;
+- au démarrage, avant d'ouvrir la base, la dernière copie est vérifiée (`PRAGMA quick_check`) puis restaurée ; une copie de secours, rafraîchie toutes les 30 min, sert si la dernière est abîmée ;
+- si le Key Value ne répond pas au démarrage, le serveur démarre sur une base vide mais **n'écrase jamais** la copie existante.
+
+Limite : le Key Value gratuit garde tout en mémoire, sans écriture sur disque. S'il redémarre lui-même (rare, maintenance Render), la copie est perdue ; le cookie de compte recrée alors les comptes, pas les soldes. Pour une garantie complète : instance payante avec disque persistant sur `/app/data`, ou Key Value payant avec persistance.
+
+## Notifications push
+
+Même app fermée, via Web Push (clés VAPID `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`) et le service worker `public/sw.js`. On les active dans Profil → Notifications, ou depuis les invitations de l'écran Livrer et du suivi d'une demande.
+
+| Qui | Quand |
+|---|---|
+| Rusher | Nouvelle course à moins de 100 m ou sur son trajet (même app fermée, s'il a déclaré un trajet ou si sa position a moins de 10 min) |
+| Demandeur | Rusher trouvé, articles achetés, rusher arrivé, désistement, demande expirée |
+| Rusher | Livraison confirmée et payée |
+| Les deux | Nouveau message (regroupés par conversation) |
+| Solde | Recharge créditée, retrait envoyé ou refusé |
+| Équipe Rush | Nouvelle demande de retrait |
+
+Pas de doublon avec l'app : l'app indique au serveur si elle est à l'écran, et la notification n'est envoyée que si elle ne l'est pas. Les abonnements expirés (404/410) sont oubliés. Le serveur ne contacte que les services push des navigateurs (Google, Mozilla, Apple, Microsoft). Sur iPhone, Safari n'envoie les notifications qu'à une app ajoutée à l'écran d'accueil (iOS 16.4+).
+
 ## Rester connecté
 
 Deux cookies HttpOnly, rien d'autre (ni pistage, ni publicité) :
@@ -117,8 +142,10 @@ shared/          Code partagé client/serveur
   hours.ts         Horaires d'ouverture (fuseau Europe/Zurich)
   types.ts         Contrat de l'API et des évènements temps réel
 server/          Hono + SQLite (node:sqlite) + WebSocket (ws)
+  index.ts         Démarrage : restaure la copie de la base, puis lance main.ts
+  snapshot.ts      Copie de la base dans le Key Value (Redis)
   services/        auth, orders, ledger, messages, presence, users, dispatch (courses en direct),
-                   geocode (recherche de lieux, itinéraire à pied),
+                   geocode (recherche de lieux, itinéraire à pied), push et notifications,
                    epflMenus (offre du jour EPFL), places (photos et avis Google)
   data/            google-places.json (relevé Google Maps crédité)
   demo/bots.ts     Rushers simulés (mode démo uniquement)
@@ -156,6 +183,8 @@ docker run -p 8787:8787 -v rush-data:/app/data rush-epfl
 | `RUSH_DB` | Fichier SQLite | `data/rush.db` |
 | `RUSH_ALLOWED_DOMAINS` | Domaines autorisés, séparés par des virgules | `epfl.ch` |
 | `RUSH_DEMO` | `1` pour activer les rushers simulés | désactivé |
+| `RUSH_SNAPSHOT_URL` | Key Value Render (Redis) qui garde la copie de la base | pas de copie |
+| `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | Clés des notifications push | notifications push désactivées |
 | `RUSH_COOKIE_SECRET` | Clé du cookie de compte ; doit rester la même d'un démarrage à l'autre | cookie de compte désactivé en production |
 | `RUSH_WELCOME_BONUS_CENTS` | Crédit offert à chaque nouveau compte, en centimes | `100` |
 | `STRIPE_TOPUP_URL` | Lien de paiement Stripe « montant libre » des recharges | recharges désactivées |
@@ -182,7 +211,7 @@ Les restaurants de l'EPFL publient chaque jour leurs menus et leurs prix sur la 
 - **Catalogue** (`shared/catalog.ts`) : tous les points de restauration du campus de Lausanne listés par l'EPFL, plus les commerces des Arcades. Horaires officiels (page Horaires de l'EPFL ou site du commerce), aucun prix estimé. Les positions viennent des fiches Google Maps quand elles sont précises, sinon du plan du campus.
 - **Prix hors EPFL** : Holy Cow!, Migros, Denner et Le Négoce ne publient pas leurs prix en magasin (ceux d'Uber Eats sont majorés, donc faux au comptoir) : on y passe par une demande libre avec budget. La carte de Gina vient de son site officiel.
 - **Photos et avis** : relevé Google Maps crédité, plus quelques photos des pages EPFL. Rien n'est repris d'Uber Eats ou de Tripadvisor.
-- **Argent réel et disque non persistant** : sur l'offre gratuite de Render, la base repart de zéro à chaque veille (15 min sans visite) ou déploiement. Le cookie de compte recrée les comptes, mais les soldes rechargés, commandes, messages et retraits en attente sont perdus. Avant d'ouvrir les recharges à d'autres personnes, monter un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
+- **Argent réel et base conservée** : la copie dans le Key Value gratuit survit aux veilles et déploiements, pas à un redémarrage du Key Value lui-même (voir plus haut). Avant d'ouvrir les recharges à beaucoup de monde, préférer un disque persistant sur `/app/data`. Tous les paiements restent visibles dans Stripe (adresse du payeur, montant) pour recréditer ou rembourser à la main.
 - **Frais Stripe** : prélevés sur chaque recharge et payés par l'équipe (le solde est crédité du montant payé). Le compte Stripe encaisse en EUR : les paiements en CHF sont convertis. TWINT n'est pas activé sur ce compte Stripe ; les recharges passent par carte, Apple Pay ou Google Pay.
 - **Authentification** : avec la connexion EPFL configurée, les adresses EPFL sont prouvées par l'annuaire de l'EPFL. Sans elle, et pour l'équipe hors EPFL, c'est une adresse + mot de passe (haché avec scrypt, adresse bloquée 15 min après 8 essais ratés, session de 30 jours) : aucun e-mail n'est envoyé, donc **l'adresse n'est pas vérifiée** et il n'y a pas de réinitialisation du mot de passe. Le crédit de bienvenue (CHF 1) reste inférieur à la plus petite commande possible, donc créer de faux comptes ne permet pas de commander gratuitement.
-- **Notifications** : en temps réel dans l'app ; les notifications push hors app restent à ajouter (le bus d'évènements `server/services/bus.ts` est prévu pour ça).
+- **Notifications** : en temps réel dans l'app, et en push hors de l'app pour qui les a activées.

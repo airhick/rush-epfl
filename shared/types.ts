@@ -271,4 +271,17 @@ export type ClientEvent =
   | { type: 'typing'; orderId: string }
   | { type: 'location'; orderId: string; lat: number; lng: number }
   /** Position de l'appareil, pour les courses proches ; jamais montrée aux autres. */
-  | { type: 'position'; lat: number; lng: number };
+  | { type: 'position'; lat: number; lng: number }
+  /** L'app est à l'écran ou non : sinon, on prévient par notification push. */
+  | { type: 'visibility'; visible: boolean };
+
+/** Contenu d'une notification push, lu par le service worker. */
+export interface PushMessage {
+  title: string;
+  body: string;
+  /** Page ouverte au toucher. */
+  url: string;
+  /** Une notification du même tag remplace la précédente. */
+  tag: string;
+  kind: 'offer' | 'order' | 'message' | 'money' | 'owner';
+}

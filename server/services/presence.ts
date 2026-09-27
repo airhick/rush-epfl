@@ -8,6 +8,8 @@ import type { Presence, RouteStop, SpotActivity } from '../../shared/types';
 /** Au-delà, un rusher qui n'a pas rafraîchi sa présence n'est plus affiché. */
 const PRESENCE_TTL_MS = 90 * 60_000;
 export const MAX_STOPS = 5;
+/** Un trajet vaut pour quelques heures : celui d'hier ne doit plus attirer de courses. */
+export const ROUTE_TTL_MS = 4 * 60 * 60_000;
 const MAX_PATH_POINTS = 400;
 
 interface PresenceRow {
@@ -31,10 +33,11 @@ function parseRoute(json: string | null): Pick<Presence, 'stops' | 'path'> {
   }
 }
 
-export function getPresence(userId: string): Presence {
+export function getPresence(userId: string, now = Date.now()): Presence {
   const row = one<PresenceRow>('SELECT * FROM presence WHERE user_id = ?', userId);
   if (!row) return DEFAULT;
-  return { available: row.available === 1, ...parseRoute(row.route_json) };
+  const fresh = now - Date.parse(row.updated_at) < ROUTE_TTL_MS;
+  return { available: row.available === 1, ...(fresh ? parseRoute(row.route_json) : { stops: [], path: null }) };
 }
 
 const round = (p: LatLng): LatLng => ({ lat: Math.round(p.lat * 1e6) / 1e6, lng: Math.round(p.lng * 1e6) / 1e6 });
