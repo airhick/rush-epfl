@@ -1,0 +1,1954 @@
+{
+ "fetchedAt": "2026-09-24",
+ "source": "Google Maps",
+ "places": {
+  "arcadie": {
+   "name": "L'Arcadie",
+   "placeId": "ChIJ0RrQJ_4wjEcRgrZ_rmiI-iw",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=L'Arcadie&query_place_id=ChIJ0RrQJ_4wjEcRgrZ_rmiI-iw",
+   "rating": 4.1,
+   "ratingCount": 197,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmGnUrd1LWbfMjuHu5qahubn-IgpDx_Zcs7gHlNGfxjGP-wjC0A1Bfa1Y6ATE1Bnv5cp_Qbw271uOhUY9p5wmZFPqpc4vYFmMDZISKhDj_fk6AQxH7xNt4e7wnyac8Z1nngsdGq",
+     "author": "Maxime Turgeon",
+     "authorUrl": "https://maps.google.com/maps/contrib/116501141080417766018"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkXSsEN0ziu6iNC8u0i4Ra_TZSgcdgm4coKTTSYdawHySmkDpvQpl8UaMHzqdayfT4Zt_lBEfYdyfH_N7hGq1IPEEjamc_vPkIrKXquyh0KrZwlsxijkCSNNzIrVRD_ySTSTiidrQ",
+     "author": "Maxime Turgeon",
+     "authorUrl": "https://maps.google.com/maps/contrib/116501141080417766018"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmtNiI-_1XcjU8n54DeFp9sdMJ8brVCvi4IH4utR89ZR2aUB-J8Tmlc35S_E0fHnpo-Xd4NkNpCHM3XhDp6yTllet8nhNnX6HCn1HWsFELv4deqqFDWd7exE2BPJPQIIdPedcbKzg",
+     "author": "Femme Heureuse",
+     "authorUrl": "https://maps.google.com/maps/contrib/116241804279248664143"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlHcimIyLrk7R19XdHXx2X-lkyTHMsSVtJrfDv0b0BJZ_tc3VqN0DVTAXcC2KovNKtIa6NFB6yxqVrZ-9lyHO88_IkvinRPh21HwU9nYCqt2ynsSaStHHq1p1JqJnNXL7S_GH7zfA",
+     "author": "Klemen Ambrožič",
+     "authorUrl": "https://maps.google.com/maps/contrib/107382403958426199573"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnVUP-oAEqtGvcM7IvXlzxcUd-wnzDVlBrAmkk5lpm5COLbjr3XgeA_CSqqtk1wf28H_LM6DFSzMzkhLi7HJ5ApceI6SCTaA0x4PmX7NaU5A6hFi1dZplLWkn8J_1aB9uiWzrs8",
+     "author": "Femme Heureuse",
+     "authorUrl": "https://maps.google.com/maps/contrib/116241804279248664143"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Yash Koushal",
+     "authorUrl": "https://www.google.com/maps/contrib/101171822464767999113",
+     "rating": 5,
+     "text": "J'ai été vraiment impressionné par la chaleur de l'accueil et la gentillesse du personnel à L'Arcadie. L'établissement a une ambiance très agréable et le cadre est magnifique. Le rapport qualité-prix est également très raisonnable. Je n'ai attendu qu'une quinzaine de minutes avant de pouvoir entrer et la propreté était impeccable.",
+     "date": "2026-06-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pSbk5qVnFZek0zZGtoSVUwUldTRlZaYkU0eWQzYxAB!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CAIQACodChtycF9oOjRnNjVqYzM3dkhIU0RWSFVZbE4yd3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Justin",
+     "authorUrl": "https://www.google.com/maps/contrib/109134943726269579554",
+     "rating": 1,
+     "text": "Leur meilleur snack : les cookies\nIl n'y en a JAMAIS ! Une honte.",
+     "date": "2026-04-29",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xkcVoyMXlaMjlLTlc1ZldqZG5URUozU1d0c01WRRAB!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CAIQACodChtycF9oOldqZ21yZ29KNW5fWjdnTEJ3SWtsMVE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Thibault Moulin",
+     "authorUrl": "https://www.google.com/maps/contrib/112434590789487693828",
+     "rating": 1,
+     "text": "Les pains au chocolat sont tellement immondes que c'est une honte d'oser les mettre en vente. Il ont visiblement séché au soleil pendant une journée avant d'être vendus. Belle arnaque à 2 frs 90 pièce.",
+     "date": "2023-01-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNCaV9Pa01nEAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgICBi_OkMg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Elliott Patelli",
+     "authorUrl": "https://www.google.com/maps/contrib/114047580781538728715",
+     "rating": 5,
+     "text": "Super service, la cuisine par contre laisse à désirer et le prix est bien trop élevé pour la qualité des biscuits, gâteaux et autres sucreries.",
+     "date": "2023-09-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNaX2FqODh3RRAB!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgICZ_aj88wE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Ivan Rojkov",
+     "authorUrl": "https://www.google.com/maps/contrib/106204504484790654426",
+     "rating": 5,
+     "text": "Petit café avec un cadre agréablement différent de celui de l'EPFL bien qu'on soit au centre de l'école.\nIls ont d'excellentes pâtisseries 👌",
+     "date": "2019-06-03",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUM0NUluVlJ3EAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgIC45InVRw%7C%7C?hl=fr"
+    },
+    {
+     "author": "Aryeth",
+     "authorUrl": "https://www.google.com/maps/contrib/106262715404388753331",
+     "rating": 3,
+     "text": "Un restaurant scolaire, plats pas forcément délicieux mais nutritifs.\nÉquipe très sympa cependant !",
+     "date": "2021-04-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNLcV9YVUhBEAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgICKq_XUHA%7C%7C?hl=fr"
+    },
+    {
+     "author": "Régis Pourroy",
+     "authorUrl": "https://www.google.com/maps/contrib/108766694230504311643",
+     "rating": 3,
+     "text": "Personnel sympa mais qualité et choix des produits très moyens",
+     "date": "2018-11-21",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNJMGVQTUtREAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgICI0ePMKQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Marton Misky",
+     "authorUrl": "https://www.google.com/maps/contrib/104884027502203765465",
+     "rating": 1,
+     "text": "Ne prenez pas les plats au poids, ils font payer aussi le poids de l’assiette...",
+     "date": "2021-06-29",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURxMU1yV1NnEAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgIDq1MrWSg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Alexandre Tsh",
+     "authorUrl": "https://www.google.com/maps/contrib/100173373610062186234",
+     "rating": 5,
+     "text": "Restau epfl super chill, bonne ambiance et le personnel est aimable !",
+     "date": "2019-03-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURvenVfNUlBEAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgIDozu_5IA%7C%7C?hl=fr"
+    },
+    {
+     "author": "Loïc Herman",
+     "authorUrl": "https://www.google.com/maps/contrib/107297949869444370783",
+     "rating": 4,
+     "text": "Un bon restaurant pour des prix raisonnables.",
+     "date": "2020-01-20",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNzeU1PRVhREAE!2m1!1s0x0:0x2cfa8868ae7fb682!3m1!1s2@1:CIHM0ogKEICAgICsyMOEXQ%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "denner-epfl": {
+   "name": "Denner Express",
+   "placeId": "ChIJEQuI5QIxjEcRTqgQ-a01kko",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Denner%20Express&query_place_id=ChIJEQuI5QIxjEcRTqgQ-a01kko",
+   "rating": 4.2,
+   "ratingCount": 94,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn30ICfRL94g4FtOhwsVVGdVPQEyG_C1KwIBXUj_tJjILiLUknyy39aiC--gpjFkKmGRZrtVR24JMfweQ7lFCJ1MzLWvObGlrFITDQHrj8qDYPFjk7kbv_7xuLFyMhZrA4Mmi0",
+     "author": "Oscar Lallier (Oslal)",
+     "authorUrl": "https://maps.google.com/maps/contrib/115119101434886008736"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnpkF0n7FHXkuUGwFzNnHjHD7mihCsDYobgU_G_B91V6qxjk4qPd08lPdloBSxkFHyZUrxp5PaPhl6zFCDhz9cNg2RM2XPPkvEDCTVlIC-t2-5MDLSVePR-x6C5xmeutYmJdEdyNg",
+     "author": "Oscar Lallier (Oslal)",
+     "authorUrl": "https://maps.google.com/maps/contrib/115119101434886008736"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWluJo4Kaf2X9mwJzOBgI8BElrwiZ2IBK3RP0_LKXwrbiinrGQRdHfjlZqFT_FtNxYIZ6PuZq9jtWJnPYlHMHqY_NbkztFbAjizGpd2f8kl-8XqoLIRp1hFOS47KjmKuAbEK-szC",
+     "author": "Denner Express",
+     "authorUrl": "https://maps.google.com/maps/contrib/116163072669725015054"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkBA4gBV6bUoihHRolAYW6YLN16ABjgQu7y1U9GZNqKuXrLYq8p4yHtbkXZXIwRpHW98jyvshQgNi2GQsf0sP45zmhrjG4f5FxWYuj6b75iYDg8ws00xQV49T2SlLEayDj_lTsu",
+     "author": "Denner Express",
+     "authorUrl": "https://maps.google.com/maps/contrib/116163072669725015054"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkM0rJ-J8KLPtMg-SAbMdnzuAhSATJxARBimDUKr9Ls5EZft-s2NMe1nU5GlWpdqSrKaM85erWnMzRvyOuSUivD8n-rbxZT8SyTCnUd2E_2_h2ldGbNxw0tusEL7tqE7sZ0J6Lu",
+     "author": "Hakki Karaimer",
+     "authorUrl": "https://maps.google.com/maps/contrib/104684429442843513895"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmp1ut9ZjiT3Qj5nQEh5jR7OgZR4klwmsDE1vl5Pk1AdMv2Y-lUQ20Ad7ei7hgrEJfGNipzsEFurnoB2MkrjcdLmhTpXtdNDfMoSTapCLItE5RnK7he17-oKHMD0rEo6motzuL1Ow",
+     "author": "Denner Express",
+     "authorUrl": "https://maps.google.com/maps/contrib/116163072669725015054"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkADu3AjOC1sqSFuJFFygUpwgepCoCU5hZ3VKyyLC9brlWV7Cq70Ng-HGZHVdytrE6pe6caCkV8jY9saPrWy11zWIqY4iDtnRjBz_CtWDzRSZvTKRBfKYeTy7DfbhJ1bnb9KVJl0A",
+     "author": "Oscar Lallier (Oslal)",
+     "authorUrl": "https://maps.google.com/maps/contrib/115119101434886008736"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn591JxuNrfXa_cpNQiBdznk2bhYVOREd5QCVcKH3qv9UMoh6dkRhux0HouPeYVk_cTq7d-IKQ4aZcx9X8RLg-HXSKLNUmW7aIqDiTg617pbA7aHjavs-5IGl0ZIWDzb57t2d1J",
+     "author": "Serge Monney",
+     "authorUrl": "https://maps.google.com/maps/contrib/116659605066963099962"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlQX_VvAPMCiZXf5TVdsD28zEM4GFNU72LYGOjRq1RyqUxWrvLJKwyna6gZnzutD1vAbyJXdRPYzdN_wyRcxaXe_-I4JKZQ7pBVNWxGcPti8mDo86RbJneDcLs8kPuVoEpeYjHmlg",
+     "author": "Hakki Karaimer",
+     "authorUrl": "https://maps.google.com/maps/contrib/104684429442843513895"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkDUtqTFwgMrtlZRq6a9QPw9abNwRb7I8KXspM6EqG9eMZhBuIy5faZYGz9bsIjYDUhXYox4dPslYgTkHlODe9NQzqYaKhL8pjDLzblBZGLGNSMfiE7Si-N8YUucwBDFeX-ZGUQ",
+     "author": "Denner Express",
+     "authorUrl": "https://maps.google.com/maps/contrib/116163072669725015054"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Xavier brülhart",
+     "authorUrl": "https://www.google.com/maps/contrib/108041938688102957031",
+     "rating": 1,
+     "text": "Bonjour,\nJe ne trouve pas normal de se faire arnaquer quand il y a une action sur un produit et le temps que vous êtes à l’intérieur (5min) l’action disparaît et vous payez plein pots.\nEn plus la majorité du personnel et sympathique mais celle qui c’est occupé de moi a le même capital sympathie qu’une porte de prison, dommage pour du personnel qui travaille au contacte du clients.",
+     "date": "2025-03-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnTUR3NnA2MFlnEAE!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgMDw6p60Yg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Bernard MONTIEL",
+     "authorUrl": "https://www.google.com/maps/contrib/118013973357191536084",
+     "rating": 5,
+     "text": "Super magasin.  Produits à bon prix et de bonne qualité.  Le personnel est très gentil et agréable",
+     "date": "2025-11-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tOdU56TkZNbmwwWldkdmFYZEpObEpoTlROV1gwRRAB!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CAIQACodChtycF9oOkNuNzNFMnl0ZWdvaXdJNlJhNTNWX0E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Nicolas Zurbuchen",
+     "authorUrl": "https://www.google.com/maps/contrib/108929071425840905888",
+     "rating": 3,
+     "text": "Petit magasin très pratique car c'est le seul des Arcades qui vend de l'alcool. Les produits sont bons marchés. Il peut y avoir vraiment beaucoup de monde les soirs de fête (trop pour la capacité du magasin).",
+     "date": "2017-11-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN3OU5hNnFRRRAB!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgICw9Na6qQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jonathan V",
+     "authorUrl": "https://www.google.com/maps/contrib/102193912224170266502",
+     "rating": 5,
+     "text": "Personnel très sympa et les produits proposés sont très attractifs",
+     "date": "2025-11-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tVMWEyWlRWR2N5WDBSRVYxWmZMVVJrVTNkR2MxRRAB!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CAIQACodChtycF9oOkU1a2ZTVGcyX0REV1ZfLURkU3dGc1E%7C%7C?hl=fr"
+    },
+    {
+     "author": "YT",
+     "authorUrl": "https://www.google.com/maps/contrib/108285747033254378581",
+     "rating": 4,
+     "text": "Magasin \"discount\" sans l'être vraiment dans le bon sens du terme : on y trouve des produits plus que bons (yaourts DENNER à CHF 0,5.- qui sont au top), des plats préparés à moins de 4 fr ou des fruits pour peu cher. Les promotions sont assez fréquentes aussi... :)\nPar contre la caisse est sous-dimensionnée, les employés sont rapidement débordés... :/",
+     "date": "2017-04-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURneHI3YVBREAE!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgIDgxr7aPQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Étienne Pot",
+     "authorUrl": "https://www.google.com/maps/contrib/103135717383278664217",
+     "rating": 5,
+     "text": "Pas immense mais pratique pour dépanner. Vendent de l'alcool contrairement à la Migros voisine.",
+     "date": "2016-03-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURRMmFDaGRREAE!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgIDQ2aChdQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "gilaniel",
+     "authorUrl": "https://www.google.com/maps/contrib/112226198645873876297",
+     "rating": 5,
+     "text": "Il ma' toujours régalé quand j'en avais le besoin (petit bémole, il manque des feuilles OCB)",
+     "date": "2021-10-15",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNLdGNHa2xRRRAB!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgICKtcGklQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "louis cardinaux (rexi38)",
+     "authorUrl": "https://www.google.com/maps/contrib/108748593734545280912",
+     "rating": 3,
+     "text": "Pratique pour des petite course mais trop peu de place au caisse",
+     "date": "2020-07-15",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUM4NjlhZGJREAE!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgIC869adbQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Julien V",
+     "authorUrl": "https://www.google.com/maps/contrib/118376736539036839321",
+     "rating": 3,
+     "text": "Gros problèmes en caisse. Caissiers souvent dépassés et absents de leur Poste!",
+     "date": "2017-08-09",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNBa0xUZS1BRRAB!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgICAkLTe-AE%7C%7C?hl=fr"
+    },
+    {
+     "author": "leo",
+     "authorUrl": "https://www.google.com/maps/contrib/111586054353105885478",
+     "rating": 5,
+     "text": "Grand choix de bière\nMerci\nPas cher",
+     "date": "2018-07-03",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNBM1k2bEZBEAE!2m1!1s0x0:0x4a9235adf910a84e!3m1!1s2@1:CIHM0ogKEICAgICA3Y6lFA%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "epicure": {
+   "name": "L'Epicure",
+   "placeId": "ChIJgTeIPv4wjEcRNQOTqf7hjZk",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=L'Epicure&query_place_id=ChIJgTeIPv4wjEcRNQOTqf7hjZk",
+   "rating": 4.1,
+   "ratingCount": 67,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm6EQgcZFOp9HEnVJ2q1pkEmUGEAaDRknNw0xRJ3IrzqrgZbe1T-0wVfQOaQIPb0wZU5xA95wNHzKLiZ7sVkUWhdYL6AI2F76zn0Mkgvqayej_3LuhXzRNum3DWZtmPkYkZ8IF_",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlvLmeoFfrpJt0W0CuqJj8Hhnp88pgZnzWAy3qA4uVv_bnVlQZVjilDCTTlMnED7Z-mU2-uuxZMXAIyUQ0A3k4oVUeI4QA8VlxozpB7XmilQD7ozestUbqdLQXDJDRCr0fdtq7QdQ",
+     "author": "Alistair Vile",
+     "authorUrl": "https://maps.google.com/maps/contrib/116043731721496479233"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl-tiHM14bLInktI9fVUiRH4TaSYhVCDvYPKN_Uf7iLfSYVPQPpIosdOCX_gzsEpRovAejahlvoHaRyKbyZ7RxHP0V5mPkdp2eTCcsN2yYmrWVAZ8OBpIceGyNU4mmGB7tOgr44",
+     "author": "Alfred Kölner",
+     "authorUrl": "https://maps.google.com/maps/contrib/118228074484050210313"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWndlfbVLEIFMkPiLIEKDN5TcYJJIUY2FT5BKBY_PI6XYdF3IzW_4k6x5fea6fr-aQb-Ykj3rqO0AUcVmO9V9V3Y5Rk6C0IXE6rLD9edPqC3EjzEFCX5XeJb00vCJH6rZyvnPzxn",
+     "author": "Alistair Vile",
+     "authorUrl": "https://maps.google.com/maps/contrib/116043731721496479233"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnVRhRq5SUjf4fjG7k4HhHiUzICa8u28J11NljuLYyshtQ8H91-tT7aQtl0INF0fcOyEF59wX_M6Ckd2uRST7mGMdIILFJr6nfDCq0FrDr3hP0wz_ImCrIkfjAzI8BRCReaworZxMdeQgPJ",
+     "author": "Romain",
+     "authorUrl": "https://maps.google.com/maps/contrib/113964039409109538024"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWns9Wu1BiYp_31Rf4UKut5hDH4LobXVD72A1t4PfQpOtXRT9vmnVrWLY_UfkiKtYjdbYaCgDYxCzJx0zdWZ-jgerR4e1q8n7OWHEKUqgUVnOdgquhIQ4DQkWdbBCJ4wz_zrltvN",
+     "author": "Sven Dutoit",
+     "authorUrl": "https://maps.google.com/maps/contrib/115712460206623537593"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnd8me8ZQowPuKaji6P8IxCzZE7UsSqDbFVdoH5sNUa-3WFq5OYCbgOKi9Y7wBRuz9nNe51i3YwMWzKnsnrfE15MXXaQLwZFgp3p_TMXQoEBRbZhaICa-jqVFuk-WeTUYbOIzk0DQ",
+     "author": "Shiling Liang",
+     "authorUrl": "https://maps.google.com/maps/contrib/117999374159906432111"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnoXBDlOMZKQxl5XgKfw-3QjqgSlMM9cXhSU0UBYTn_T3ZNaJIvTemfkelVRtM5FrGRi4mlJLMQ1DUotX7ydM12Q2xUSrD-WqGswugv_Bo-cNE1pLrWG12BGuI_-Jvw4LkixPde9g",
+     "author": "Shiling Liang",
+     "authorUrl": "https://maps.google.com/maps/contrib/117999374159906432111"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlpWKM4N5HZn2gXMkhqCcEwNQsrhskBMCJhmZKfsA0mIG7pgwjnhnrGgu593kOr3zFv2Rcp2hRVJL7UUY7jZU-x_tgh01TCouG83N8_06VpoZt3UNBosqnxUH42eHBaeyODnLjXjg",
+     "author": "José Gaggio",
+     "authorUrl": "https://maps.google.com/maps/contrib/116804976641876226114"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWll7IJOl4OGmABz6ao1jAwJFemKG31cea9270-AD0CqKxrrY4q5ricQX0qHDpfCg1sxd_zZaFL0mXwnKozHBFwU39nkHG_P3Pub9a2F1ydeNkagRWFmE3Mrp6WL8d_DVrllOXnW",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Gabs",
+     "authorUrl": "https://www.google.com/maps/contrib/110271866826316952002",
+     "rating": 5,
+     "text": "Très bonne option pour manger au coeur de l’EPFL sans perdre de temps. Ce restaurant un self-service pensé aussi comme lieu de pause et d’étude, donc pratique si tu enchaînes cours, conf, réunions ou une session à la bibliothèque.  ￼\n\nLa carte est plus variée que ce qu’on attend d’une cafétéria de campus, avec un vrai focus “saveurs”, et assez de choix pour contenter tout le monde, du rapide au plus consistant.  ￼\n\nCe qui fait la différence: l’ambiance est agréable, la terrasse est un vrai plus quand il fait beau, et tu manges correctement même quand tu veux rester sur des options plutôt équilibrées (soupes, salades, sandwichs, plats chauds).\n\nSeul “risque”: aux heures de pointe, ça peut être très fréquenté, logique vu l’emplacement. Mais globalement, ça reste une adresse fiable, efficace, et franchement sympa pour un déjeuner sur le campus.",
+     "date": "2026-03-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tkeFlsaGljRkp3ZUdaNWExTkpWMnRGVVRKVU5rRRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CAIQACodChtycF9oOkdxYlhicFJweGZ5a1NJV2tFUTJUNkE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Salomon Guinchard",
+     "authorUrl": "https://www.google.com/maps/contrib/105900499963128747392",
+     "rating": 1,
+     "text": "Détestable, tout simplement. Serveuse odieuse, qui nous parle comme à des imbéciles. En plus, prix élevés.",
+     "date": "2026-02-23",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21KcVdVUk1Va2RoWVVSQmFHUlFWRWRGY0RGQ1JYYxAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CAIQACodChtycF9oOmJqWURMUkdhYURBaGRQVEdFcDFCRXc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Aryeth",
+     "authorUrl": "https://www.google.com/maps/contrib/106262715404388753331",
+     "rating": 4,
+     "text": "Bien, pas trop cher pour les étudiants et plutôt équilibré. Par contre je ne recommande pas le sandwich au pain de sils fromage et miel, qui est pour moi une plutôt mauvaise combinaison.",
+     "date": "2021-11-01",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNHMGNiNlBnEAE!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgICG0cb6Pg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Franklin",
+     "authorUrl": "https://www.google.com/maps/contrib/115612360414776277479",
+     "rating": 2,
+     "text": "Ne propose pas la réduction étudiante sauf à demander explicitement…",
+     "date": "2025-06-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VKRHE1WkNjc3FiSWlRRRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEJDq5ZCcsqbIiQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Fred Corbaz",
+     "authorUrl": "https://www.google.com/maps/contrib/110317347621726588070",
+     "rating": 5,
+     "text": "Très bon café et petite restauration ! Prix convenables et service sympa .",
+     "date": "2018-12-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNvNVpldTJ3RRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgICo5Zeu2wE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Kim Lê Ngoc",
+     "authorUrl": "https://www.google.com/maps/contrib/103421440948048802695",
+     "rating": 4,
+     "text": "Très bonne salades (à composer ou salade du jour), des sandwichs. Simple et efficace",
+     "date": "2018-05-03",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNBX2Ita3lBRRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgICA_b-kyAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jean-Pierre Moser",
+     "authorUrl": "https://www.google.com/maps/contrib/102061170527746186318",
+     "rating": 4,
+     "text": "Un bon plan salade pour manger sain et léger par les grandes chaleurs.",
+     "date": "2018-07-21",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURROHNQSFpREAE!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgIDQ8sPHZQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Cyrille Picard",
+     "authorUrl": "https://www.google.com/maps/contrib/114296611687115642617",
+     "rating": 5,
+     "text": "Belle offre pour un restaurant sur site universitaire",
+     "date": "2018-09-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURBejRUQ0hnEAE!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgIDAz4TCHg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Samuel Bancal",
+     "authorUrl": "https://www.google.com/maps/contrib/115780756988707149079",
+     "rating": 5,
+     "text": "Bonnes salades du jour, produits de qualité... I like it!",
+     "date": "2019-01-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURJZ2QyRnpBRRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgIDIgd2FzAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Lionel Delavy",
+     "authorUrl": "https://www.google.com/maps/contrib/114631191871078605113",
+     "rating": 4,
+     "text": "Self service très bon et rapide",
+     "date": "2018-12-02",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNJdmVldGhnRRAB!2m1!1s0x0:0x998de1fea9930335!3m1!1s2@1:CIHM0ogKEICAgICIveethgE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "foodlab": {
+   "name": "FoodLab Alpine",
+   "placeId": "ChIJfeFT0C0xjEcRCKxK--hWq50",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=FoodLab%20Alpine&query_place_id=ChIJfeFT0C0xjEcRCKxK--hWq50",
+   "rating": 3.6,
+   "ratingCount": 35,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkYCdgYpo4yi4QEm4pLwBUELkWc4CMI1ZAVZcbBmPIPuIsQsUGzMA_k2St8_VAon0o2YaEvHRQNjwfdjUPi2R6pehlogYdGzb0yuPm-w7FQdYxsVM2xswHUPXEM6xRKVu4fEYzonA",
+     "author": "Femme Heureuse",
+     "authorUrl": "https://maps.google.com/maps/contrib/116241804279248664143"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmPYZjrT99cpPU2chhc9AsJfuTIyK1qcsu3RmCv_bVSrzRExL9PBTj-SschiJlmsI9gUStOh0a5Jhpd0oz0ndhGpoJXbeAIuSOpjmEwyINqOUea1vhUyIWgGvcj_lBtcBZwzz8W",
+     "author": "Zirun Wang",
+     "authorUrl": "https://maps.google.com/maps/contrib/118405612921711735475"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm0aJ3h00PyxImfemIuFGxlc_Px3pa33PUwT_CgQ8rECC7ZiamEsaqvEQjt2kcK-z4N0ZD42lveJLKNd5-4cGJUjgAc-9JurHhqvH7IqHSWjUFQHI1E0deklc1u77vQvfgIo9-G",
+     "author": "Oscar Lallier (Oslal)",
+     "authorUrl": "https://maps.google.com/maps/contrib/115119101434886008736"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm9HXJPpnBgc38SX5qRpZu7yPTIMDeQFsIY5tPlj1jcyDNajYx5eQWbT0TeZstlXl29NBTSOTBQiXspno68nM3-RadcOjGrGKzN9axOo2cqi_OWetlW7i5HIBFNuUYj1KF7qMcn",
+     "author": "Robert D.",
+     "authorUrl": "https://maps.google.com/maps/contrib/109303663413532223390"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmRpEFjDuMBgKVPtrIN3l8QL9GDuQ3IyNT4FNGMVsDifb74Fl-eF2z2kbMjs8v6JIFA3n--a0tTmdSR8n1dxkjHsegWJagR5-VPMszP2Xc90NN6nzcXH_Gy1nyUhLSPS1szDgoB",
+     "author": "Robert D.",
+     "authorUrl": "https://maps.google.com/maps/contrib/109303663413532223390"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkHL7dfapdwfYBkHZRZGrT7J9LlSX8DrjC1v7V1xXAygvDXWW-BPDyGcrOiQWkrFIBhZ6RPAIDo6CGWj6wzKNg3ltcEuKkr3pJ--HNPrvrUlKPzqs2uY1OFTYoBiWv3HRV4Vddf",
+     "author": "Zépo",
+     "authorUrl": "https://maps.google.com/maps/contrib/103535204993876221412"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Robert D.",
+     "authorUrl": "https://www.google.com/maps/contrib/109303663413532223390",
+     "rating": 5,
+     "text": "Restaurant universitaire qui propose chaque jour trois assiettes à choix, à des prix entre 10 et 18 francs. On choisit la file d’attente qui correspond au plat choisi. L’assiette est remplie devant vous, par des employés aimables et souriants, qui soignent la présentation. Les mets sont bons et les portions sont suffisantes. On peut ajouter une soupe ou un dessert pour un petit supplément. Le mardi est un jour sans viande. On se sert un verre d’eau à la fontaine et on s’assied à l’une des grandes tables. Je trouve que le rapport qualité/prix est bon.",
+     "date": "2025-03-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnTURRcHNQMW9RRRAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgMDQpsP1oQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Naël Souhaïl",
+     "authorUrl": "https://www.google.com/maps/contrib/117245351281838011642",
+     "rating": 1,
+     "text": "Personnel désagréable et non accueillant. Les quantités sont dérisoires et ne compensent la qualité des produits. Ils se prennent pour un vrai restaurant alors que c’est une cantine déplorable à 7,5CHF minimum par plat !\nÉnorme arnaque, à fuir absolument.",
+     "date": "2025-06-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2sxcFVEZHpSR1ZRVkdrelEzWXpaVlp0WmxGd2JuYxAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CAIQACodChtycF9oOk1pUDdzRGVQVGkzQ3YzZVZtZlFwbnc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Tibor Tersztyánszky",
+     "authorUrl": "https://www.google.com/maps/contrib/100952906928096702461",
+     "rating": 3,
+     "text": "Ils essayent, mais avant il me semble que les menus était mieux varié. Ce que j'ai trouvé déjà pas une fois les fruits pour dessert ne sont pas vraiment bien examinés avant de mettre à l'étagère...\nEt aussi que je trouve chaque fois des nourritures qui devrait être chaud ben ils sont froid et envers...",
+     "date": "2021-11-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURHNGZIeFVBEAE!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgIDG4fHxUA%7C%7C?hl=fr"
+    },
+    {
+     "author": "Alix Favier",
+     "authorUrl": "https://www.google.com/maps/contrib/102015240211784418906",
+     "rating": 1,
+     "text": "Un restaurant étudiant qui sert des pâtes à la crème pour 7.10CHF Avec un plat à moitié rempli en plus?? je trouve ça Abberant…",
+     "date": "2025-06-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJMnJsZG53N2RXdG5BRRAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEI2rldnw7dWtnAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Marc Deketelaere-Aigle",
+     "authorUrl": "https://www.google.com/maps/contrib/116988121225548587752",
+     "rating": 1,
+     "text": "Un service pingre et des plats à la qualité médiocre dès que le prix passe en dessous de 8CHF, ce qui est déjà conséquent pour un établissement aussi moyen",
+     "date": "2025-06-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VQLXoyYm5MdjRtcFFBEAE!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEP-z2bnLv4mpQA%7C%7C?hl=fr"
+    },
+    {
+     "author": "Zépo",
+     "authorUrl": "https://www.google.com/maps/contrib/103535204993876221412",
+     "rating": 5,
+     "text": "Très bon repas de midi à part pour le tyrannosaure qui s'est baladé sur mon assiette",
+     "date": "2021-11-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURHMUo3Z213RRAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgIDG1J7gmwE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Silver S",
+     "authorUrl": "https://www.google.com/maps/contrib/109253405364854719569",
+     "rating": 1,
+     "text": "La majorité du personnel est non-chalant et désagréable.",
+     "date": "2024-05-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUN6cVBYeENnEAE!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgICzqPXxCg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Brot Claude Alain",
+     "authorUrl": "https://www.google.com/maps/contrib/112507820508606937207",
+     "rating": 4,
+     "text": "Bonne qualité de nourriture pour un prix pas élevé",
+     "date": "2023-04-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURSMGVQYndBRRAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgIDR0ePbwAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "David Domjan",
+     "authorUrl": "https://www.google.com/maps/contrib/113431978176302522793",
+     "rating": 5,
+     "text": "Foodlab Gingko est le meilleur.\n\nLeurs soupes sont excellentes.\n\nJ'aimerais que Gingko propose aussi ses soupes sur TooGoodTogo ; ils doivent sûrement en avoir pas mal en réserve.",
+     "date": "2026-02-17",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pZNVVFRmZRelZtVHpsbmFqZEVhbkl5TmpaelJtYxAB!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CAIQACodChtycF9oOjY5UEFfQzVmTzlnajdEanIyNjZzRmc%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    },
+    {
+     "author": "Michal Haubner",
+     "authorUrl": "https://www.google.com/maps/contrib/101346456115189780523",
+     "rating": 1,
+     "text": "Mauvaise organisation : longues files d’attente pour certains plats, pas d’attente pour d’autres.\n\nLa qualité de la nourriture varie beaucoup d’un jour à l’autre, mais les prix sont systématiquement élevés pour une qualité généralement médiocre.\n\nIl n’y a souvent aucune option pour les personnes souffrant d’allergies alimentaires.\n\nCe prestataire doit s’améliorer et répondre aux besoins de ses clients !",
+     "date": "2024-01-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNObGM2NkVREAE!2m1!1s0x0:0x9dab56e8fb4aac08!3m1!1s2@1:CIHM0ogKEICAgICNlc66EQ%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    }
+   ]
+  },
+  "giacometti": {
+   "name": "Cafétéria Giacometti",
+   "placeId": "ChIJb9T_gf0wjEcR7yyQicz6_BY",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9t%C3%A9ria%20Giacometti&query_place_id=ChIJb9T_gf0wjEcR7yyQicz6_BY",
+   "rating": 4.1,
+   "ratingCount": 93,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWksee55aPr3KXAVofs2rKfib4IcIaSPNvqOcWo12zGpZRwSIxE3yK1_GjKmjWoKK_qTbkDv7yly74_yYOWZ51riaOwGCAuJ4HFU0YKROCr4VElyXuCFIFVPn8ZK5GIYCJLzdW57",
+     "author": "Alfred Kölner",
+     "authorUrl": "https://maps.google.com/maps/contrib/118228074484050210313"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCz5mGpZhUSILkO96TB26W8M_SEI3LS7hk5BAQbxZZ2JPg3IdxhotJ5zvJlc2z4IVhhq7vG9GCsqsMYbUJ71jxrTa9l2M2wYThRb-BWoKA4juTOQBDzPSyJ-seV9nxINeD5FkRLg",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl85af4dlhR3lrGtsOYkO5_wfimtWb0EaJzoED18cDheT85hyOxNK4tBbJoUn9GJul6KH0hT6-xgZ59RY-if0tl3lQehYu63y2GQWdXjJq5av80EDiDhyOILPOo4Gb1Uvr7kcaF",
+     "author": "Indira Colic",
+     "authorUrl": "https://maps.google.com/maps/contrib/116115463496698039031"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkRc3H5w3SBqF41_HyQRqmneWK-G4Rv8B-KCXzpCVXP0Wpa9cQ3ToDeq6h_c06SzohISHF-PSj3ZJ9WGFAgXxwHl1P93CILCkgElwR6Zb-6e5yXRpyN3SP6si6PQhk9_EQ3eVqb",
+     "author": "Pranav Kulkarni",
+     "authorUrl": "https://maps.google.com/maps/contrib/117491708708987903152"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmCN-Qtd-8-frYczFbiljfIgN6obSF6u-yY8hdBeBLlqo5OYDLiq-BrulJAvw-MUlRfgYrp7IguLg83Dz79qqpdvPHOsOmbQGzVWa6uebVWbjeGdxqmONgK3K_0zuv75UHajB592g",
+     "author": "Indira Colic",
+     "authorUrl": "https://maps.google.com/maps/contrib/116115463496698039031"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "D M",
+     "authorUrl": "https://www.google.com/maps/contrib/110592198163440744830",
+     "rating": 1,
+     "text": "La cafétéria est très chère, les prix ont énormément augmenté depuis 2021. Les plats sont aussi devenus beaucoup moins bon. De plus la serveuse est très désagréable.",
+     "date": "2022-11-20",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUQtdU9INWV3EAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgID-uOH5ew%7C%7C?hl=fr"
+    },
+    {
+     "author": "Yase Bond",
+     "authorUrl": "https://www.google.com/maps/contrib/103084554740077154770",
+     "rating": 4,
+     "text": "Endroit très chaleureux et sympathique avec une belle terrasse pour profiter du soleil...",
+     "date": "2022-09-10",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUM2cXJxSkdREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIC6qrqJGQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "TheMightyJon",
+     "authorUrl": "https://www.google.com/maps/contrib/102098884218002259196",
+     "rating": 3,
+     "text": "Prix élevés et personnel souvent débordés\nMarche bien car il est dans le bâtiment des architectes qui sont au bout de leur vie",
+     "date": "2017-10-26",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNBck1IclZREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgICArMHrVQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Alec Chevrot",
+     "authorUrl": "https://www.google.com/maps/contrib/105449065608937850335",
+     "rating": 5,
+     "text": "Excellent pour une petite faim tout comme pour le midi si l'on est pressé !",
+     "date": "2018-12-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURJN0pxWmNREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIDI7JqZcQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "biowan",
+     "authorUrl": "https://www.google.com/maps/contrib/103267935994677727726",
+     "rating": 5,
+     "text": "C'est super sympa, le personnel est très aimable 😊",
+     "date": "2019-02-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNvLXE3VklREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgICo-q7VIQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Michael Lanzrein",
+     "authorUrl": "https://www.google.com/maps/contrib/102757147211934161161",
+     "rating": 5,
+     "text": "café délicieux. service très sympathique. cadre sympa",
+     "date": "2018-11-17",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNJM3RiYlNREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgICI3tbbSQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "t b",
+     "authorUrl": "https://www.google.com/maps/contrib/112092059331716028430",
+     "rating": 5,
+     "text": "Excellent! Des prix très raisonables et un goût gourmet.",
+     "date": "2019-08-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURVbFpXZVZnEAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIDUlZWeVg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Anita Blanchard",
+     "authorUrl": "https://www.google.com/maps/contrib/117844151676560591295",
+     "rating": 1,
+     "text": "J y ai mangé le jour des portes ouvertes de l EPFL.... Est ce pour ça que cela laissait à désirer ? Vraiment déçue",
+     "date": "2019-10-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUMwdi1DU0pREAE!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIC0v-CSJQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Eloy Snow",
+     "authorUrl": "https://www.google.com/maps/contrib/112679430384983480067",
+     "rating": 4,
+     "text": "Lieu agréable, jolie et apaisant pour une pause",
+     "date": "2018-10-17",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUR3enQza21nRRAB!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIDwzt3kmgE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Florian Faucheur",
+     "authorUrl": "https://www.google.com/maps/contrib/108308017676153762856",
+     "rating": 5,
+     "text": "Feu Christophe, meilleur manager de loin :)",
+     "date": "2021-06-28",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURxLU0yYnVBRRAB!2m1!1s0x0:0x16fcfacc89902cef!3m1!1s2@1:CIHM0ogKEICAgIDq-M2buAE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "gina": {
+   "name": "Gina Ristorante",
+   "placeId": "ChIJ_9seUAIxjEcRFvxLoCNYyL8",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Gina%20Ristorante&query_place_id=ChIJ_9seUAIxjEcRFvxLoCNYyL8",
+   "rating": 4.1,
+   "ratingCount": 506,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkGxam-KXJgo30lwDDLLiMLDrH7hUTGjKcHX8nQMlzkAEZ7cOjb8v28WYNrg7tmf4nW4ZAPn8dzpbRF_ks7iViAlQQUZIwpetKSwd_pqswLV6y6TMnc2UfPo25ayqv6qrjsWxlb",
+     "author": "Gina Ristorante",
+     "authorUrl": "https://maps.google.com/maps/contrib/107667934087175050043"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnXjTPV8qUZ0Of8qUZqlnkGkffUnsMpuc8sRtljVRJUcP2U_11oYt8vyeq7tawxo85-q3B2YpuGOajvz5pydC5W0Z-TNXkvwm68XOViOSda8NMKTQAC7SqcxEgGPnCa2q6DQOX4Gg",
+     "author": "Borjan Stoevski",
+     "authorUrl": "https://maps.google.com/maps/contrib/116460984878702772765"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnokMNlkCBNOsiHJlFNtbAv2VHYUCTs6yfkGB73Zsm6VuszZLMtkHuOL7_eeSrW0P45mGcYLFPsN_qogvynuK5Hj_HMfQJztAAHk_LOu30baXc6q8H1_-w_XQCOHTncz8Sh3ocG",
+     "author": "Gina Ristorante",
+     "authorUrl": "https://maps.google.com/maps/contrib/107667934087175050043"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkkN2SxDdCBoViD1gAUif8Gr8LDoQ28yAOvcBzMQxqkjMhlA4qSDewovoSllXh_NSeyJzArDPJ962qHaq_jVHhOSl3hO7il631NsLNwX0c-gKNvtyfwuc0uXoAAyXub1scbkds",
+     "author": "SmoothChillBrandy",
+     "authorUrl": "https://maps.google.com/maps/contrib/101688817561267957617"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmtrjmQIZOI0OmuVpqejHyuSmWsSMNVC0-GtL9TGNGvIFNJOUxEDEVZbngigvOwvFaoieel544vdGnJs993XaQIAgnsIb9hC3OY5FxXifhQP0RyoeHVVnz8LOKhobrN_dbyn0AZiQ",
+     "author": "Corinne Beaud",
+     "authorUrl": "https://maps.google.com/maps/contrib/103601683579631417124"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnLbGzT55H3I-yPd1XSblmWJV2TACg4CJn5u1cmPCTCm1e8R3UvpmIvCIK_cJFNTzcIrCHqiQ2oLeG0Ix8ogODJtFgyaLlhi9cKE7Z42a9uqDk9De5JKEp2WpJwyJg7zx2lcphl05uO5ap3",
+     "author": "Vidar Hepsø",
+     "authorUrl": "https://maps.google.com/maps/contrib/117468677845355313136"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCLLYaQo62UptLdEMBHnV_gfTJGf6WBN-RRojjo7Tz046IIhBKYv8jYGUNWjL-kPm2SKbZclKa1nRr3HajU_9_UuMI1jdvT87eBlVctRPf6zwQcVmgqOR9VUyO-LmKGrKCSl6ldg",
+     "author": "un dulce de la Vlad Muresan",
+     "authorUrl": "https://maps.google.com/maps/contrib/109026831915084181214"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlkhL0n6sCgCqB9vRk6mG1xd-rJFwR5g5k4HApFvot4yY2wD6UXLQn7e6rIA26I4tEk_AqAB_pTG0-jqiXf15ybfaMUCYUERowUnDOl54LsIaFxKShBus302i3zCoQ2THQUx7xG",
+     "author": "Sandra Pasqualato",
+     "authorUrl": "https://maps.google.com/maps/contrib/112558935471734241402"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnqMFB0wvldo8Z9mfd5XIBScJFHEIFy5hU4SlCtOGsBmKwwaKQLOloqIrk2mu_Dj5TS8sGt0LbYZp6SxiH3NRG4ybRCVlz8qgLYvZddQYZtPh5BCb_-0Dxq5mxwVz28CUIUCone",
+     "author": "SmoothChillBrandy",
+     "authorUrl": "https://maps.google.com/maps/contrib/101688817561267957617"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnDDN7FyPVO435DLQd-HMWEZD4y3696XZL0ywKI_wrj-6fI_aAWofS4_ay8tc92EaRL6MWGOWytpLJYm64dlj1JDjZpNN1c6fcFoj1adWBIoLTv8UnWod8hwYWyKp251MwqOMq34A",
+     "author": "SmoothChillBrandy",
+     "authorUrl": "https://maps.google.com/maps/contrib/101688817561267957617"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Enzo Campigotto",
+     "authorUrl": "https://www.google.com/maps/contrib/109815170533255701850",
+     "rating": 3,
+     "text": "Le Restaurant nous a un peu déçu sur les mets que nous avons choisi.\nLa Pizza Mortazza proposée dans le munu du jour avait trop d'ingrédients (trop chargée) et la pâte trop fine, difficile à couper avec le couteau qui est mis à disposition.\nLa Parmiagiana avait beaucoup trop de fromage.\nLe personnel de service est agréable et à l'écoute.",
+     "date": "2025-04-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnTUNZaU11UUdnEAE!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CIHM0ogKEICAgMCYiMuQGg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Cosandey Paul",
+     "authorUrl": "https://www.google.com/maps/contrib/110258685203789000426",
+     "rating": 5,
+     "text": "Bonne cuisine, plats généreux.\nUn menu du jour est à disposition. Une fois la commande passée le service est rapide et les serveurs sont polis.\n\nLes serveurs ne sont pas passé tout de suite vers nous pour la commande et d'autres tables ont été servies avant que nous ayons pris la commande.\nPeut-être car ils pensaient que nous attendions une personne de plus. Néanmoins ils ne nous ont pas posé la question si une personne de plus devait nous rejoindre.\n\nPour le reste nous avons bien mangé, les plats n'étaient pas trop lourds et bien digestes. J'ai passé un bon moment.",
+     "date": "2026-01-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xGWlRqQmthMEpKU1hwcWJGaGZNblpmTVd0SWMzYxAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CAIQACodChtycF9oOlFZTjBka0JJSXpqbFhfMnZfMWtIc3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Robin Béal",
+     "authorUrl": "https://www.google.com/maps/contrib/114570833007869222185",
+     "rating": 5,
+     "text": "Très bon repas, c’était vraiment délicieux j’ai choisi des tagliatelles avec sanglier et cèpes c’était le top ! Une recommandation de la serveuse qui était très avenante et très sympathique. Le service a été correct au niveau du temps et le prix dans la moyenne.",
+     "date": "2025-02-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnTUNBLTd6bGpRRRAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CIHM0ogKEICAgMCA-7zljQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Aparna Majhi",
+     "authorUrl": "https://www.google.com/maps/contrib/104785095208716737781",
+     "rating": 5,
+     "text": "J'ai été vraiment impressionné par l'accueil chaleureux et la gentillesse du personnel. L'ambiance est agréable, le décor est soigneusement décoré, on se sent tout de suite à l'aise. Le rapport qualité-prix est parfait.",
+     "date": "2026-06-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xwTVVsUlFhbmR2Ym5kV1RtSmxhSGhpU1ZjeU5uYxAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CAIQACodChtycF9oOlpMUlRQandvbndWTmJlaHhiSVcyNnc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Nicolas Louvion",
+     "authorUrl": "https://www.google.com/maps/contrib/112768174627046018894",
+     "rating": 5,
+     "text": "Cadre exceptionnel, bon rapport qualité prix, les pizzas sont vraiment excellentes, le personnel est à l'écoute et toujours souriant.\nUn vrai plaisir de prendre une pause café à cet endroit tous les jours !\n\nContinuez comme ça 🔥🔥",
+     "date": "2025-10-15",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25WM1dXUkZZa1ZOVjJ0VlpXSnRUbmMzVlc5c2QzYxAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CAIQACodChtycF9oOnV3WWRFYkVNV2tVZWJtTnc3VW9sd3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "David Leresche (Mckey)",
+     "authorUrl": "https://www.google.com/maps/contrib/112563556194574374459",
+     "rating": 4,
+     "text": "Très beau restaurant, acceuil impeccable et serveurs disponibles. C'est très grand. La pizza etait superbe et délicieuse avec des ingrédients frais et c'est très bien servi !\nSeul bémol pour moi c'est la salade dont la sauce qui était bien trop vinaigrée. Le parking sous terrain à côté aide bien aussi.",
+     "date": "2022-03-02",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNXeGZHSWpBRRAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CIHM0ogKEICAgICWxfGIjAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Philippe Siraut",
+     "authorUrl": "https://www.google.com/maps/contrib/113567709994855719651",
+     "rating": 5,
+     "text": "Le service pourrait être un plus attentif aux clients.\nLe repas a été excellent.\nLe service de base a été très rapide.\nMais lorsqu'il a fallu commander des bouteilles supplémentaires d'eau ou de vin, il a fallu attendre de nombreuses et longues minutes avant qu'un.e serveur/se ne lève les yeux et réponde à nos appels désespérés à coups de grands gestes à travers le restaurant.\nEt cela s'est passé plusieurs fois pendant la soirée. Peut-être aurions nous dû moins boire :-)",
+     "date": "2025-12-09",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tKdmFYQlViR3AwVTNwTldrUTNSMEpyU1hwVU4zYxAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CAIQACodChtycF9oOkJvaXBUbGp0U3pNWkQ3R0JrSXpUN3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "poulou7",
+     "authorUrl": "https://www.google.com/maps/contrib/101876076633163844144",
+     "rating": 1,
+     "text": "On ne peut pas faire confiance aux horaires, la cuisine ferme quand bon leur semble contrairement aux horaires affichés... Qualité très moyenne, ambiance feutrée et peu joviale",
+     "date": "2026-06-10",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21GZmFrWnhibEJPT0RsNVUyNW5ibVYxU0hKTFVtYxAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CAIQACodChtycF9oOmFfakZxblBOODl5U25nbmV1SHJLUmc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Corinne Beaud",
+     "authorUrl": "https://www.google.com/maps/contrib/103601683579631417124",
+     "rating": 4,
+     "text": "Service un peu lent. Tjrs les rappeler à l'ordre. Et pour l'addition dû demander 3 fois. Le serveur ne s'inquiète pas de savoir si c'était bon. Ne demande même pas.",
+     "date": "2024-06-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURMbnB5bXVBRRAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CIHM0ogKEICAgIDLnpymuAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Julien Grandjean",
+     "authorUrl": "https://www.google.com/maps/contrib/115460136423319871422",
+     "rating": 5,
+     "text": "Service impeccable dans un magnifique cadre sur le campus de l'EPFL. Pour le coup de la joue de boeuf sur lit de rizoto superbe ! On reviendra",
+     "date": "2025-03-22",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnTUR3d01yUjVRRRAB!2m1!1s0x0:0xbfc85823a04bfc16!3m1!1s2@1:CIHM0ogKEICAgMDwwMrR5QE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "holy-cow-epfl": {
+   "name": "Holy Cow! Gourmet Burger Co. EPFL",
+   "placeId": "ChIJlcDhQgIxjEcRYIpjPfYTl2U",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Holy%20Cow!%20Gourmet%20Burger%20Co.%20EPFL&query_place_id=ChIJlcDhQgIxjEcRYIpjPfYTl2U",
+   "rating": 4.1,
+   "ratingCount": 1474,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlYPXs6Vi7pZjAH951Ga9cCPxWLotXrAHsca3N_PtMx0r_FogZR_ssyhAG4D-Yyn3Hp1LP7weR5VyCThG6z_L9KA3My_g_YGuINYvZTpsSVPsfheLUxhUcWpdHm8HVng5gV3VMi3Yc4iCcI",
+     "author": "Holy Cow! Gourmet Burger Co. LAUSANNE EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/104710564001221675764"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlvbJrIGcZCWrcDAImJ54U95I-ARLw0XuskwJT19yAXhRvaVGJQ5uAYXPh7HIZi8i4-dqcqFFjog6-bU29cHeuvEyVSTKIPYSIdlv2NgkbDr6mfJ-q10eXatsjkyREWxIvLnM1x",
+     "author": "Riyo Kojima",
+     "authorUrl": "https://maps.google.com/maps/contrib/106994168724675119463"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWloHEmZ8UhTUryr5GSzHWfxPsFtPGCnGjFm4Xl33qu9NvqiPUaECAVXxl1HboBzUZ0tFNN60DCsknSs1xGeAHGzr6pxJYGqpvX-4X17JWkdTtXS_OnN5KdlbSRkY5Wjb5oU-QZjBLkrplpj",
+     "author": "Holy Cow! Gourmet Burger Co. LAUSANNE EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/104710564001221675764"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn7p6Pa7v38zNtX2n58zezh-fpxowFHzHNqJAhsr6uzxl-fBnh74AIipbOw-CgUrlF7PI25oEesL_mPPYGV9QQYFr0bLtfh17WLRVTedTNgWp8IvSDpEPKeKOXJkRu_UePq1RFH",
+     "author": "Holy Cow! Gourmet Burger Co. LAUSANNE EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/104710564001221675764"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm01PhaY-lGFgHTuuZ6CGQgKjLBkxL5PELUdI7z9pK3lVITtWWattfRCs3xiTchU-QM1K2aPUdo6buCwocT4fPQQEwx_3s9LAr1WfbFqulnfbMuYg3TiyhEIfTyubSS5MhMhhaUT4PmPUo",
+     "author": "Matteo Nicolò Sagazio",
+     "authorUrl": "https://maps.google.com/maps/contrib/112024414488627870663"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmjQuvR4kitUkaTb2qrSdTHHMB8NAA9wvaZLE-w2AmGRt88PYD9OaX3LqNbo1c0HEZdXtOOSOd6qzipN6lwGfsbtdBDWXqFMQYF4jpZ6bwQm8UqR7Ykg06DaJ8Vl2rSieT3d7Ymww",
+     "author": "Holy Cow! Gourmet Burger Co. LAUSANNE EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/104710564001221675764"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnb2rpK8yjZg5nrq6YWeYVwbmr571FNEZaAfmb0iygI9oIpK9K85SyuaBXGxnuoU0Xu8YhNwQGYjAaw7v3YEJcr3STYvsGBH2g7kHifv0swrDfwjuByldW_EbGdD5DJQomx8zbBhEkplUSo",
+     "author": "Holy Cow! Gourmet Burger Co. LAUSANNE EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/104710564001221675764"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlgzu08gvpXpZRyTxSB9WtZDCfsaeUfxRQbvtaJ8uW6276r0Fhx42QpQmFctAZdRy6DogTPHvB9ingAcA6v5chtuLuk4ForYQAFqIUEtHq-g3CXBIz5NOgFfBNDWX263Vplwy0W",
+     "author": "Mauricio Montoya",
+     "authorUrl": "https://maps.google.com/maps/contrib/107490922712779245492"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkNPruxJfj9X13hQqKmNre6GbaA1fxc55GNDrOrj3gHA7sS_7hmsx7xaAGFfZCx4agWmj5_xPZyiZmH8DGwHz3WE9HD2Q3fizGC_S3l95npLpHo0L2uezVWAtnBR1Kk8-lwMGYJ",
+     "author": "brian suchy",
+     "authorUrl": "https://maps.google.com/maps/contrib/111879473484254983534"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkb-O74L6aLv1eLxv3N539yPmU27f68OWKYcFKtOZs57TOlaeQtiIue4Ahnty8lkeuaU-CRmcMcISM6ILHxTUOc0ORr_bB4YMpdkZf9wPg--Z13Hc0xxy_xg6TzVQasgo3fnx3WFgXZylBY",
+     "author": "Enzo Campigotto",
+     "authorUrl": "https://maps.google.com/maps/contrib/109815170533255701850"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Laurent Deillon",
+     "authorUrl": "https://www.google.com/maps/contrib/114872110611289275492",
+     "rating": 1,
+     "text": "Franchement, il faut sérieusement revoir votre manière de travailler. Voir les employés manipuler leur téléphone en plein service, puis toucher la nourriture sans se laver les mains, c’est inadmissible. On parle d’hygiène de base, pas d’un détail.\n\nEnsuite, les sauces simplement jetées dans le sac, sans aucune précaution… Résultat : la commande arrive couverte de sauce, imbibée, et complètement immangeable. Et tout ça pour 2.50 la sauce, c’est presque ironique.\n\nLe plus choquant, c’est le décalage entre le prix et le service. Vous ne vendez pas des burgers à 10 balles, mais des produits à 25 CHF. À ce tarif, on s’attend à un minimum de soin, de respect du client, et d’implication. Là, on voit clairement que les employés n’en ont rien à faire, et ça se ressent dans chaque étape de la commande.\n\nHonestly, you really need to rethink the way you work. Watching employees constantly on their phones during service, then handling food without washing their hands, is unacceptable. That’s basic hygiene, not an optional detail. This issue has been documented and reported.\n\nThen you just throw the sauces into the bag without any care… The order ends up covered in sauce, soaked through, and completely impossible to eat. And you dare charge 2.50 for each sauce on top of that — it’s almost comical.\n\nWhat’s truly shocking is the gap between the price and the service. You’re not selling cheap fast‑food burgers; you’re charging 25 bucks for a single burger. At that price, customers expect proper service, not this joke. It’s obvious the staff couldn’t care less about their job, and it shows in every part of the experience.",
+     "date": "2026-07-17",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xCTWEzbEVUamhYUlRoTlRISXhRMUpCWkdGelRFRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOlBMa3lETjhXRThNTHIxQ1JBZGFzTEE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Chloé Jolliet",
+     "authorUrl": "https://www.google.com/maps/contrib/112028941139339619973",
+     "rating": 4,
+     "text": "C'était une très  belle découverte.\nService rapide, avec des magnifiques burgers. Frais sains, à l'intérieur du restaurant c'est très joli.\nEt ils disposent des sirops peut sucré C'était vraiment très chouette. Tout près de la salle Métropole. Du coup très pratique pour aller croquer quelque chose. Avant d'aller à un concert ou un spectacle. Notamment pour nous ce soir-là, c'était Calogéro qui était sur scène",
+     "date": "2026-05-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t0VFZGUklhRkZsVDJ4dllWWmlUVzl3Um1ac2VrRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOktTVFRIaFFlT2xvYVZiTW9wRmZsekE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Enzo Campigotto",
+     "authorUrl": "https://www.google.com/maps/contrib/109815170533255701850",
+     "rating": 4,
+     "text": "Très bons burgers (Menus Viva España & The Veggie)\nLivraison rapide.",
+     "date": "2026-03-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t4eUxYRkVOa00yVm5kZlZ6ZzFXSEkwZDJwQmQxRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOkxyLXFENkM2VndfVzg1WHI0d2pBd1E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Riyo Kojima",
+     "authorUrl": "https://www.google.com/maps/contrib/106994168724675119463",
+     "rating": 5,
+     "text": "C'est un restaurant rapide de hamburgers que beaucoup de gens trouvent facile à visiter.\nNous avons visité Holy Cow de l'EPFL à Lausanne à la fin du mois d'août 2022.\nNon seulement il propose des tarifs étudiants sur le menu, mais il est aussi facilement accessible depuis le quais du métro et dispose de nombreuses places assises.\nLes ingrédients sont également très suisses, c'est donc un bon choix pour ceux qui veulent manger du fast-food suisse.\nLa plupart des clients étaient des étudiants et des adolescents. C'était un peu trop bruyant.\nNous voulions manger sur la terrasse car elle est agréable en été, mais malheureusement il y avait beaucoup de guêpes et nous nous sommes installés à l'intérieur. L'intérieur du restaurant est charmant.",
+     "date": "2023-02-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNobWMtMUdnEAE!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CIHM0ogKEICAgIChmc-1Gg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Raphael Heinziger",
+     "authorUrl": "https://www.google.com/maps/contrib/106891174651046251718",
+     "rating": 4,
+     "text": "Les burger de cette chaîne sont bons et sont plus travaillé avec des produits locaux, par contre c'est asser cher quand même pour du fast-food.\nLe service peut être amélioré car c'est plutôt froid mais c'est un bon fast foodndans le quartier de l'epfl, je recommande l'établissement.",
+     "date": "2026-08-14",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xObmVsUkROMUl3ZG5wS05IWmZWM2RXYUhZNGMxRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOlNnelRDN1IwdnpKNHZfV3dWaHY4c1E%7C%7C?hl=fr"
+    },
+    {
+     "author": "12po98b Xpiu98h",
+     "authorUrl": "https://www.google.com/maps/contrib/108293077246511040097",
+     "rating": 1,
+     "text": "Commandé sur Uber eats. Après plusieurs commandes parfaitement normales, j'ai reçu une commande avec une très forte odeur d'urine. Je n'ai jamais vecu cela nulle part ailleurs. Je pense que des contrôles sanitaire sont indispensables dans cet etablissement",
+     "date": "2026-08-11",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2sxT2RGbFpPRzVtUlRsV1NFbHJlWG95VUVoSWJrRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOk1OdFlZOG5mRTlWSElreXoyUEhIbkE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Daniel Kostro",
+     "authorUrl": "https://www.google.com/maps/contrib/100982963740157602406",
+     "rating": 1,
+     "text": "J'ai connu Holy Cow à ses débuts. La viande dans les burgers était très bonne. Malheureusement aujourd'hui c'est n'est plus 100% du boeuf et ça détériore beaucoup le goût. C'est ce qui se passe quand l'objectif est de rentabiliser un maximum la chaîne.\nJe recommande plutôt Inglewood, qui est aussi une chaîne, avec des prix comparables, mais qui met de la bonne viande dans ses burgers.",
+     "date": "2026-03-22",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xKWWFFOU1PVXMwTFhGNmJFMTJiRkZTV0dWVmJuYxAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOlJYaE9MOUs0LXF6bE12bFFSWGVVbnc%7C%7C?hl=fr"
+    },
+    {
+     "author": "J M",
+     "authorUrl": "https://www.google.com/maps/contrib/109987948102092015489",
+     "rating": 3,
+     "text": "Nous sommes venus hier soir en « click and collect ». Nous n’avons pas contrôler sur place mais avons ouvert la commande une fois arrivés à la maison.\nNous avions commandé 3 sauces supplémentaires (que nous avons donc payées) elles n’y étaient pas. De plus, dans un des menus, nous avions également payé un supplément afin d’avoir des frites de patates douces que nous n’avons pas eu non plus. Quelle déception, sans compter le fait qu’on ne peut même pas les appeler directement car ne possède pas de ligne directe. Enfin.",
+     "date": "2026-05-17",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2s1WE1sbHJZeTE1TUVaUk1HNVVNblJVY1RNMFgyYxAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOk5XMllrYy15MEZRMG5UMnRUcTM0X2c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Marcy P.",
+     "authorUrl": "https://www.google.com/maps/contrib/114847337335332235910",
+     "rating": 5,
+     "text": "Là-bas je vous dis c’est trop bien parce que en fait l’intérieur il est trop beau les burgers tellement, ils sont gros, ils étaient trop bon sauf que vu que j’étais petite encore, je sais pas quelle avait bah mon pote il était petit et du coup j’ai pas pu tout finir, mais c’était trop bon il était bien gros là trop bon",
+     "date": "2026-08-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21WUGJrVkxSMHh3VDE5M01GRnBaMUJQYzFnM1VsRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOmVPbkVLR0xwT193MFFpZ1BPc1g3UlE%7C%7C?hl=fr"
+    },
+    {
+     "author": "fred yogi",
+     "authorUrl": "https://www.google.com/maps/contrib/112178009512070714929",
+     "rating": 2,
+     "text": "Ce soir en cuisine personne n’avait de gant. De plus la personne à la caisse faisait aussi le service à emporter et ce qui m’a choqué c’est qu’il passe les frites du plat à un box avec les mains. Et auparavant il avait touché l’écran remis des boissons dans le frigidaire enfin c’est dégueulasse.\nQuel changement depuis la vidéo d’un client où on y voit les cuisine et la caisse, tout le monde a des gants.",
+     "date": "2026-06-08",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25sWFRVWmZhVTlhVDE5M2JGaGFXVFJWVEVadVRrRRAB!2m1!1s0x0:0x659713f63d638a60!3m1!1s2@1:CAIQACodChtycF9oOnlXTUZfaU9aT193bFhaWTRVTEZuTkE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "hopper": {
+   "name": "Caféteria BC",
+   "placeId": "ChIJEQ3K2_wwjEcRMsVKyQnZUcw",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9teria%20BC&query_place_id=ChIJEQ3K2_wwjEcRMsVKyQnZUcw",
+   "rating": 4.5,
+   "ratingCount": 25,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl_vP9wXseUsoKMoCZIgZcI-qceGlP0im6uiZqdO9va_yFQ5E4iRCqwlUA4JqxftJFTwSGHMUJRz3cVuvrgBCvTl1n_RHQGuBlfIxbWAhGJ6IODQ8Y8gH7bmHaiX6qu4heXqnT2ig",
+     "author": "Z",
+     "authorUrl": "https://maps.google.com/maps/contrib/115621447796658176349"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkYQZyxox5MWIx8A3Y-ag2z98XBAFHjO3rz1PhpL5dk8TC9u1zUhPcjyo9oDc38IrAvK_c4UoFtoTZnSP6AJDPN6GWjroFZXT1-faMidyTlC8vRI6U2KOQuxTHDaGSV8-sbpEyd",
+     "author": "Noa ETTE",
+     "authorUrl": "https://maps.google.com/maps/contrib/108693725699259803314"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmETYge9Z1ukau_PC1sf1IsyxjXwuksVnCFDPrkGUPrmqfesu_Dqota68YxdxndKBknKIJY827387l1M_lnYABdQAOqpV48rtA3M0RSG-1sA7NKsaq26wwm6I45PptFotoLODA",
+     "author": "louisky",
+     "authorUrl": "https://maps.google.com/maps/contrib/110148291638872966645"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl5GSB5gZfcNKuTTGvs3IdyB-KhgADKy5bsSqCpvFjwnH-6F3EyX46rXF5FQaEx2v8CT3hXKI7mSWIzsLvG1JKhYU4z2ZV2CyBI8XAguMO0_bMfIFqUvAhnLiwxxnKKiD5pHI00xdLdUTUj",
+     "author": "Franco Terranova",
+     "authorUrl": "https://maps.google.com/maps/contrib/111785222407748636454"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmJJf0SKmM4KBEeC4OoFmMZYbZl8Jn3G4EO7OlRX-deqAxbueNT5loQk3RXU4SB5CEOu5DopLvELNOsYBOXkroC2cVpqb1EmVa2LljV1NUbYKyqFn2HPQ_4VIpoPj2h-OUHthlt1NyO63cX",
+     "author": "Franco Terranova",
+     "authorUrl": "https://maps.google.com/maps/contrib/111785222407748636454"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnJgXW9EIyNFOy559JKyphL1lkO-MMSzykm4y8q2Dzdrs3AuQOD4IoIWjwp1D1MLfzknoUs9d97pvnM_U566vD-0gmioy0UC328mm_vE0pI7Jgyvg0iyt1dskLQzzmcw3jSvnhb1w",
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://maps.google.com/maps/contrib/113959927505819426457"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkFbeseC0_wkbGSxdjKT3HvJYOPTUUOvP0pxNp2kVYf4l1hcWib51Kni6bklyrM1ibxdhL_ckhoMaGU8A0hTkjsUVOHUkPXoGJwzffcA8dD-UOmFcr3yI7u72_JIAlkBLT4NtB7",
+     "author": "paulo reis",
+     "authorUrl": "https://maps.google.com/maps/contrib/108126649366084186045"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkgyVQ8Nmt8BF2KVo0b8f4zvTSEgsScU3yk9zufUT2bfz6ugxsf5Fw287Q0VjTILE-vsImU3lLtDhF8Vv1QIh5PfAYLoeTOpeVzLwMcooGdPDQ2FGZ4SOHPpwN6Pke3JLubRBk",
+     "author": "Zac",
+     "authorUrl": "https://maps.google.com/maps/contrib/116574937224571919099"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk2e2mosfavMP99cOH-yr_H73HPpsHidyKyjJgmIPUzAeujN3l4ShYzfzQpy5gHVaD9Z0LWfLwglOKrzAw2sqiflBby4weZho8H8xmd_JPRUNg9PJc3rz3GfYSziJGFOse3Iy7A",
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://maps.google.com/maps/contrib/113959927505819426457"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkNbJh9Rl4WKN8QurjhzsHUo2Nv4dCnO4bCwSo7LdjTBx-pAeCjcZE0QjJPXPE--cz2UrSIJWU1HJnRLDxpz76qZMRcBgrfCLnoH3XhjaGDhvjmX2djA2N-YvCjxkSJt7XBUbe-",
+     "author": "Raphael Cannatà",
+     "authorUrl": "https://maps.google.com/maps/contrib/105923395239377575732"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Sedgewick Daunger",
+     "authorUrl": "https://www.google.com/maps/contrib/112878699674482194888",
+     "rating": 5,
+     "text": "J'ai été vraiment impressionné par le caféteria BC, l'ambiance est décontractée et accueillante, le service est attentif et souriant. Les prix sont raisonnables par rapport à la qualité du service et de la propreté. Un vrai plaisir de boire un café dans ce lieu !",
+     "date": "2026-06-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xWbE9HWlVRVk0yYVc1RWNtcFFOWGxQTVV0NlZWRRAB!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CAIQACodChtycF9oOlVlOGZUQVM2aW5EcmpQNXlPMUt6VVE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Noa ETTE",
+     "authorUrl": "https://www.google.com/maps/contrib/108693725699259803314",
+     "rating": 5,
+     "text": "Excellent service! Le staff est un des meilleurs de tout le campus EPFL! La nourriture est toujours succulente et donne un sourire à quiconque la consomme. De plus la terrace donne à cette expérience sensorielle un boost génial. Je recommande a tout les élèves de l’epfl et à n’importe qui d’autre dans les parages.",
+     "date": "2022-12-13",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUQtMzZiZk1nEAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgID-36bfMg%7C%7C?hl=fr"
+    },
+    {
+     "author": "louisky",
+     "authorUrl": "https://www.google.com/maps/contrib/110148291638872966645",
+     "rating": 5,
+     "text": "Personnel d’une extrême gentillesse nous servant des mets d’une qualité inégalée sur le campus !",
+     "date": "2022-12-13",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUQtMzZiMGtnRRAB!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgID-36b0kgE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jezenay",
+     "authorUrl": "https://www.google.com/maps/contrib/112711328249835430498",
+     "rating": 4,
+     "text": "Très bon mais un peu cher. Cependant, mention à la terrasse qui à la meilleure vue du campus (on voit un bout du lac de Genève!)",
+     "date": "2023-11-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNsd0pubC1BRRAB!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgIClwJnl-AE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Zac",
+     "authorUrl": "https://www.google.com/maps/contrib/116574937224571919099",
+     "rating": 5,
+     "text": "Meilleur resto de l’EPFL, ils sont tous adorables et les plats envoient leur consommateurs au 7eme ciel 🤤",
+     "date": "2024-06-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURMcHRxRmN3EAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgIDLptqFcw%7C%7C?hl=fr"
+    },
+    {
+     "author": "Zhamot",
+     "authorUrl": "https://www.google.com/maps/contrib/100335412534269216193",
+     "rating": 3,
+     "text": "Repas pas toujours super chaud, plats pas incroyables mais personnel très accueillants et prix corrects",
+     "date": "2023-05-03",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURSODlQNWRREAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgIDR89P5dQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Swann",
+     "authorUrl": "https://www.google.com/maps/contrib/116877407515181329727",
+     "rating": 5,
+     "text": "Super sympa ! Merci pour le reservice généreux !!",
+     "date": "2025-02-20",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnTUNncV9qSEFREAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgMCgq_jHAQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://www.google.com/maps/contrib/113959927505819426457",
+     "rating": 5,
+     "text": "Endroit lumineux et calme. Nourriture excellente à prix raisonnable.",
+     "date": "2017-03-08",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNBeHZtall3EAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgICAxvmjYw%7C%7C?hl=fr"
+    },
+    {
+     "author": "Timaël Andrié",
+     "authorUrl": "https://www.google.com/maps/contrib/112921735673431432932",
+     "rating": 5,
+     "text": "Staff super sympa et vu au top que ce soit à l’extérieur ou l’intérieur",
+     "date": "2023-01-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURCcHEyN0JnEAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgIDBpq27Bg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Okok 123",
+     "authorUrl": "https://www.google.com/maps/contrib/104987097655430997527",
+     "rating": 1,
+     "text": "Nourriture de très basse qualité",
+     "date": "2019-06-10",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUM0aGVfQkZ3EAE!2m1!1s0x0:0xcc51d909c94ac532!3m1!1s2@1:CIHM0ogKEICAgIC4he_BFw%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "klee": {
+   "name": "Scolarest / Le Klee",
+   "placeId": "ChIJ_7kTi_4wjEcRMH_N9UaI6ig",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Scolarest%20%2F%20Le%20Klee&query_place_id=ChIJ_7kTi_4wjEcRMH_N9UaI6ig",
+   "rating": 2.9,
+   "ratingCount": 84,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmnHvtH9hvCKeBzpoEaxaMvog0i9ZEPrxsL_Is2oBMIj6h27sR7D_8HfzkW9tElsk_3DZxxS2vkWvtbPJOH_YeS9ZVcMLqA10q8q0e72-wMop1wtX6S7PMHFYL5pmbDvaY9fg",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkDbtYnQz9KyeD9WhIv1nQt4ouP1B3p5enINB0jP-xLHl77x9NLbKlmgB6EuZEpgogJG3-h_MKhtpY4seTPqYuh9_2KLiOfphrcuy2AYCmXs14uTwYpdE4qmHVBTEs-B9p5q0m_yw",
+     "author": "Ignacio Cecilia Rosa",
+     "authorUrl": "https://maps.google.com/maps/contrib/101000583162125546356"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnXcza9dwqAvdkjuR6FpvA47WNhHFgsMt90bi6reR0WFWrdh23XiditsnF_7I_TOrydt1-gwosM7G6Oxz4vm48TYknznGkg8nJfUCSAWVZfS_6WxhyUTFFu1HyLnlSh2HBVCm0v",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlm7MmL4IDT6Y_bv0KpW0KR0cgR3iklehR68JLEZ0rGbZcfSdt9VsdLr6KvV6XYv5pcBx74zmtQ_dLcRV2r7KsPvumNpG8E5N9v2w6Vx9uU5KVM5_NZ-uBsHlJ9OTm2-RVtLDg",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkpSPUEk2z34NFcMlCbI3Ob49-esZ43QVjDVksA4q9DVeWvOE9Q8uu36vmAnhspAktlhLNajZyeOCUjHGKxrIjqVmBsgDgyHFXFh98ZufbOJhsdGnp8mZNA38pCOEjDCULGIA8",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkIZv7GEXhjUo2LBZ2U4FXHp5Le8t1Ll50oTIw_K4P9bC2_IXgFDaYOsVNUHC6GE_FM970umD0roh0fIIh_0so11Oz-_CwvP4L4UxoYKRROnBuIe198l4RwpGcTaSnj4UT0CabnSQ",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmt14S2_7jVUOMnFvvOyI5HxxQNdCuOg34_iF6sDsMy-j-T9irTWn9FeQJbHJPaP5oqCEDgQgb_nr9kKk8PzDs3Rs-gakFPL_KB-BzNfspP_1GPehmhjRJrEq4zqoOtrl2OVrGT",
+     "author": "Eléonore",
+     "authorUrl": "https://maps.google.com/maps/contrib/111497684563802411121"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm3DGBqUVFF5uC4AnVnxL4jLhr2EYwmR6CatNM_WVg0ZlvVD7q7tYcBAxgPWOGDZ81SbjCCDoKk5UtCRLfd1T4vyiuu35YO471bgRYBmGDaUhAp2z-7ltB0XBv9jcRg9F0uUkoX",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkntd0J5GsvcLEJtAWl4COAJcYYK6bZdB2EpghfJdp7LZhBbDriwcEX6Hshu4WA2wDJNDA49I6kpgK8ybfXOB_wuoZY-NJ0RSqa8r_FuLSwldXOZ0qWnBSx_SLi-Gdz3cosy2umNQ",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlx3HTvns_I2yApzCO0A0-ORs8z-QAMSNBM1wT3ILLltC9LyB8ed1HPwZlqW5M5JxX8X7mPQ2-husetCUzJqC739wmpFK1kwFw6WTk27Fuivk8WOQZEBlzD0DZjBy0scvsgcuIsyA",
+     "author": "Henrick Sdf",
+     "authorUrl": "https://maps.google.com/maps/contrib/110407927627588758532"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "QG",
+     "authorUrl": "https://www.google.com/maps/contrib/110998274913088205816",
+     "rating": 1,
+     "text": "Au vu du nombre de commentaires signalant ces problèmes et de l’absence d’amélioration depuis des années, la situation est déplorable pour une cafétéria universitaire.\nLa qualité est globalement médiocre : les tiramisus ne sont pas frais, ce qui n’est qu’un problème parmi tant d’autres.\nLes plats sont servis en demi-portions alors que les prix sont clairement exagérés pour un public étudiant.\nÀ cela s’ajoute le comportement très désagréable d’une membre du personnel, ce qui détériore encore davantage l’expérience.\nLa liste des points négatifs est longue, et rien ne semble évoluer malgré les retours répétés.",
+     "date": "2025-12-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT21GaVN6VmphbVI0VGpSZmIyTnFPSE52ZHpSdmJFRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOmFiSzVjamR4TjRfb2NqOHNvdzRvbEE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Maria Gutierrez",
+     "authorUrl": "https://www.google.com/maps/contrib/112635962514305324229",
+     "rating": 1,
+     "text": "Ce café ne sert à rien. Le service est exécrable, les vendeuses manquent souvent de patience, surtout les plus âgées, et elles traitent les étudiants d'une manière déplorable. Les prix sont exorbitants pour la qualité de ce qu'elles proposent, et il ne faut pas oublier que nous sommes sur un campus universitaire. Oui, c'est les Rolex Learning Center mais c'est pas pour cela que les étudiants on se promène avec une rolex au poignet. Si vous voulez prendre un simple café, mieux vaut marcher 5 kilomètres que de commander quoi que ce soit dans cette cafet, si on peut appeler ça comme ça.",
+     "date": "2025-12-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pjMVNFSjFaR1Z5ZHpFd00yNXZiREoyU25JMGVrRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOjc1SEJ1ZGVydzEwM25vbDJ2SnI0ekE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Charlotte Reigner",
+     "authorUrl": "https://www.google.com/maps/contrib/116523993027669978392",
+     "rating": 1,
+     "text": "Une personne du staff est extrêmement désagréable, manque de respect, aucune empathie en vers les clients. Elle nous hurle de nous déplacer à la deuxième caisse, n'adresse jamais un bonjour, ou au revoir. je n'ai jamais vu un service aussi déplorable, c'est extrêmement décevant.\nIl serait temps de reconsidérer ce choix de carrière.\nConcernant les prix, c'est également un scandale, nous sommes sur un campus universitaire, c'est exorbitant.\nLes portions des salades, pâtes et pâtisseries sont minuscules, c'est à ce demandé si ce ne sont pas des portions enfants.",
+     "date": "2025-12-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t0cE9YaHBNemR1Y2xJeFRYWlVlVzV1VkRGcVlWRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOktpOXhpMzduclIxTXZUeW5uVDFqYVE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Zied Ben Hassine",
+     "authorUrl": "https://www.google.com/maps/contrib/104519283919994942070",
+     "rating": 1,
+     "text": "La personne avec les lunettes, cheveux reflet rouge, qui parle souvent portugais avec sa responsable est extrêmement désagréable, elle n’a aucun sens de l’accueil de la clientèle et est tout autant désagréable avec ses collègues à première vue. Il faudrait peut être songer à faire un changement à ce niveau là.",
+     "date": "2026-01-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tOdFJHazVNRE5FYWs0NU5YUm1OV0ozUmtOTFUwRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOkNtRGk5MDNEak45NXRmNWJ3RkNLU0E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Timothée Evard",
+     "authorUrl": "https://www.google.com/maps/contrib/105725330478241238315",
+     "rating": 5,
+     "text": "Super service, rapide et efficace ! et belle ambiance de travail.\nPetit + pour les deux barista, Alina et Sonia, toujours serviables et accueillantes !",
+     "date": "2026-04-10",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pseFIxTjVNMFV6WW1kMFVFRlJja1Z6YVV4NlYwRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOjlxR1N5M0UzYmd0UEFRckVzaUx6V0E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Tony Andriamampianina",
+     "authorUrl": "https://www.google.com/maps/contrib/113145564079459288622",
+     "rating": 5,
+     "text": "Service vraiment sympathique, un grand merci à Alina en particulier qui donne le sourire !",
+     "date": "2026-04-09",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tWeU1FMTVaRWN4Y0dWbVVVdHRNRzFNU0ZaTlkwRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CAIQACodChtycF9oOkVyME15ZEcxcGVmUUttMG1MSFZNY0E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Mathe Casali",
+     "authorUrl": "https://www.google.com/maps/contrib/110183101436504015782",
+     "rating": 1,
+     "text": "Certaines personnes du staff sont super mal polies, n’ont aucune patience avec les etudiants. Les prix sont souvent énormes pour la quantité et qualité servie. Décevant tout le long de mes 7 ans d’étude sur le campus…",
+     "date": "2024-10-02",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURuOExYaXRRRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CIHM0ogKEICAgIDn8LXitQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Guillaume Gav",
+     "authorUrl": "https://www.google.com/maps/contrib/104370913419517198163",
+     "rating": 3,
+     "text": "La nourriture de ce que j'ai goûté est plutôt bonne et faite d'ingrédients locaux de qualité. Le service est toujours aimable et souriant. La chose qui est dommage : le prix. Certes les bons  produits ont un coût, mais la majorité des potentiels acheteurs sont des étudiants, qui ne sont sûrement pas prêts à mettre 10.- pour un snack. Un plat du jour ou autre à prix plus abordable serait peut-être une bonne alternative.",
+     "date": "2019-03-14",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURvM00yZDJRRRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CIHM0ogKEICAgIDo3M2d2QE%7C%7C?hl=fr"
+    },
+    {
+     "author": "E K",
+     "authorUrl": "https://www.google.com/maps/contrib/109464778991707167107",
+     "rating": 2,
+     "text": "Beaucoup trop cher! Rappelons que nous sommes dans une université, vendre une boisson 4 fois plus cher pour des étudiants, que dans le commerce est une aberration. Les produits sont très industriels, rien n’est fait sur place. Les jeunes qui y travaillent sont sympa mais les adultes sont froids.",
+     "date": "2023-07-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNKazk2WklnEAE!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CIHM0ogKEICAgICJk96ZIg%7C%7C?hl=fr"
+    },
+    {
+     "author": "M. R.",
+     "authorUrl": "https://www.google.com/maps/contrib/101712013610566090631",
+     "rating": 5,
+     "text": "Très bon, les jus sont super, les repas sont sains et donnent de l'énergie, ça change des cafét étudiantes avec des vieux sandwichs de mauvaise qualité.\n\nBonne initiative de mettre les repas dans des bocaux en verre consignés.... MAIS pourquoi les jus dans des verres en plastique + paille ? C'est complètement contradictoire, et c'est pas difficile de mettre dans des verres.",
+     "date": "2019-05-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURZcF9pd3Z3RRAB!2m1!1s0x0:0x28ea8846f5cd7f30!3m1!1s2@1:CIHM0ogKEICAgIDYp_iwvwE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "migros-epfl": {
+   "name": "MIGROS",
+   "placeId": "ChIJ2VO18AIxjEcRW0ArAL3NsX4",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=MIGROS&query_place_id=ChIJ2VO18AIxjEcRW0ArAL3NsX4",
+   "rating": 4.2,
+   "ratingCount": 618,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlbBr0dqjYxwYon12gCXblqtYI2xBnMnBYyCXIaduC3thhpWf-KQCOyytyp13V47ciej8F7UDyizbDSb_fIXEhDMjPNgMLB2F6l-1i_ER_lTbUXKPV8ROHpLS7DuT2iDT28ButZ",
+     "author": "Supermarché Migros - Ecublens - EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/105991381427640722626"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk6t-R_qhxAbO_nc_0WMxvmRVVnedTril2EnnKjy6gNvT-zwA9qPU0WPVVDeGwYRG2V8aQWxaVXfuPKvb2o3taXYmPdk2_cVntJRibGarG55-U4r__vVBYZqALV3CM2IVDVlntazg",
+     "author": "Elvedina Mk",
+     "authorUrl": "https://maps.google.com/maps/contrib/109892852996761124523"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlJCG7PEN52V4lYSB35GpgfeqwW3x7eFVVNpqFY0TFsu4JYkTWavRnPtngMBb2GA3aekf6ojb8UeGCbF-Vh9mT3YcunitemKsoXi-TDLeRg5ZTZprZUA96XJ5B0TVSlIPaj5mk6",
+     "author": "simos simo",
+     "authorUrl": "https://maps.google.com/maps/contrib/105091987673438266301"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl1AZxDBRGvhA1ydXksqRPXindoKy9olpRgP7Ny5q_VdwLxVTd1H-LjK14QjC9scd6LCZNJTKOAiCkmbtSyPcbhSnGIHxwHqvS27_BmWGpDLs0NSvI-Bnpwy7j-h1NG7KLdCo55",
+     "author": "Supermarché Migros - Ecublens - EPFL",
+     "authorUrl": "https://maps.google.com/maps/contrib/105991381427640722626"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlLgzmODoiHfaZB25tNAzLqwuauCfamywJv-ISU4Jpog1oDXgT4NbFcwmb266APqYym6oHZirtC_YvYCxT5ijskX_adDhwSj5Fl0teIDPQZruMSvsMBZlknarY0A0mUMdZjrfI",
+     "author": "Amer C",
+     "authorUrl": "https://maps.google.com/maps/contrib/105940680570824675601"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmA4wG0-et00BWr5JvJ537SUAbEjkznUefeM6HomMx6Trtz4GFI9C1yr3p9ixY0W1oAShoCXhp6b0BHL6RB-1L6JF6rano2VNNbUvqm6z6zFTj0Nz0CwEGbsvwbpIgXa-QKjEm3ncxiPxG1",
+     "author": "Adolf Spörri",
+     "authorUrl": "https://maps.google.com/maps/contrib/110116296264718395671"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnHkCHdGq1X52cqrrxZEpDFO3WBK6Hw1zs3OWkMjyms0aGq202X91Hp_wkQh-Xu1U2QMer8Gva4-2JmiXi7w4FRUsf7lag7qNjkq0pUojFj6DA87eZm-_TJ0Ur73fwDZ1zMf59F",
+     "author": "Ya Sa",
+     "authorUrl": "https://maps.google.com/maps/contrib/116341066190736634546"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmWtEuiLCpoFcuU4VuydZ6Yg6rN9GI-HlZ6C0n2n_fb6Jd1CSYWta--Klh82BQ_NmSzs4HACS_T6tQrOsQBADd_bedfLogeZiwWln2CQxwwhSmGXavj0pFUh6gZbo_BQlaRn_BqPA",
+     "author": "simos simo",
+     "authorUrl": "https://maps.google.com/maps/contrib/105091987673438266301"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlWK22VZU4GHXhrUpgo3jf-KLVZaM90eOSF6LOwcanvAcnKaUF3KI1zQO55UdWPBOdbJ5Yq2w2JPW3NnOZCTR-ejbr00qOqb9_GBKGsWsCXGYq064hZPGby-Wh1YQh-KfNDqreNp5PA9kDj",
+     "author": "August Ning",
+     "authorUrl": "https://maps.google.com/maps/contrib/116859675229754903993"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnBbIDN2yjQv6SL5F0YzQ86Ewtfw4qfxZQ9FXXabXr9Wqa22pA-ayHyMBYyI16Isk_mUJLXdywQStTtoRDm9WM4CjrEoT9Q6wCvZTqPv15EMwR5MuqyT5EJ5mYxFE1jMVOTpyJN",
+     "author": "simos simo",
+     "authorUrl": "https://maps.google.com/maps/contrib/105091987673438266301"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Adhish Majumdar",
+     "authorUrl": "https://www.google.com/maps/contrib/113641199361652800420",
+     "rating": 1,
+     "text": "Lors de ma visite ce soir, mon ami et moi avons été priés de nous séparer au self-checkout, la politique du magasin n’autorisant qu’une seule personne par borne. Je comprends l’intention derrière cette règle, mais elle peut donner aux clients honnêtes le sentiment d’un manque de confiance. D’ailleurs je n’ai jamais entendu une consigne pareille dans d’autres supermarchés Migros. L’employé a été courtois, mais j’invite Migros à reconsidérer cette politique afin d’offrir une expérience plus agréable et accueillante à tous.",
+     "date": "2025-10-22",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25wUFRqVTFRMkZ1T1dKVWJXMTBkekU1VUZacVdtYxAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CAIQACodChtycF9oOnpPTjU1Q2FuOWJUbW10dzE5UFZqWmc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Kam wodz",
+     "authorUrl": "https://www.google.com/maps/contrib/106863006429169574447",
+     "rating": 5,
+     "text": "Grand choix de produits, ouvert longtemps",
+     "date": "2026-05-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25ndGFIZDNURk5tZFU1T1NETlhabnBOTUhSM1dWRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CAIQACodChtycF9oOngtaHd3TFNmdU5OSDNXZnpNMHR3WVE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Matis GUTFREUND",
+     "authorUrl": "https://www.google.com/maps/contrib/110058820219105268156",
+     "rating": 4,
+     "text": "Les produits pris n’étaient pas très cher",
+     "date": "2026-02-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2twNFluQk1aVzlCVDNsb2NFWjZibGRUV0dWUWExRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CAIQACodChtycF9oOkp4YnBMZW9BT3locEZ6bldTWGVQa1E%7C%7C?hl=fr"
+    },
+    {
+     "author": "Olive Ducry",
+     "authorUrl": "https://www.google.com/maps/contrib/111209140657466642265",
+     "rating": 5,
+     "text": "Le supermarché Migros de l'EPFL est un vrai sauveur pour les étudiants et le personnel. Avec sa large sélection de produits alimentaires et non alimentaires, ainsi que ses horaires étendus, c'est l'endroit idéal pour faire ses courses rapidement entre deux cours ou pendant la pause déjeuner. De plus, la qualité des produits est toujours au rendez-vous, et serviable. Un incontournable de l'EPFL",
+     "date": "2024-05-16",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNUaWFhSWJREAE!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgICTiaaIbQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Théophane Mayaud",
+     "authorUrl": "https://www.google.com/maps/contrib/101909213527304339421",
+     "rating": 3,
+     "text": "Petit magasin qui dépanné bien, mais c'est tout de même très cher, surtout le matériel scolaire. Il n'empêche que le magasin est la et c'est pratique !!\nIl y a des caisses rapides, et rarement beaucoup d'attente même si les files sont longues.",
+     "date": "2016-10-23",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURBNjdHWDJ3RRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgIDA67GX2wE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Brinax",
+     "authorUrl": "https://www.google.com/maps/contrib/104432126960932233183",
+     "rating": 4,
+     "text": "Petite migros Mais avec vraiment pas mal de choix cependant j'aurais apprécié un peu plus de diversité dans le rayon boulangerie. Tout de même le personnel est sympathique donc je mets 4 étoiles. La proximité avec le métro fais que j'y aille assez souvent!",
+     "date": "2020-06-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURjdXV1cS1BRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgIDcuuuq-AE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Siméon",
+     "authorUrl": "https://www.google.com/maps/contrib/101168615012850068909",
+     "rating": 4,
+     "text": "Dédicace spéciale au combo smoothie + croissant de sils, une bonne base pour tout goutax qui se respecte. Le duo de cuisses de poulet est pas mal aussi, accompagné de son taboulé oriental mit gemüse, option à ne pas négliger pendant les trop nombreux jours végés de l'epfl",
+     "date": "2024-06-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNMbnB5dnZBRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgICLnpyvvAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Nicolas Zurbuchen",
+     "authorUrl": "https://www.google.com/maps/contrib/108929071425840905888",
+     "rating": 3,
+     "text": "Magasin avec beaucoup de produits différents et ouvert plus tard que la normale. Largement suffisant pour les étudiants et possibilité de faire des courses rapides. Facilement accessible en transport public.",
+     "date": "2017-11-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN3OU03X3NBRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgICw9M7_sAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Justin Picard",
+     "authorUrl": "https://www.google.com/maps/contrib/100848326031316098012",
+     "rating": 1,
+     "text": "Très mauvais service à la clientèle, ils refusent de reprendre des produits avariés même avec le ticket de caisse",
+     "date": "2025-10-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25wblYyWTBVRnBxUzBnemMwbHBRM0JhU2s5c2FsRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CAIQACodChtycF9oOnpnV2Y0UFpqS0gzc0lpQ3BaSk9salE%7C%7C?hl=fr"
+    },
+    {
+     "author": "simos simo",
+     "authorUrl": "https://www.google.com/maps/contrib/105091987673438266301",
+     "rating": 5,
+     "text": "Chez migros touts frais",
+     "date": "2021-02-01",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN5Z2VUcnlBRRAB!2m1!1s0x0:0x7eb1cdbd002b405b!3m1!1s2@1:CIHM0ogKEICAgICygeTryAE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "montreux-jazz-cafe": {
+   "name": "Montreux Jazz Café",
+   "placeId": "ChIJaf31MPwwjEcRCxp5Np7dN_4",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Montreux%20Jazz%20Caf%C3%A9&query_place_id=ChIJaf31MPwwjEcRCxp5Np7dN_4",
+   "rating": 4.1,
+   "ratingCount": 189,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkVshq2BWsBsSaT96Olf4s45-vi1_mSrDx4TGSzdLhe2FWV-yf4Za801XlOSUY07VCmaHqB2qd0io-qPgCMJlQjbXIdgWgHIE10OmiHoVvzZA3oDFaQ_LR4GEZ2X6QDrIwsWEEJ",
+     "author": "Montreux Jazz Café",
+     "authorUrl": "https://maps.google.com/maps/contrib/107894070447207592619"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl9nvDxePKxOTMUUnPjKhMMWkakIqVlgqWN1hBMxYWxXIuLruGE9-zuRWwUJ6Sig1sLGdF7oOMt3MCNwpyCsItLP54CoTQPl7HnNc1p3TkepSQh3QOe1twSQH_glEWiVcJKYl8iUg",
+     "author": "nora b",
+     "authorUrl": "https://maps.google.com/maps/contrib/100711845720288022296"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCep5H1aXdZ2RjVFGDUf7Qf_P7YBeZvbzsad4S_Lmc9jUiu-F6_mekibQvbRIOrrLKhwAEN1d0lAvnmtJInRP45-pIFBYaNGAjBcduCpcjpVGCCuQKbLhSKeh4UMmrutyEfcTx",
+     "author": "nora b",
+     "authorUrl": "https://maps.google.com/maps/contrib/100711845720288022296"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmzOqNzQD8cRWVkKgg8eJzQHTJHWSW2G4BTfZGP-QnRsw6FtKo3Mx8Z-0-KSXlz1cLCcBHKN1sGiAhdZXtPMshaXGzxjdrp_4YRod7yaM3DUAG_6WCeil9M29SBhHyK7Qncw2rCmQ",
+     "author": "Giorgio Nicoletti",
+     "authorUrl": "https://maps.google.com/maps/contrib/112224896393470030676"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkL9Bqe4ujPoiynlaAfTfsj-EwW2_YoG9Nsd5I8qYEirs-bKHxbF1AH_BKNCxViQMrj1hHiq3zM9s_DYjY2oNRvRsMSWiWsfG7Yz3aUiM3yiKp0TcUTm6cjVH3NSGaILAZ2pTNO",
+     "author": "Pascal Wicht",
+     "authorUrl": "https://maps.google.com/maps/contrib/109667071008603871419"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmgh4I-p2qc8EYBzRH6TSl32dGrBUNlp3znheKQ9zz3FZzBbm9ymbvfybBdXEEts1yXQ15wd-Ab6XULp_Rss35cRbIUuaHK50P3pNMCq8KYzSyTxSvOc9DjjY5qO9iM7mBLpx9s",
+     "author": "Giorgio Nicoletti",
+     "authorUrl": "https://maps.google.com/maps/contrib/112224896393470030676"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmhiFnKnDIH5cvfTD9roU_bdMlBwqaYnm80nmaXw9RtsJmAfK_4c2h1qpxMBI-bNtKWB2FbfaApnDA7ESOPwOb6ZuHRlWbWFmFc4ELQRNFMzIvyb6llSuvzuQ4v-u1tqfdDXx8OlRzOqdCa",
+     "author": "Stevenxon",
+     "authorUrl": "https://maps.google.com/maps/contrib/102462545903247725849"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlfxtv8CwkJKFApyAuEMaSKJ5llRxomMuYU8hRhOEFRXchKMf2qC5EuZMSlhFhd6h_uXK-jwzmsvGlZ3bZyei_DC6JCHyv9ZzyMUxWvRSDgO6UwFkQLv6SRZOpd4i6RdGhbs0DP",
+     "author": "Only the best",
+     "authorUrl": "https://maps.google.com/maps/contrib/114074378799338439459"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk9hFRf-ebmvHIrZaqjN50gsdN94_1AxM4ItuOAUAJ0bU2hAno16HZHd5Ma0QWYZqcats89ujnjgS5IhtqTrwyC29Y1cKv81e_WBqGVryNRe3_nw8VuYfOOXv7RcoapCV9gmCu42g",
+     "author": "Julien Garros",
+     "authorUrl": "https://maps.google.com/maps/contrib/105476341565484421350"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnEKLvx1WSUr7IQbYgmG1Ev4QmLhs5KM3ZNqUYjtCug8eeKGRmZKCgcE3l_fUVUIuudiNmz3NAwcRKD9hrvd4l4OszgcYYvcDHhshcLV9oa-8hqzdBO4iwzzSv1vgSu4GRNDQ",
+     "author": "Giorgio Nicoletti",
+     "authorUrl": "https://maps.google.com/maps/contrib/112224896393470030676"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Arvind Upadala",
+     "authorUrl": "https://www.google.com/maps/contrib/113580844747787351487",
+     "rating": 5,
+     "text": "J'ai été très impressionné par l'accueil chaleureux et professionnel du personnel dans ce café très agréable. L'ambiance est vraiment soignée et le service est au top. Les prix sont conformes à la qualité du lieu. J'ai été parfaitement rassuré par la propreté et la rapidité de service. Une expérience inoubliable !",
+     "date": "2026-06-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT201c01FazRWMFoxZVRFelJsTXpkbVF5YzNSVmRGRRAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CAIQACodChtycF9oOm5sMEk4V0Z1eTEzRlMzdmQyc3RVdFE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Tanveer Khan",
+     "authorUrl": "https://www.google.com/maps/contrib/109901043146632912334",
+     "rating": 5,
+     "text": "J'ai eu l'occasion de passer une soirée incroyable au Montreux Jazz Café à Lausanne. Le service est à la hauteur de l'ambiance musicale : accueillant et professionnel. L'ensemble du personnel est à l'écoute et fait tout pour que la soirée se passe en parfaites conditions.",
+     "date": "2026-07-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pWU1owTk1jR0paV0hkUVNEWlNXazlJYTBkbVdFRRAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CAIQACodChtycF9oOjVSZ0NMcGJZWHdQSDZSWk9Ia0dmWEE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Suryakala Kandivalasa",
+     "authorUrl": "https://www.google.com/maps/contrib/103584918849966418492",
+     "rating": 5,
+     "text": "J'ai été bluffé par la chaleur d'accueil et le professionnalisme du personnel dès mon arrivée au Montreux Jazz Café. L'ambiance est électriquement animée sans être trop bruyante et le cadre est tout simplement magnifique. Le rapport qualité-prix est vraiment excellent.",
+     "date": "2026-06-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xoaFdXcEViMWRJTTI5M09YSmhlVTFwVWtJNFIyYxAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CAIQACodChtycF9oOlhhWWpEb1dIM293OXJheU1pUkI4R2c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Julien Garros",
+     "authorUrl": "https://www.google.com/maps/contrib/105476341565484421350",
+     "rating": 4,
+     "text": "Un petit restaurant très sympathique à côté du campus, avec une belle vue. La nourriture est bonne : j’ai pris une salade au chèvre chaud, qui était excellente. Service impeccable et ambiance agréable. Je conseille pour un lunch rapide entre amis. Salade à 21 CHF.",
+     "date": "2025-02-26",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnTURncmJEcU5REAE!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CIHM0ogKEICAgMDgrbDqNQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jean-Luc Archimi",
+     "authorUrl": "https://www.google.com/maps/contrib/115160424419330477890",
+     "rating": 1,
+     "text": "Des années que nous venons ici avant de partir en vacances ,  cela a baissé d année en année  ! Aujourd'hui  on touche le fond ! Je demande un proseco, ils ont pas ! On me propose une petite bouteille de champagne SERVI DANS UN VERRE EN PLASIQUE jettable ! !!! Je demande un limoncello pour moi , on me répond : je sais pas ce que c est !!!!  On a touché  le fond !!!  De désespoir  je prend une bouteille d eau gazeuse, l eau était tiède  !!!  No comment  ... le fond  du fond",
+     "date": "2026-02-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2toM2MxWk9SMkZVVjBabE9VTnpkV1pZUkdWaGNuYxAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CAIQACodChtycF9oOkh3c1ZOR2FUV0ZlOUNzdWZYRGVhcnc%7C%7C?hl=fr"
+    },
+    {
+     "author": "nora b",
+     "authorUrl": "https://www.google.com/maps/contrib/100711845720288022296",
+     "rating": 5,
+     "text": "Mon endroit préféré pour travailler!\nStaff super accueillant et tout ce qu’ils proposent est délicieux.\nVrai café et dessert beau et bon. Même la limonade est fait maison et très rafraîchissante.\nSi vous passez par l’EPFL ou l’UniL arrêtez vous ici pour la pause café.\nEn plus vous pouvez organiser des événements d’entreprise privé.",
+     "date": "2022-10-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUMtNHBPV2h3RRAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CIHM0ogKEICAgIC-4pOWhwE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Only the best",
+     "authorUrl": "https://www.google.com/maps/contrib/114074378799338439459",
+     "rating": 3,
+     "text": "Lieux sympas.\n\nAccueil correct.\n\nDe bons choix pour tous les goûts.\n\nAccessible aux fauteuils roulants\n\nToilettes propres.",
+     "date": "2019-01-03",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURJMXR5bFVnEAE!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CIHM0ogKEICAgIDI1tylUg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Julien Ferla",
+     "authorUrl": "https://www.google.com/maps/contrib/117233039609954792793",
+     "rating": 3,
+     "text": "Joli cadre, design avec affiche, photo et projection de concert du Montreux jazz,... Dommage que le son des projections soit si mauvais !!\n\nPas acceptable pour un concept comme celui ci",
+     "date": "2017-11-23",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNBc0llTkZBEAE!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CIHM0ogKEICAgICAsIeNFA%7C%7C?hl=fr"
+    },
+    {
+     "author": "Joël Fontanel",
+     "authorUrl": "https://www.google.com/maps/contrib/117275662219329590872",
+     "rating": 5,
+     "text": "Magnifique moment : l'Express est servi dans une tasse dorée accompagné de biscuit délicieux.\nLe café est excellent !\nOn y retourne régulièrement. Les plaisir d'y croiser aussi des clients d'exception. C'est très classe 👍\nContact avec les employés serveurs top.",
+     "date": "2025-08-01",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pCQmRGRXlORTVUVFhRM2J5MDBZakJNTlVWcmJYYxAB!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CAIQACodChtycF9oOjBBdFEyNE5TTXQ3by00YjBMNUVrbXc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Chrislian Cordier",
+     "authorUrl": "https://www.google.com/maps/contrib/104177275437016473085",
+     "rating": 5,
+     "text": "On y mange bien et l'ambiance générale est très agréable, une pepite sur le campus!",
+     "date": "2021-10-15",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUQ2cjhHOUlREAE!2m1!1s0x0:0xfe37dd9e36791a0b!3m1!1s2@1:CIHM0ogKEICAgID6r8G9IQ%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "negoce": {
+   "name": "Le Négoce",
+   "placeId": "ChIJ74BdSzUxjEcR6dey6eu_xyU",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Le%20N%C3%A9goce&query_place_id=ChIJ74BdSzUxjEcR6dey6eu_xyU",
+   "rating": 3.5,
+   "ratingCount": 23,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlFDEtRbs6etOot08Js-LGRYAI_bUxoYGC3NaGbvjjvMFv6vVbvVmuGWs4SUmzcWEUZ34ybySRc1Jzwgr028AgX23dwKYV01a4ByWFYlPgWKa7EUc04voy4Nf6TXx3FaPf5A4H5CQ",
+     "author": "Arthur",
+     "authorUrl": "https://maps.google.com/maps/contrib/101347271623643240872"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlyc6u4sFzzobykDgmEovfT5b96xL6GoLzx6NrvpY54O01PzbgubR1XSqBMU3HuJeznYme_17P_oKEGMt_fSWg5Gt5SX96k3wArQYzaBbfjJV_F4zR2_WDmr1P1UO80m2JRlLTB",
+     "author": "Oriane M",
+     "authorUrl": "https://maps.google.com/maps/contrib/107323981775282815373"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWk8Sg5RYdoV4_OJR-LkY_ZlchOjVfSPRmXb16xq9tP0hawZcQctPwmi-hzYhpJ8f2cW_gAikFGB653y8MsVoVIlTkVm_UV7EtKjRt2an3kTUTGNzVUtMzrDBOisxcdiwmCqg1M",
+     "author": "Hamid Khatibi",
+     "authorUrl": "https://maps.google.com/maps/contrib/109876294144268459812"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Swann",
+     "authorUrl": "https://www.google.com/maps/contrib/116877407515181329727",
+     "rating": 1,
+     "text": "Les produits sont bons, le personnel en général est sympa sauf une dame qui systématiquement nous agresse mes amis et moi.\n\nCe serait sympa de pouvoir passer au seul tabac du campus sans avoir affaire à cette vieille folle.",
+     "date": "2026-02-26",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT25kbmJHbFRUMmhHUkV4dE1FSlNTM2xRWDBab1RYYxAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOndnbGlTT2hGRExtMEJSS3lQX0ZoTXc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Amélie Gauglhofer",
+     "authorUrl": "https://www.google.com/maps/contrib/108834555862637759754",
+     "rating": 3,
+     "text": "L'endroit et les produits sont sympas, mais les horaires de fermeture ne sont pas toujours respecté. Je me suis retrouvée plusieurs fois devant les portes fermées alors que c'était indiqué ouvert sur Google maps",
+     "date": "2026-04-02",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2psa01tcDVRV05UU2t4ek0ySkhRVzFXU0ZKU1UzYxAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOjlkMmp5QWNTSkxzM2JHQW1WSFJSU3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Maryam Rili",
+     "authorUrl": "https://www.google.com/maps/contrib/101112792802220830104",
+     "rating": 1,
+     "text": "Le personnel est très très désagréable, ne dis ni ne répond au bonjour alors qu’il n’y avait personne d’autre dans le magasin, m’ignore et répond au téléphone quand c’est le moment de m’encaisser",
+     "date": "2026-04-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pnNVVsTjVURXMyYlU5MmJIZHNabUozWHkwNU5VRRAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOjg5UlN5TEs2bU92bHdsZmJ3Xy05NUE%7C%7C?hl=fr"
+    },
+    {
+     "author": "louisky",
+     "authorUrl": "https://www.google.com/maps/contrib/110148291638872966645",
+     "rating": 3,
+     "text": "Des prix qui motivent à se retenir de manger pendant bien quelques heures. Cependant le personnel est tout à fait agréable et l’on peut trouver de nombreuses choses. Son point fort majeur est sa proximité des lieux de cours permettant de venir s’approvisionner à la pause. Je recommanderai si les prix étaient revus à la baisse..",
+     "date": "2022-12-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNCeUs2VnRBRRAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CIHM0ogKEICAgICByK6VtAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Kylian De Blasio",
+     "authorUrl": "https://www.google.com/maps/contrib/114495144229036949594",
+     "rating": 5,
+     "text": "Si je pouvais donner plus de cinq étoiles, je le ferais sans hésitation ! Le kiosque de l'EPFL est bien plus qu'un simple lieu pour acheter des produits, c'est une expérience à part entière. Dès que vous franchissez ses portes, vous êtes accueilli par une ambiance chaleureuse et dynamique qui vous donne instantanément le sourire.\n\nLe personnel est incroyablement sympathique et toujours prêt à vous aider, que ce soit pour vous conseiller sur leurs délicieuses collations ou simplement pour engager une conversation amicale. Leur passion pour ce qu'ils font se ressent dans chaque interaction, ce qui rend chaque visite encore plus spéciale.\n\nEt parlons de la sélection de produits ! Que vous ayez besoin d'une collation rapide entre les cours ou d'une boisson revigorante pour vous accompagner pendant une longue session d'étude, le kiosque propose tout ce dont vous pourriez avoir envie, et plus encore. Leurs options sont variées, fraîches et toujours de la plus haute qualité.\n\nDe plus, l'emplacement du kiosque est idéal pour les étudiants et le personnel de l'université. Que vous ayez besoin d'une pause entre les cours ou d'un endroit pour travailler en toute tranquillité, le kiosque est l'endroit parfait pour se détendre et recharger ses batteries.\n\nEn résumé, le kiosque de l'EPFL est bien plus qu'un simple lieu de vente, c'est un véritable joyau au cœur du campus. Une expérience incontournable pour tous ceux qui recherchent un service exceptionnel, des produits de qualité et une ambiance conviviale. Je le recommande vivement à tous les étudiants, membres du personnel et visiteurs de l'EPFL !",
+     "date": "2024-03-26",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNENHB1UHVBRRAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CIHM0ogKEICAgICD4puPuAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "The DJMK",
+     "authorUrl": "https://www.google.com/maps/contrib/103014482057306618844",
+     "rating": 1,
+     "text": "D'habitude bien mais si vous tomber sur la dame qui y travaille c'est une catastrophe! Manque de respect et impatiente c'est inadmissible",
+     "date": "2025-10-30",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t0dkxXWm5lR1pMYlVsWFJraEVOa2MzVEhWUVUyYxAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOktvLWZneGZLbUlXRkhENkc3THVQU2c%7C%7C?hl=fr"
+    },
+    {
+     "author": "mathias bruehlmann",
+     "authorUrl": "https://www.google.com/maps/contrib/106230028945998811296",
+     "rating": 5,
+     "text": "Plein de petites choses utiles pour un apéro ou une petite pause entre deux cours",
+     "date": "2024-09-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNIM2U3YmlBRRAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CIHM0ogKEICAgICH3e7biAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Andrea Habegger",
+     "authorUrl": "https://www.google.com/maps/contrib/101069119827285694887",
+     "rating": 5,
+     "text": "Frais et personnel sympathique à un prix correct",
+     "date": "2024-03-31",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNEcmMtY0JnEAE!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CIHM0ogKEICAgICDrc-cBg%7C%7C?hl=fr"
+    },
+    {
+     "author": "Kaaiiifff",
+     "authorUrl": "https://www.google.com/maps/contrib/112177504165880756216",
+     "rating": 1,
+     "text": "Se prendre un “c’est long la…” alors que j’étais en train de payer un peu plus que la somme demandé psk j’avais besoin d’une fourchette était une expérience enrichissante",
+     "date": "2026-09-11",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pJNVRXVlNkbFZ3VlZkVFIyaFFiVWt3UVVwVFJtYxAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOjI5TWVSdlVwVVdTR2hQbUkwQUpTRmc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jan W.",
+     "authorUrl": "https://www.google.com/maps/contrib/100589118856277081714",
+     "rating": 2,
+     "text": "Vous pouvez payer en euros, c'est un avantage. Cependant, le taux de change appliqué est spécial (1,80 CHF = 3 €), ce qui est un inconvénient majeur.",
+     "date": "2026-07-06",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT205RFZtUlRjalJ4VUdkNGVYUXhWRWgyTUhWYVVGRRAB!2m1!1s0x0:0x25c7bfebe9b2d7e9!3m1!1s2@1:CAIQACodChtycF9oOm9DVmRTcjRxUGd4eXQxVEh2MHVaUFE%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    }
+   ]
+  },
+  "niki": {
+   "name": "Cafétéria Niki",
+   "placeId": "ChIJxRg0WWkxjEcRfezFZkgoZHQ",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9t%C3%A9ria%20Niki&query_place_id=ChIJxRg0WWkxjEcRfezFZkgoZHQ",
+   "rating": 3.7,
+   "ratingCount": 11,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm1N95fpyX7V-7C64cso8_EBexl-mtiUfZGZmFjEPAL4np6Fi5aeGSz5wl2sp4IlEfK5_56Y8RKsRbWAhiYk-1bQGASUjDSURj0aDPiuACFrHWQeiGxIU4gWqgFuE2XvAzVzCYmFEgwX1mx",
+     "author": "Julius Freytag",
+     "authorUrl": "https://maps.google.com/maps/contrib/100856412145350533218"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "mariem baklouti",
+     "authorUrl": "https://www.google.com/maps/contrib/113639617720348029502",
+     "rating": 2,
+     "text": "Nous sommes des clients réguliers , on vient assez souvent .cependant, ce matin, dès notre entrée, avant même de bien s'installer, la dame qui travaille viens vers nous s'exprimant avec un ton méprisant \"il faut acheter qq chose pour rester là\" ,nous sommes conscients de cela et puis elle se moque en ajoutant \"j'espère\". je tiens à préciser qu'elle ne se comporte  pas de la même façon avec le reste des clients .Nous sommes vraiment déçus!!!!!",
+     "date": "2026-04-22",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2pSTVpVOUtNRkJ4Y1d0NmNtNXllaTB6VWtoWmJGRRAB!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CAIQACodChtycF9oOjRMZU9KMFBxcWt6cm5yei0zUkhZbFE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Colin Parisod",
+     "authorUrl": "https://www.google.com/maps/contrib/105670440205846271285",
+     "rating": 3,
+     "text": "Les horaires d'ouverture ne sont pas super : ce serait sympa de pouvoir prendre une crêpe vers 10h pendant la pause, mais ça n'est pas encore ouvert, dommage. Sinon le service est très lent mais les crêpes très bonnes.",
+     "date": "2022-08-24",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUR1MllfWEhBEAE!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CIHM0ogKEICAgIDu2Y_XHA%7C%7C?hl=fr"
+    },
+    {
+     "author": "FreezHype",
+     "authorUrl": "https://www.google.com/maps/contrib/103050602110050155782",
+     "rating": 4,
+     "text": "bonne ambiance",
+     "date": "2026-01-20",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2tSSWJsQkJUSHBxTkhabE4xWmhUV2s1VFVkYVJHYxAB!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CAIQACodChtycF9oOkRIblBBTHpqNHZlN1ZhTWk5TUdaRGc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Julius Freytag",
+     "authorUrl": "https://www.google.com/maps/contrib/100856412145350533218",
+     "rating": 4,
+     "text": "Bon, mais plus cher que les autres cafés du campus",
+     "date": "2026-01-27",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2poWWJtTjZVRXRWWTA1TFVqTnViemxaWWpZM2VWRRAB!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CAIQACodChtycF9oOjhYbmN6UEtVY05LUjNubzlZYjY3eVE%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    },
+    {
+     "author": "Z",
+     "authorUrl": "https://www.google.com/maps/contrib/115621447796658176349",
+     "rating": 3,
+     "text": "Petit café-pâtisserie à l'EPFL, niché dans un coin discret, à l'abri de l'Esplanade.\n\nPrix raisonnables (pour la Suisse !) et portions généreuses. Le personnel est accueillant et le service à table est impeccable.\n\nLa carte propose un large choix. Gaufres, crêpes et boissons chaudes sont les spécialités de ce café du campus.\n\nL'une des meilleures adresses de l'EPFL, et à un prix très abordable.",
+     "date": "2024-03-13",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUQ5Mk0tU1lREAE!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CIHM0ogKEICAgID92M-SYQ%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    },
+    {
+     "author": "Thibault C.",
+     "authorUrl": "https://www.google.com/maps/contrib/113754979456480618613",
+     "rating": 5,
+     "text": "Le meilleur café du campus !",
+     "date": "2024-07-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNyNUpQUFJnEAE!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CIHM0ogKEICAgICr5JPPRg%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    },
+    {
+     "author": "Pierpaolo Ranieri",
+     "authorUrl": "https://www.google.com/maps/contrib/105960755285816013308",
+     "rating": 4,
+     "text": "Bar cosy à l'EPFL",
+     "date": "2023-09-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURaOUtDMzF3RRAB!2m1!1s0x0:0x7464284866c5ec7d!3m1!1s2@1:CIHM0ogKEICAgIDZ9KC31wE%7C%7C?hl=fr",
+     "translatedFrom": "en"
+    }
+   ]
+  },
+  "ornithorynque": {
+   "name": "L'Ornithorynque",
+   "placeId": "ChIJ5z6xc_0wjEcRf0rGNBv26EQ",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=L'Ornithorynque&query_place_id=ChIJ5z6xc_0wjEcRf0rGNBv26EQ",
+   "rating": 3.9,
+   "ratingCount": 169,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlxDHu3tcg-hHGkmrjxMZAg_qPoXa6tzLNXtBMu1UXCe_MEnGbpRQPKtIY45LRMO4Pc1jsCrUSyMEBIbzJWbCMvY08v5V-Dz4R16DDLd0hzCnruzMyKXkwNkC0PzSpd74hjjKugHA",
+     "author": "Yanax",
+     "authorUrl": "https://maps.google.com/maps/contrib/107109430034163562710"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlO1Gp5joUkAlHrFqXWoDORdfkXe2wCHIAUDYeweGUvGDWsMJagDufwXg82AzET-Ime7bP8EevB1d0lzCb5T2mXLN6KOrMGGKsC-qMlvt1-xOuXUt2j8VDQMV-58I1UbTCgHnJH",
+     "author": "Antonio",
+     "authorUrl": "https://maps.google.com/maps/contrib/112784140332537314594"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkulrPOGSAfMv5Fllaj8qXgmMhmG4L1z3rwR3fbYCbNjAvxDXqQ5cRvsjipvAvUQWhP9KUnje1ALZLLbMmnRSR1Fr4Qvk6b3JKqJKQJtksi5TPNaUZ_XxQs1nj6iQTQUmN2uTD8",
+     "author": "Yanax",
+     "authorUrl": "https://maps.google.com/maps/contrib/107109430034163562710"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlhJ7m2LFThMgwSaE4naIMcTQ4TpS-EVJjJtCm532TmHmvQmCkGUv7qwC3cU6HWwGG4evQx2-5zUwN4zwTGu7iZFy_MVdZb4DXvYEwRVdnX5jOVmHAyyqo0JE-aG-E7fm0-CuQyVA",
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://maps.google.com/maps/contrib/113959927505819426457"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlGt1R1MuEYTo5LXVRRkQqcQNMt2PYSWM0lTZYWm5gDErnf0OnALlA-8r-GFb8pviw33ymT27xH2DeTT3NTPO5oTn-pKrmsfyBgHe_IVu72xz33yTO-VEpmHoLN16YFPb-qZK1r",
+     "author": "Yanax",
+     "authorUrl": "https://maps.google.com/maps/contrib/107109430034163562710"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmk_A6NhyTNx4Mq4kz1fYgaeMnD6_QXv-xc1rRQUrpoveAQVWabOyu_inHtu1tPOZMMxM5jbdqnu238Fa00h8YwVQ4m2XG9URIcApvy_a8LN0k3YeFbwWJwpHjCw3LvD-TDQNYEAg",
+     "author": "Yanax",
+     "authorUrl": "https://maps.google.com/maps/contrib/107109430034163562710"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWm0oFdxQgQfeXJzQIiR-oO1nKjkQrF-CGF-IHPpkiRXwCiQnnU2iJSoElD_S4K_nRuFNCCzxZLZAwdRmR4VKbMaqOQL0XxfTKW2Fy9kbGiFJZ58zmppxu9jD5tm5tkSUv1AXs0j",
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://maps.google.com/maps/contrib/113959927505819426457"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkK71Dx_vaBt8siceRDvf8EF9v6kXTbw37KVBijtHipomUrOroqyqF6QtqUnhQm0LuY0akWkNPu0eXgjp4aK3uc4TG3V9ZrwBgLr_rGuNzNip7slVwvKdhudtWHpQZ1E0Dk0x5eag",
+     "author": "Simon Narduzzi",
+     "authorUrl": "https://maps.google.com/maps/contrib/113959927505819426457"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWlCcb453gw5XIbbEmbrVpd7d238XMyP6FjXKjzXKAIFrirX8qXcrUr0uKOL-EQA7PGJCPuSaoEYf0j8_1M3ktOnEeEw5LweiJuUX6ZUdf9ga1Q1mZ-h2sCvAXxdjGAUqycbj_xp",
+     "author": "Trunks 09",
+     "authorUrl": "https://maps.google.com/maps/contrib/117201565449664901994"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl-dU461bDt6VmKzaQpJiZROBR4VuXCs0fBJ1oxV44s2ZJkfmzhtjpsHXiEyzNUrx5Sf7KCeqKEzJXtvDUTF_rjmDmxLOcIjqi9g3z5D_CtIBjaaCU2dXYCSYF-fdGSeOuaKR4",
+     "author": "Edward Mi",
+     "authorUrl": "https://maps.google.com/maps/contrib/115702864548443335636"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Trunks 09",
+     "authorUrl": "https://www.google.com/maps/contrib/117201565449664901994",
+     "rating": 4,
+     "text": "Très bonne nourriture, assez variée, les plats pourraient être juste un peu plus garnis",
+     "date": "2021-08-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURhZ01hYXhBRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgIDagMaaxAE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Maxime Duc",
+     "authorUrl": "https://www.google.com/maps/contrib/104943953909705182541",
+     "rating": 3,
+     "text": "Restauration estudiantine efficace, parfois bonne et original comme avec le Orini'Burger, Orni'Pizza ou Orni'paté en croûte. Des plats qu'on ne voit pas tous les jours sur des menus sont aussi les bienvenus, le chef a pour habitude de proposer lors des fêtes nationales de pays des plats nationaux! Hier, c'était notamment le cas de la journée nationale de la Biélorussie, avec ses orteils de porc sur choux rouges (s/o la soupe).\nLes quantités sont cependant assez faible malgré la horde de petits étudiants méca qui prennent d'assault toutes les places disponibles.\nSi on a le malheur d'avoir encore faim, c'est déjà trop tard pour vous. Vous avez adoré l'Orni'Burger et ses frites country? Les gnocchis au poisson avec salat de mercredi d'il y a 2 semaines sont ressortis du compost pour vous...",
+     "date": "2024-06-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNMbm9MV1R3EAE!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICLnoLWTw%7C%7C?hl=fr"
+    },
+    {
+     "author": "Eloy Snow",
+     "authorUrl": "https://www.google.com/maps/contrib/112679430384983480067",
+     "rating": 4,
+     "text": "Restaurant agreable, lumineux, offrant une infrastructure propre et accueillante.\nDe plus, les plats proposés sont variés de jours en jours et permet de choisir entre un pannel de plats different vraiment plaisant!\nMais un des gros plus, ce sont les pâtes!! On peut cumuler nos plats pour en avoir un gratuit a l'aide d'une carte de fidélité et par ailleurs les sauces sont extrêmement bonnes et toutes aussi varié les une que les autres.\nBref je recommande absolument cette enseigne",
+     "date": "2018-10-11",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSUNnbkxTWWJREAE!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICgnLSYbQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "David Guhl",
+     "authorUrl": "https://www.google.com/maps/contrib/102964655563137263109",
+     "rating": 5,
+     "text": "Bonne cantine avec chaque jour un plat de la mer, un végétarien, une viande et les pâtes. Rapide, original, cuit en flux tendu, pas de grosses bassines servies à la louche.",
+     "date": "2018-12-31",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNJbzlqTHN3RRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICIo9jLswE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Pauline Mélénec",
+     "authorUrl": "https://www.google.com/maps/contrib/111144888848915544792",
+     "rating": 5,
+     "text": "Plats varies et equilibrés, parfait pour un lunch rapide mais bon. Il peut y avoir de l attente vers 12h si les etudiants sont presents sur le campus de L EPFL",
+     "date": "2021-08-15",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURhNUlMaHJnRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgIDa5ILhrgE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Antoine H",
+     "authorUrl": "https://www.google.com/maps/contrib/117178760284273130686",
+     "rating": 1,
+     "text": "Pire cafétéria niveau allergènes. Aucune info, \"demandez au personnel\" qui est ultra occupé déjà.\nMettez une liste écrite, reponse: \"la loi nous oblige pas\"\nService minimum...",
+     "date": "2022-07-25",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN1OHZyODlBRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICu8vr89AE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Tibor Tersztyánszky",
+     "authorUrl": "https://www.google.com/maps/contrib/100952906928096702461",
+     "rating": 4,
+     "text": "La nourriture est très bonne, mais la manía de servire tout en bols ça me nerve.  Il est hyper difficile a finir une assiette de riz p.ex. avec de la fourchette dans une bols...",
+     "date": "2021-03-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN3azQ2QjRRRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICwk46B4QE%7C%7C?hl=fr"
+    },
+    {
+     "author": "boudpapier",
+     "authorUrl": "https://www.google.com/maps/contrib/103150050313293416226",
+     "rating": 2,
+     "text": "Le plat n'avait pas assez de goût, j'ai dû y remédier",
+     "date": "2024-04-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNqb3BpWG9nRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgICjopiXogE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Simon Berner",
+     "authorUrl": "https://www.google.com/maps/contrib/100683625906599388626",
+     "rating": 3,
+     "text": "Assez cher dans l'ensemble (~4chf de plus que sur les autres restaurants du campus). Mais la qualité est satisfaisante",
+     "date": "2018-10-08",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnSURBMWN6WVhREAE!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgIDA1czYXQ%7C%7C?hl=fr"
+    },
+    {
+     "author": "Jezenay",
+     "authorUrl": "https://www.google.com/maps/contrib/112711328249835430498",
+     "rating": 4,
+     "text": "Cafétéria sous-cotée. Les plats y sont très bons à des prix tout à fait raisonnables.",
+     "date": "2023-11-12",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNsd09uTTFnRRAB!2m1!1s0x0:0x44e8f61b34c64a7f!3m1!1s2@1:CIHM0ogKEICAgIClwOnM1gE%7C%7C?hl=fr"
+    }
+   ]
+  },
+  "satellite": {
+   "name": "Bar Satellite",
+   "placeId": "ChIJ_Vx_A_4wjEcRlFND3SI6B7g",
+   "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Bar%20Satellite&query_place_id=ChIJ_Vx_A_4wjEcRlFND3SI6B7g",
+   "rating": 4.7,
+   "ratingCount": 1062,
+   "photos": [
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWl1NB9eKrszKrcolM7MxzKlFn2-yqp13_I-ujq_LLSNrupdgTzB_Q_sClXDiyEKCI003dhE7Wplq9PcxpZn2C4rsXRSgf_JJY7DA2vvnF9z1KeAcMdcDJDf-oLd9SEaaX86mYDkMA",
+     "author": "Unni Krishnan",
+     "authorUrl": "https://maps.google.com/maps/contrib/117687956220762976238"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWn5TVTVp8OF_6MLCsRrTlPsZDORv7wV0qmYjq8OnGaZkbvah2fuAPCARNBHKa7M_XWdAyqIFRrzxWFeZiwONbxMvtgOElWT1Kx6hCUCH7Xbh4fGaNE6Mqx0eOeHKgizqpXrNxu5",
+     "author": "Karim Pascal Khoukhi",
+     "authorUrl": "https://maps.google.com/maps/contrib/100531105375468869596"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmLLJqrnzldFhV4i1IQHs6WUEz4kKVmnrjcN9uVAVZMMh9987a6ILT2JQaOaxboW-AAAUhU904Lw23JNqt0MYAN3vG45X9fW31zXhDLct8F7JmiFy6ITUu3MEpY153NkJc750BbbZVpvFyy",
+     "author": "Bar Satellite",
+     "authorUrl": "https://maps.google.com/maps/contrib/103831564343469603032"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmrdicB4wRxRESskd3rB_Zm4xg8RcwP6QzQvZ4Xcs3ILBrQFt4gds7kuYK6zYMloHhREYr1qoYykBH_SXGoxHPw5SUbKaz3GPhuzLExa-UR-C5fRatugtLdd8vmWFaOVK9ZKiTpBp7Feqxj",
+     "author": "Bar Satellite",
+     "authorUrl": "https://maps.google.com/maps/contrib/103831564343469603032"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmc2oMwSJ-xdOHZorFv9nql6uDZBV_E3H74qeVEBJpnczBZ3lKP9BDnMkcyDrOHcGZ_gAQXh31LaG2UkRon1hVRxGr8M0TCiREg7Ll0AIsZeAtXqeNOb7Sw9g8uEA_6mfhbyPyb4m3Um4A",
+     "author": "David W Hogg",
+     "authorUrl": "https://maps.google.com/maps/contrib/116421724878364783882"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnSsYlZ7fzv8wAZbexvTNIs6IUr9Z0CtJUbF1oU3WJQeGckenoEFCvl7Z9e7c52TFln6GMQydyT3EUD30-odxp8f6uRhH9bZO2mMkh9k5N6HtgExx59sC41xMA5Aaqn50OKU3hg",
+     "author": "Hendrik Schütz",
+     "authorUrl": "https://maps.google.com/maps/contrib/112161464907698619992"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnwNFxmD4y5NbZGwBUJREMo5VAob9bk3UXZ7Q0p4k-p-GuCcsXbQP40DWKQgTWdwskZ1WcBp50lobXNf35sZnqqZzT2MhNoJXvGlleKohzF6F5hZUd_kAQqLU_7KMMDf9SURBVt",
+     "author": "Karim Pascal Khoukhi",
+     "authorUrl": "https://maps.google.com/maps/contrib/100531105375468869596"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkvGvjAPAuA7ctOPvSd2uhJOJLV_hVEWT6GktuTNlDMTemJcCVP_CMOccDpm9mZ4sFaDxt-QaBJePnMrhGet6cjq3OZTzWPD3_BjjXP80Q8XfkyfsQmBXjgGNmps_sHSkmFBMSpug",
+     "author": "Karim Pascal Khoukhi",
+     "authorUrl": "https://maps.google.com/maps/contrib/100531105375468869596"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWmkR29-66ZNyT8oyajxQnr1ac5bpKWesqlBtgewpxlXUjLmCXeSjfEicEEuz1NqqUaUUbLNxIg-h80e_n4VTVo-gAAIS82XuTbpB4VnPlOxKEpWusAPWR2hEthBpkGNyuxUX3TmoQ",
+     "author": "Selmar Binder",
+     "authorUrl": "https://maps.google.com/maps/contrib/104215224220796086963"
+    },
+    {
+     "url": "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWnZcYz4vRktRmpdPgCU8zLjk9hbfqwPvLhBxwAULWHryqqmD9DpvJaMOu2qWTaj2Clvey9dxSxou6EB_xeLujooI_F6PZg_NsDLjhvVKfwOJX01IIUQFiEMq2bxcUWL0CTbCoLWlQN8s9uf",
+     "author": "Bar Satellite",
+     "authorUrl": "https://maps.google.com/maps/contrib/103831564343469603032"
+    }
+   ],
+   "reviews": [
+    {
+     "author": "Mikael Gonzalez",
+     "authorUrl": "https://www.google.com/maps/contrib/104562808068793001296",
+     "rating": 5,
+     "text": "Lieu incontournable de la culture étudiante de l'EPFL. une large sélection de bières est disponible à prix tout doux, les serveur.euses sont très sympathiques, la déco est très organique. Il y a régulièrement des événements en tous genres, tout au long de l'année. Il y a des canapés, babyfoot, autrse jeux de société, BDs... C'est globalement un lieu de rencontre pour étudiants et enseignants, pour travailler ou se détendre, du matin au soir!",
+     "date": "2026-04-01",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT210cmJVcG9PRXAyYVV4WlpGQXpNWE5QZG5KSFRXYxAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CAIQACodChtycF9oOmtrbUpoOEp2aUxZZFAzMXNPdnJHTWc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Alexis R.",
+     "authorUrl": "https://www.google.com/maps/contrib/101589482186909730303",
+     "rating": 5,
+     "text": "Degust de bière ! J’ai adoré les différents goûts d’Hummus, de carotte, de fromage et de pain !\n\nBravo Lausanne !",
+     "date": "2026-05-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2xSWGJtZGxWV1p2UmpkNmFXVk5TME51VkdGRlMzYxAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CAIQACodChtycF9oOlRXbmdlVWZvRjd6aWVNS0NuVGFFS3c%7C%7C?hl=fr"
+    },
+    {
+     "author": "Antoine Polster",
+     "authorUrl": "https://www.google.com/maps/contrib/106372939008318879054",
+     "rating": 5,
+     "text": "Très bon bar étudiant avec large éventail de bières. Belle atmosphère, à ne pas manquer si vous faites vos études à l’EPFL 😉",
+     "date": "2025-09-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2poRllraEZMVmMzUlZaT05YVk1RMEV4ZEhSWFduYxAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CAIQACodChtycF9oOjhFYkhFLVc3RVZONXVMQ0ExdHRXWnc%7C%7C?hl=fr"
+    },
+    {
+     "author": "Zephyr",
+     "authorUrl": "https://www.google.com/maps/contrib/109826770221248256404",
+     "rating": 5,
+     "text": "Superbe bar avec une ambiance top 👍🏽",
+     "date": "2026-03-19",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUlRQUNvZENodHljRjlvT2t0ZlZVVkNVbGxPWVhKRmRUTnhjVmRpVW10NlNVRRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CAIQACodChtycF9oOktfVUVCUllOYXJFdTNxcVdiUmt6SUE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Leila Paolini",
+     "authorUrl": "https://www.google.com/maps/contrib/112042296730016169382",
+     "rating": 5,
+     "text": "Mon endroit préféré a l’epfl, le matin c’est calme et y’a du bon café, le soir super ambiance et bonnes bières. Les serveurs sont tous super sympa et gentils. À midi il y a des sandwiches et des tranches de pizza à 5 francs.\nJe suis fan des tous les événements: dégustations, concerts, ludiques et plein d’autres.",
+     "date": "2024-08-04",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUNqcnVEMF93RRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgICjruD0_wE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Alex Collet",
+     "authorUrl": "https://www.google.com/maps/contrib/114891995171065022583",
+     "rating": 5,
+     "text": "Bar étudiant très sympa, bonne terrasse et ambiance détendue avec souvent des événements. Bonne sélection de bières de tout part.",
+     "date": "2024-11-05",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUMzMXZxYXlRRRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgIC31vqayQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Antony Khoury",
+     "authorUrl": "https://www.google.com/maps/contrib/112798898289628363112",
+     "rating": 5,
+     "text": "Meilleur bar étudiant ever. J’ai passé les meilleurs moments de ma vie ici, et j’ai goûté tant de bières. Lieu à préserver 🫶",
+     "date": "2025-04-06",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnTURJeU9UaXRRRRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgMDIyOTitQE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Olivier Neukomm",
+     "authorUrl": "https://www.google.com/maps/contrib/104586464266588057279",
+     "rating": 5,
+     "text": "Ambiance étudiant très sympa , bonne musique, les serveurs et serveuses sont supers sympas et le choix de bières est hyper vaste ! J’adore cet endroit 🤩",
+     "date": "2025-03-18",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChZDSUhNMG9nS0VJQ0FnTUN3dXNlaEF3EAE!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgMCwusehAw%7C%7C?hl=fr"
+    },
+    {
+     "author": "Michaël Tasev",
+     "authorUrl": "https://www.google.com/maps/contrib/106224856166216894408",
+     "rating": 5,
+     "text": "Superbe ambiance conviviale, beaucoup de bonnes bières très différentes et à faible prix. Et c'est sans parler des activités culturelles et ludiques régulières, entre café-théatres qualitatifs, concerts (avec une sono des plus propres), dégustations de bières et j'en passe, bref à voir absolument!",
+     "date": "2020-01-05",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSURNaFo2eXRnRRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgIDMhZ6ytgE%7C%7C?hl=fr"
+    },
+    {
+     "author": "Nicolas Zurbuchen",
+     "authorUrl": "https://www.google.com/maps/contrib/108929071425840905888",
+     "rating": 5,
+     "text": "Bar d'étudiants avec un énorme choix de bières et de très bons prix. Il faut venir tôt car les places sont très vites prises. L'ambiance est super, la décoration est top (notamment les snowboards) et les canapés sont confortables.",
+     "date": "2017-11-07",
+     "url": "https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sChdDSUhNMG9nS0VJQ0FnSUN3OVBhVDVnRRAB!2m1!1s0x0:0xb8073a22dd435394!3m1!1s2@1:CIHM0ogKEICAgICw9PaT5gE%7C%7C?hl=fr"
+    }
+   ]
+  }
+ }
+}
